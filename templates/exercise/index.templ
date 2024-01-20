@@ -1,0 +1,23 @@
+package exerciseview
+
+import (
+    "strconv"
+
+    "github.com/MigFerro/exame/templates/layouts"
+    "github.com/MigFerro/exame/entities"
+)
+
+templ ShowIndex(ee []entities.ExerciseEntity) {
+    @layouts.Base(layouts.BaseOptions{ WithLatex: true, WithHTMX: true }) {
+        <h1 class="py-5 text-xl"> Exercise List</h1>
+        <div class="pt-5">
+            <ul>
+                for i, e := range ee {
+                    <li>
+                        <a class="text-blue-500 underline hover:text-yellow-500" href={ templ.URL("/exercises/" + e.Id.String()) }>Exercise {strconv.Itoa(i+1)}</a>
+                    </li>
+                } 
+            </ul>
+        </div>
+    }
+}

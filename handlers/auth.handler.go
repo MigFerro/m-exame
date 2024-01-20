@@ -91,7 +91,6 @@ func (h *AuthHandler) Logout(c echo.Context) error {
 
 	val := session.Values["logged-user"]
 	if _, ok := val.(*entities.AuthUser); ok {
-		fmt.Println("ok")
 		session.Values["logged-user"] = entities.AuthUser{}
 	} else {
 		fmt.Println("Could not retrieve logged user from cookies.")

@@ -1,0 +1,17 @@
+package exerciseview
+
+import (
+    "github.com/MigFerro/exame/templates/layouts"
+)
+
+templ ShowCreate() {
+    @layouts.Base(layouts.BaseOptions{ WithLatex: true, WithHTMX: true }) {
+        <div class="pt-5">
+            <form>
+                <textarea class="border border-slate-300" id="problem_text" name="problem_text" rows="20" cols="50"
+                placeholder="Escreve aqui o texto do exercício...">
+                </textarea>
+            </form>
+        </div>
+    }
+}

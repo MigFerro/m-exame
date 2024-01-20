@@ -33,7 +33,9 @@ func main() {
 	app.GET("/auth/logout", authHandler.Logout)
 
 	//exercises
-	app.GET("/exercises/:id", exerciseHandler.ExerciseShow)
+	app.GET("/exercises", exerciseHandler.ExerciseListShow)
+	app.GET("/exercises/create", exerciseHandler.ExerciseCreateShow)
+	app.GET("/exercises/:id", exerciseHandler.ExerciseDetailShow)
 	app.POST("/exercises/:id/solve", exerciseHandler.ExerciseSolve)
 
 	app.Start(":3000")

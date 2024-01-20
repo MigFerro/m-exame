@@ -14,7 +14,20 @@ type ExerciseHandler struct {
 	DB *sqlx.DB
 }
 
-func (h *ExerciseHandler) ExerciseShow(c echo.Context) error {
+func (h *ExerciseHandler) ExerciseListShow(c echo.Context) error {
+
+	var exercises []entities.ExerciseEntity
+	err := h.DB.Select(&exercises, `SELECT * FROM exercises`)
+
+	if err != nil {
+		fmt.Println("Error retrieving exercise from database: ", err)
+		return err
+	}
+
+	return render(c, exerciseview.ShowIndex(exercises))
+}
+
+func (h *ExerciseHandler) ExerciseDetailShow(c echo.Context) error {
 	exerciseId := c.Param("id")
 
 	exerciseRow := h.DB.QueryRowx(
@@ -35,7 +48,7 @@ func (h *ExerciseHandler) ExerciseShow(c echo.Context) error {
 		return err
 	}
 
-	return render(c, exerciseview.Show(exercise, exerciseChoices))
+	return render(c, exerciseview.ShowDetail(exercise, exerciseChoices))
 }
 
 func (h *ExerciseHandler) ExerciseSolve(c echo.Context) error {
@@ -68,4 +81,9 @@ func (h *ExerciseHandler) ExerciseSolve(c echo.Context) error {
 	tx.Commit()
 
 	return render(c, exerciseview.Solve(correctAns))
+}
+
+func (h *ExerciseHandler) ExerciseCreateShow(c echo.Context) error {
+
+	return render(c, exerciseview.ShowCreate())
 }
