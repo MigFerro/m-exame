@@ -1,0 +1,32 @@
+package components
+
+import (
+	"github.com/MigFerro/exame/entities"
+)
+
+func getAuthenticatedUserName(c context.Context) string {
+    authUser, ok := c.Value("authUser").(*entities.AuthUser)
+    if !ok {
+        return ""
+    }
+    return authUser.Name
+}
+
+templ Header(authUserName string) {
+    <div class="px-[5%] py-[2.5%] bg-slate-400 flex justify-between">
+        <h1>Exame App</h1>
+        if authUserName == "" {
+            <a href="/auth/google">Login</a>
+        } else {
+            <div>
+                <p>{ getAuthenticatedUserName(ctx) }</p>
+                <a href="/auth/logout">Logout</a>
+            </div>
+        }
+    </div>
+}
+
+func HeaderWithAuthUser(c context.Context) templ.Component {
+    authUserName := getAuthenticatedUserName(c)
+    return Header(authUserName)
+}

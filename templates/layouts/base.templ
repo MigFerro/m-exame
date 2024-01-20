@@ -1,0 +1,43 @@
+package layouts
+
+import "github.com/MigFerro/exame/templates/components"
+
+type BaseOptions struct {
+    WithLatex bool
+    WithHTMX bool
+}
+
+templ Base(options BaseOptions) {
+    <html>
+        <head>
+            <link rel="stylesheet" href="/static/css/tailwind.css" />
+            
+            // LaTeX support
+            if options.WithLatex {
+                <script>
+                    MathJax = {
+                        tex: {
+                            inlineMath: [['$', '$'], ['\\(','\\)']]
+                        },
+                        svg: {
+                            fontCache: 'global'
+                        }
+                    };
+                </script>
+                <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+                <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.1/es5/tex-mml-chtml.js"></script>
+            }
+
+            // HTMX support
+            if options.WithHTMX {
+                <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+            }
+        </head>
+        <body>
+            <div class="px-[15%]">
+                @components.HeaderWithAuthUser(ctx)
+                { children... }
+            </div>
+        </body>
+    </html>
+}
