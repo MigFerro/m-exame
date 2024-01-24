@@ -14,8 +14,7 @@ templ ShowDetail(e entities.ExerciseEntity, choices []entities.ExerciseChoiceEnt
         <div class="pt-5">
             <h1 class="pb-5 text-xl"> Exercise Detail </h1>
             for _, line := range strings.Split(e.ProblemText, "\n") {
-                <p>{line}</p>
-                <br />
+                <p>{line}<br /></p>
             }
 
             <form hx-post={ fmt.Sprintf("%v", templ.URL(e.Id.String() + "/solve")) } hx-target="#result" hx-swap="innerHTML">

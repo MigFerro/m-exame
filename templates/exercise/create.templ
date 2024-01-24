@@ -1,7 +1,7 @@
 package exerciseview
 
 import (
-    //"fmt"
+    "strings"
 
     "github.com/MigFerro/exame/templates/layouts"
 )
@@ -14,22 +14,27 @@ templ ShowCreate(problemText string) {
     @layouts.Base(layouts.BaseOptions{ WithLatex: true, WithHTMX: true }) {
         <div class="pt-5">
             <div class="flex justify-between">
-                <form method="post" class="w-1/2">
-                    if problemText == "" {
-                        <textarea class="border border-slate-300" id="problem_text" name="problem_text" rows="20" cols="50"
-                        placeholder="Escreve aqui o texto do exercício...">
-                        </textarea>
-                    } else {
-                        <textarea class="border border-slate-300" id="problem_text" name="problem_text" rows="20" cols="50">
-                            { problemText }
-                        </textarea>
+                <div class="w-1/2 shrink container">
+                    <form method="post">
+                        if problemText == "" {
+                            <textarea class="border border-slate-300 px-5 py-5 w-full h-[30em]" id="problem_text" name="problem_text"
+                            placeholder="Escreve aqui o texto do exercício...">
+                            </textarea>
+                        } else {
+                            <textarea class="border border-slate-300 px-5 py-5 w-full h-[30em]" id="problem_text" name="problem_text" rows="20" cols="50">
+                                { problemText }
+                            </textarea>
+                        }
+                        <div class="pt-5">
+                            <input class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center" type="submit" name="action" value="Preview" />
+                            <input class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center" type="submit" name="action" value="Save" />
+                        </div>
+                    </form>
+                </div>
+                <div class="w-1/2 shrink px-5 py-5">
+                    for _, line := range strings.Split(problemText, "\n") {
+                        <p>{line}<br /></p>
                     }
-                    <input class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center" type="submit" name="action" value="Preview" />
-                    <input class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center" type="submit" name="action" value="Save" />
-                </form>
-                <div class="bg-red-500 w-1/2">
-                    <h2>Preview</h2>
-                    <p id="preview">{ problemText }</p>
                 </div>
             </div>
         </div>
