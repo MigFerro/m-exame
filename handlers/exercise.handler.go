@@ -14,6 +14,31 @@ type ExerciseHandler struct {
 	DB *sqlx.DB
 }
 
+func (h *ExerciseHandler) HandleExerciseCreate(c echo.Context) error {
+	formAction := c.Request().FormValue("action")
+
+	if formAction == "Preview" {
+		return exercisePreviewShow(c)
+	}
+
+	if formAction == "Save" {
+		return nil
+	}
+
+	return nil
+}
+
+func (h *ExerciseHandler) ExerciseCreateShow(c echo.Context) error {
+
+	return render(c, exerciseview.ShowCreate(""))
+}
+
+func exercisePreviewShow(c echo.Context) error {
+	formPreviewText := c.Request().FormValue("problem_text")
+
+	return render(c, exerciseview.ShowCreate(formPreviewText))
+}
+
 func (h *ExerciseHandler) ExerciseListShow(c echo.Context) error {
 
 	var exercises []entities.ExerciseEntity
@@ -81,9 +106,4 @@ func (h *ExerciseHandler) ExerciseSolve(c echo.Context) error {
 	tx.Commit()
 
 	return render(c, exerciseview.Solve(correctAns))
-}
-
-func (h *ExerciseHandler) ExerciseCreateShow(c echo.Context) error {
-
-	return render(c, exerciseview.ShowCreate())
 }

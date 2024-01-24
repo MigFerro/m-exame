@@ -1,17 +1,37 @@
 package exerciseview
 
 import (
+    //"fmt"
+
     "github.com/MigFerro/exame/templates/layouts"
 )
 
-templ ShowCreate() {
+templ ShowPreview(previewText string) {
+   <p id="preview">{ previewText }</p> 
+}
+
+templ ShowCreate(problemText string) {
     @layouts.Base(layouts.BaseOptions{ WithLatex: true, WithHTMX: true }) {
         <div class="pt-5">
-            <form>
-                <textarea class="border border-slate-300" id="problem_text" name="problem_text" rows="20" cols="50"
-                placeholder="Escreve aqui o texto do exercício...">
-                </textarea>
-            </form>
+            <div class="flex justify-between">
+                <form method="post" class="w-1/2">
+                    if problemText == "" {
+                        <textarea class="border border-slate-300" id="problem_text" name="problem_text" rows="20" cols="50"
+                        placeholder="Escreve aqui o texto do exercício...">
+                        </textarea>
+                    } else {
+                        <textarea class="border border-slate-300" id="problem_text" name="problem_text" rows="20" cols="50">
+                            { problemText }
+                        </textarea>
+                    }
+                    <input class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center" type="submit" name="action" value="Preview" />
+                    <input class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center" type="submit" name="action" value="Save" />
+                </form>
+                <div class="bg-red-500 w-1/2">
+                    <h2>Preview</h2>
+                    <p id="preview">{ problemText }</p>
+                </div>
+            </div>
         </div>
     }
 }
