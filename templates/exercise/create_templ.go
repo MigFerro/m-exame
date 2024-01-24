@@ -73,12 +73,12 @@ func ShowCreate(problemText string) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			if problemText == "" {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<textarea class=\"border border-slate-300 px-5 py-5 w-full h-[30em]\" id=\"problem_text\" name=\"problem_text\" placeholder=\"Escreve aqui o texto do exercício...\"></textarea>")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<textarea class=\"border border-slate-300 px-5 py-5 w-full h-[15em]\" id=\"problem_text\" name=\"problem_text\" placeholder=\"Escreve aqui o texto do exercício...\"></textarea>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<textarea class=\"border border-slate-300 px-5 py-5 w-full h-[30em]\" id=\"problem_text\" name=\"problem_text\" rows=\"20\" cols=\"50\">")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<textarea class=\"border border-slate-300 px-5 py-5 w-full h-[15em]\" id=\"problem_text\" name=\"problem_text\" rows=\"20\" cols=\"50\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

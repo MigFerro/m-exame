@@ -88,15 +88,14 @@ func (h *ExerciseHandler) ExerciseSolve(c echo.Context) error {
 
 	exercise := entities.ExerciseEntity{}
 	exerciseUser := entities.ExerciseUserEntity{}
-	var solution string
+	var isSolution bool
 
 	tx := h.DB.MustBegin()
 	_ = tx.Get(&exerciseUser, "SELECT * FROM exercise_users WHERE exercise_id = $1 AND user_id = $2", exerciseId, authUser.Id)
 	_ = tx.Get(&exercise, "SELECT * FROM exercises WHERE id = $1", exerciseId)
-	_ = tx.Get(&solution, "SELECT value FROM exercise_choices WHERE exercise_id = $1 AND solution = true", exerciseId)
+	_ = tx.Get(&isSolution, "SELECT solution FROM exercise_choices WHERE id = $1", formChoice)
 
-	correctAns := solution == formChoice
-	solved := exerciseUser.Solved || correctAns
+	solved := exerciseUser.Solved || isSolution
 
 	if exerciseUser == (entities.ExerciseUserEntity{}) {
 		tx.MustExec("INSERT INTO exercise_users (user_id, exercise_id, solved, updated_at) VALUES ($1, $2, $3, $4)", authUser.Id, exerciseId, solved, time.Now())
@@ -105,5 +104,5 @@ func (h *ExerciseHandler) ExerciseSolve(c echo.Context) error {
 	}
 	tx.Commit()
 
-	return render(c, exerciseview.Solve(correctAns))
+	return render(c, exerciseview.Solve(isSolution))
 }

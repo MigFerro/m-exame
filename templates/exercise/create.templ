@@ -17,11 +17,11 @@ templ ShowCreate(problemText string) {
                 <div class="w-1/2 shrink container">
                     <form method="post">
                         if problemText == "" {
-                            <textarea class="border border-slate-300 px-5 py-5 w-full h-[30em]" id="problem_text" name="problem_text"
+                            <textarea class="border border-slate-300 px-5 py-5 w-full h-[15em]" id="problem_text" name="problem_text"
                             placeholder="Escreve aqui o texto do exercício...">
                             </textarea>
                         } else {
-                            <textarea class="border border-slate-300 px-5 py-5 w-full h-[30em]" id="problem_text" name="problem_text" rows="20" cols="50">
+                            <textarea class="border border-slate-300 px-5 py-5 w-full h-[15em]" id="problem_text" name="problem_text" rows="20" cols="50">
                                 { problemText }
                             </textarea>
                         }

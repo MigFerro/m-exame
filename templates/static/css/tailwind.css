@@ -572,8 +572,8 @@ video {
   display: flex;
 }
 
-.h-\[30em\] {
-  height: 30em;
+.h-\[15em\] {
+  height: 15em;
 }
 
 .w-1\/2 {
@@ -660,10 +660,6 @@ video {
 
 .pb-5 {
   padding-bottom: 1.25rem;
-}
-
-.pb-7 {
-  padding-bottom: 1.75rem;
 }
 
 .pt-5 {
