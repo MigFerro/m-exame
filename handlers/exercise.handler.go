@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/MigFerro/exame/entities"
@@ -22,7 +23,7 @@ func (h *ExerciseHandler) HandleExerciseCreate(c echo.Context) error {
 	}
 
 	if formAction == "Save" {
-		return nil
+		return handleExerciseSavePreview(c)
 	}
 
 	return nil
@@ -30,13 +31,29 @@ func (h *ExerciseHandler) HandleExerciseCreate(c echo.Context) error {
 
 func (h *ExerciseHandler) ExerciseCreateShow(c echo.Context) error {
 
-	return render(c, exerciseview.ShowCreate(""))
+	return render(c, exerciseview.ShowCreate("", []string{"", "", "", ""}))
 }
 
 func exercisePreviewShow(c echo.Context) error {
 	formPreviewText := c.Request().FormValue("problem_text")
+	choices := []string{"", "", "", ""}
+	for i := 0; i < 4; i++ {
+		choice := c.Request().FormValue("choice" + strconv.Itoa(i))
+		choices[i] = choice
+	}
 
-	return render(c, exerciseview.ShowCreate(formPreviewText))
+	return render(c, exerciseview.ShowCreate(formPreviewText, choices))
+}
+
+func handleExerciseSavePreview(c echo.Context) error {
+	formPreviewText := c.Request().FormValue("problem_text")
+	choices := []string{"", "", "", ""}
+	for i := 0; i < 4; i++ {
+		choice := c.Request().FormValue("choice" + strconv.Itoa(i))
+		choices[i] = choice
+	}
+
+	return render(c, exerciseview.ShowSavePreview(formPreviewText, choices))
 }
 
 func (h *ExerciseHandler) ExerciseListShow(c echo.Context) error {

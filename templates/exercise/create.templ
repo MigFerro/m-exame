@@ -2,6 +2,7 @@ package exerciseview
 
 import (
     "strings"
+    "strconv"
 
     "github.com/MigFerro/exame/templates/layouts"
 )
@@ -10,8 +11,8 @@ templ ShowPreview(previewText string) {
    <p id="preview">{ previewText }</p> 
 }
 
-templ ShowCreate(problemText string) {
-    @layouts.Base(layouts.BaseOptions{ WithLatex: true, WithHTMX: true }) {
+templ ShowCreate(problemText string, choices []string) {
+    @layouts.Base(layouts.BaseOptions{ WithLatex: true, WithHTMX: false }) {
         <div class="pt-5">
             <div class="flex justify-between">
                 <div class="w-1/2 shrink container">
@@ -26,6 +27,11 @@ templ ShowCreate(problemText string) {
                             </textarea>
                         }
                         <div class="pt-5">
+                            for i, choice := range choices {
+                                <input type="text" id={ "choice" + strconv.Itoa(i) } name={ "choice" + strconv.Itoa(i) } value={ choice } class="border border-slate-300 px-2 py-2"/>
+                            }
+                        </div>
+                        <div class="pt-5">
                             <input class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center" type="submit" name="action" value="Preview" />
                             <input class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center" type="submit" name="action" value="Save" />
                         </div>
@@ -35,6 +41,32 @@ templ ShowCreate(problemText string) {
                     for _, line := range strings.Split(problemText, "\n") {
                         <p>{line}<br /></p>
                     }
+                </div>
+            </div>
+        </div>
+    }
+}
+
+templ ShowSavePreview(problemText string, choices []string) {
+    @layouts.Base(layouts.BaseOptions{ WithLatex: true, WithHTMX: false }) {
+        <div class="pt-5">
+            <div class="">
+                <div class="">
+                    for _, line := range strings.Split(problemText, "\n") {
+                        <p>{line}<br /></p>
+                    }
+                    <div class="grid grid-cols-4 pt-7 w-1/2">
+                        for i, choice := range choices {
+                            <div class="flex">
+                                <p class="font-bold">{ []string{"(A) ", "(B) ", "(C) ", "(D) "}[i] }</p>
+                                <p class="pl-5">{ choice }<br /></p>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="pt-7">
+                    <input class="btn-primary" type="submit" name="action" value="Voltar atrás" />
+                    <input class="btn-primary" type="submit" name="action" value="Confirmar" />
                 </div>
             </div>
         </div>
