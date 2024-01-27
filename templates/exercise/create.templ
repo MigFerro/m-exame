@@ -32,8 +32,8 @@ templ ShowCreate(problemText string, choices []string) {
                             }
                         </div>
                         <div class="pt-5">
-                            <input class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center" type="submit" name="action" value="Preview" />
-                            <input class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center" type="submit" name="action" value="Save" />
+                            <input class="btn-primary" type="submit" name="action" value="Preview" />
+                            <input class="btn-primary" type="submit" name="action" value="Save" />
                         </div>
                     </form>
                 </div>
@@ -50,25 +50,38 @@ templ ShowCreate(problemText string, choices []string) {
 templ ShowSavePreview(problemText string, choices []string) {
     @layouts.Base(layouts.BaseOptions{ WithLatex: true, WithHTMX: false }) {
         <div class="pt-5">
+        <form method="post">
             <div class="">
-                <div class="">
-                    for _, line := range strings.Split(problemText, "\n") {
-                        <p>{line}<br /></p>
+
+                <input type="hidden" id="problem_text" name="problem_text" value={ problemText } />
+
+                for _, line := range strings.Split(problemText, "\n") {
+                    <p>{line}<br /></p>
+                }
+                <div class="grid grid-cols-4 pt-7 w-1/2">
+                    for i, choice := range choices {
+                        <div class="flex">
+                            <p class="font-bold">{ []string{"(A) ", "(B) ", "(C) ", "(D) "}[i] }</p>
+                            <p class="pl-5">{ choice }<br /></p>
+                        </div>
+                        <input type="hidden" id={ "choice" + strconv.Itoa(i) } name={ "choice" + strconv.Itoa(i) } value={ choice } />
                     }
-                    <div class="grid grid-cols-4 pt-7 w-1/2">
-                        for i, choice := range choices {
-                            <div class="flex">
-                                <p class="font-bold">{ []string{"(A) ", "(B) ", "(C) ", "(D) "}[i] }</p>
-                                <p class="pl-5">{ choice }<br /></p>
-                            </div>
-                        }
-                    </div>
-                </div>
-                <div class="pt-7">
-                    <input class="btn-primary" type="submit" name="action" value="Voltar atrás" />
-                    <input class="btn-primary" type="submit" name="action" value="Confirmar" />
                 </div>
             </div>
+            <div class="pt-7">
+                <input class="btn-primary" type="submit" name="action" value="Voltar atrás" />
+                <input class="btn-primary" type="submit" name="action" value="Confirmar" />
+            </div>
+        </form>
         </div>
     }
+}
+
+templ ShowExerciseSaved() {
+    @layouts.Base(layouts.BaseOptions{ WithLatex: false, WithHTMX: false }) {
+        <div class="pt-5">
+            <p>O exercício foi criado com sucesso!</p>
+        </div>
+    }
+    
 }

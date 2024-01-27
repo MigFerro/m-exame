@@ -3,10 +3,12 @@ package handlers
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/MigFerro/exame/entities"
 	exerciseview "github.com/MigFerro/exame/templates/exercise"
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
 )
@@ -26,6 +28,10 @@ func (h *ExerciseHandler) HandleExerciseCreate(c echo.Context) error {
 		return handleExerciseSavePreview(c)
 	}
 
+	if formAction == "Confirmar" {
+		return handleSaveExercise(c, h.DB)
+	}
+
 	return nil
 }
 
@@ -34,26 +40,75 @@ func (h *ExerciseHandler) ExerciseCreateShow(c echo.Context) error {
 	return render(c, exerciseview.ShowCreate("", []string{"", "", "", ""}))
 }
 
-func exercisePreviewShow(c echo.Context) error {
+func getExerciseForm(c echo.Context) (string, []string) {
 	formPreviewText := c.Request().FormValue("problem_text")
 	choices := []string{"", "", "", ""}
 	for i := 0; i < 4; i++ {
 		choice := c.Request().FormValue("choice" + strconv.Itoa(i))
 		choices[i] = choice
 	}
+
+	return formPreviewText, choices
+
+}
+
+func exercisePreviewShow(c echo.Context) error {
+	formPreviewText, choices := getExerciseForm(c)
 
 	return render(c, exerciseview.ShowCreate(formPreviewText, choices))
 }
 
 func handleExerciseSavePreview(c echo.Context) error {
-	formPreviewText := c.Request().FormValue("problem_text")
-	choices := []string{"", "", "", ""}
-	for i := 0; i < 4; i++ {
-		choice := c.Request().FormValue("choice" + strconv.Itoa(i))
-		choices[i] = choice
-	}
+	formPreviewText, choices := getExerciseForm(c)
 
 	return render(c, exerciseview.ShowSavePreview(formPreviewText, choices))
+}
+
+func saveExerciseChoices(exerciseId uuid.UUID, choices []string, authUserId uuid.UUID, tx *sqlx.Tx) {
+	isSolution := false
+	numOfChoices := 4
+
+	valueStrings := make([]string, 0, numOfChoices)
+	valueArgs := make([]interface{}, 0, numOfChoices*4)
+
+	for i, choice := range choices {
+		if i == 0 {
+			isSolution = true
+		} else {
+			isSolution = false
+		}
+
+		valueStrings = append(valueStrings, fmt.Sprintf("($%d, $%d, $%d, $%d)", 4*i+1, 4*i+2, 4*i+3, 4*i+4))
+		valueArgs = append(valueArgs, choice)
+		valueArgs = append(valueArgs, isSolution)
+		valueArgs = append(valueArgs, authUserId)
+		valueArgs = append(valueArgs, exerciseId)
+	}
+
+	query := fmt.Sprintf("INSERT INTO exercise_choices (value, solution, created_by, exercise_id) VALUES %s", strings.Join(valueStrings, ","))
+	fmt.Println(query)
+
+	tx.MustExec(query, valueArgs...)
+}
+
+func handleSaveExercise(c echo.Context, db *sqlx.DB) error {
+	formPreviewText, choices := getExerciseForm(c)
+
+	authUser := getAuthenticatedUser(c.Request().Context())
+
+	exercise := entities.ExerciseEntity{
+		ProblemText: formPreviewText,
+		CreatedBy:   authUser.Id,
+	}
+
+	tx := db.MustBegin()
+	res := tx.QueryRow("INSERT INTO exercises (problem_text, created_by) VALUES ($1, $2) RETURNING id", exercise.ProblemText, exercise.CreatedBy)
+	var exerciseId uuid.UUID
+	res.Scan(&exerciseId)
+	saveExerciseChoices(exerciseId, choices, authUser.Id, tx)
+	tx.Commit()
+
+	return render(c, exerciseview.ShowExerciseSaved())
 }
 
 func (h *ExerciseHandler) ExerciseListShow(c echo.Context) error {

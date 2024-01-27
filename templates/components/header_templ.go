@@ -11,16 +11,8 @@ import "io"
 import "bytes"
 
 import (
-	"github.com/MigFerro/exame/entities"
+	templateutils "github.com/MigFerro/exame/templates/utils"
 )
-
-func getAuthenticatedUserName(c context.Context) string {
-	authUser, ok := c.Value("authUser").(*entities.AuthUser)
-	if !ok {
-		return ""
-	}
-	return authUser.Name
-}
 
 func Header(authUserName string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
@@ -67,7 +59,7 @@ func Header(authUserName string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var4 string = getAuthenticatedUserName(ctx)
+			var templ_7745c5c3_Var4 string = templateutils.GetAuthenticatedUserName(ctx)
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -98,6 +90,6 @@ func Header(authUserName string) templ.Component {
 }
 
 func HeaderWithAuthUser(c context.Context) templ.Component {
-	authUserName := getAuthenticatedUserName(c)
+	authUserName := templateutils.GetAuthenticatedUserName(c)
 	return Header(authUserName)
 }

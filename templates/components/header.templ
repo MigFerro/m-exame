@@ -1,16 +1,9 @@
 package components
 
 import (
-	"github.com/MigFerro/exame/entities"
+	templateutils "github.com/MigFerro/exame/templates/utils"
 )
 
-func getAuthenticatedUserName(c context.Context) string {
-    authUser, ok := c.Value("authUser").(*entities.AuthUser)
-    if !ok {
-        return ""
-    }
-    return authUser.Name
-}
 
 templ Header(authUserName string) {
     <div class="px-[5%] py-[2.5%] bg-slate-400 flex justify-between">
@@ -19,7 +12,7 @@ templ Header(authUserName string) {
             <a href="/auth/google">Login</a>
         } else {
             <div>
-                <p>{ getAuthenticatedUserName(ctx) }</p>
+                <p>{ templateutils.GetAuthenticatedUserName(ctx) }</p>
                 <a href="/auth/logout">Logout</a>
             </div>
         }
@@ -27,6 +20,6 @@ templ Header(authUserName string) {
 }
 
 func HeaderWithAuthUser(c context.Context) templ.Component {
-    authUserName := getAuthenticatedUserName(c)
+    authUserName := templateutils.GetAuthenticatedUserName(c)
     return Header(authUserName)
 }
