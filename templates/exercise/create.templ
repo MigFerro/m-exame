@@ -47,7 +47,7 @@ templ ShowCreate(problemText string, choices []string) {
     }
 }
 
-templ ShowSavePreview(problemText string, choices []string) {
+templ ShowSaveConfirmationPreview(problemText string, choices []string) {
     @layouts.Base(layouts.BaseOptions{ WithLatex: true, WithHTMX: false }) {
         <div class="pt-5">
         <form method="post">
@@ -77,7 +77,7 @@ templ ShowSavePreview(problemText string, choices []string) {
     }
 }
 
-templ ShowExerciseSaved() {
+templ ExerciseSavedSuccessShow() {
     @layouts.Base(layouts.BaseOptions{ WithLatex: false, WithHTMX: false }) {
         <div class="pt-5">
             <p>O exercício foi criado com sucesso!</p>

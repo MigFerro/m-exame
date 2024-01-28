@@ -17,7 +17,7 @@ type ExerciseHandler struct {
 	DB *sqlx.DB
 }
 
-func (h *ExerciseHandler) HandleExerciseCreate(c echo.Context) error {
+func (h *ExerciseHandler) HandleExerciseCreateJourney(c echo.Context) error {
 	formAction := c.Request().FormValue("action")
 
 	if formAction == "Preview" {
@@ -25,11 +25,11 @@ func (h *ExerciseHandler) HandleExerciseCreate(c echo.Context) error {
 	}
 
 	if formAction == "Save" {
-		return handleExerciseSavePreview(c)
+		return exerciseSaveConfirmationPreviewShow(c)
 	}
 
 	if formAction == "Confirmar" {
-		return handleSaveExercise(c, h.DB)
+		return saveExerciseWithChoices(c, h.DB)
 	}
 
 	return nil
@@ -58,10 +58,10 @@ func exercisePreviewShow(c echo.Context) error {
 	return render(c, exerciseview.ShowCreate(formPreviewText, choices))
 }
 
-func handleExerciseSavePreview(c echo.Context) error {
+func exerciseSaveConfirmationPreviewShow(c echo.Context) error {
 	formPreviewText, choices := getExerciseForm(c)
 
-	return render(c, exerciseview.ShowSavePreview(formPreviewText, choices))
+	return render(c, exerciseview.ShowSaveConfirmationPreview(formPreviewText, choices))
 }
 
 func saveExerciseChoices(exerciseId uuid.UUID, choices []string, authUserId uuid.UUID, tx *sqlx.Tx) {
@@ -91,7 +91,7 @@ func saveExerciseChoices(exerciseId uuid.UUID, choices []string, authUserId uuid
 	tx.MustExec(query, valueArgs...)
 }
 
-func handleSaveExercise(c echo.Context, db *sqlx.DB) error {
+func saveExerciseWithChoices(c echo.Context, db *sqlx.DB) error {
 	formPreviewText, choices := getExerciseForm(c)
 
 	authUser := getAuthenticatedUser(c.Request().Context())
@@ -108,7 +108,7 @@ func handleSaveExercise(c echo.Context, db *sqlx.DB) error {
 	saveExerciseChoices(exerciseId, choices, authUser.Id, tx)
 	tx.Commit()
 
-	return render(c, exerciseview.ShowExerciseSaved())
+	return render(c, exerciseview.ExerciseSavedSuccessShow())
 }
 
 func (h *ExerciseHandler) ExerciseListShow(c echo.Context) error {
