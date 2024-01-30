@@ -1,0 +1,21 @@
+package exerciseview
+
+import (
+    "github.com/MigFerro/exame/templates/layouts"
+    "github.com/MigFerro/exame/entities"
+)
+
+templ ShowCategoriesIndex(ecs []entities.ExerciseCategoryEntity) {
+    @layouts.Base(layouts.BaseOptions{ WithLatex: false, WithHTMX: false }) {
+        <h1 class="py-5 text-xl"> Exercise Categories List</h1>
+        <div class="pt-5">
+            <ul>
+                for _, ec := range ecs {
+                    <li>
+                        <a class="text-blue-500 underline hover:text-yellow-500" href="/">{ ec.Category }</a>
+                    </li>
+                } 
+            </ul>
+        </div>
+    }
+}

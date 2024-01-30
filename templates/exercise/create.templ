@@ -5,31 +5,53 @@ import (
     "strconv"
 
     "github.com/MigFerro/exame/templates/layouts"
+    "github.com/MigFerro/exame/entities"
+    "github.com/MigFerro/exame/shared"
 )
 
 templ ShowPreview(previewText string) {
    <p id="preview">{ previewText }</p> 
 }
 
-templ ShowCreate(problemText string, choices []string) {
+templ ShowCreate(form shared.ExerciseFormResponse, categories []entities.ExerciseCategoryEntity) {
     @layouts.Base(layouts.BaseOptions{ WithLatex: true, WithHTMX: false }) {
         <div class="pt-5">
             <div class="flex justify-between">
                 <div class="w-1/2 shrink container">
-                    <form method="post">
-                        if problemText == "" {
+                    <form method="post" id="exercise_create_form">
+                        if form.ProblemText == "" {
                             <textarea class="border border-slate-300 px-5 py-5 w-full h-[15em]" id="problem_text" name="problem_text"
                             placeholder="Escreve aqui o texto do exercício...">
                             </textarea>
                         } else {
                             <textarea class="border border-slate-300 px-5 py-5 w-full h-[15em]" id="problem_text" name="problem_text" rows="20" cols="50">
-                                { problemText }
+                                { form.ProblemText }
                             </textarea>
                         }
                         <div class="pt-5">
-                            for i, choice := range choices {
-                                <input type="text" id={ "choice" + strconv.Itoa(i) } name={ "choice" + strconv.Itoa(i) } value={ choice } class="border border-slate-300 px-2 py-2"/>
+                            for i, choice := range form.Choices {
+                                <input type="text" id={ "choice" + strconv.Itoa(i) } name={ "choice" + strconv.Itoa(i) } value={ choice.Value } class="border border-slate-300 px-2 py-2"/>
+                                if choice.IsSolution {
+                                    <input type="radio" id={ "choice" + strconv.Itoa(i) } value={ strconv.Itoa(i) } name="choice_solution" checked="checked"/>
+                                } else {
+                                    <input type="radio" id={ "choice" + strconv.Itoa(i) } value={ strconv.Itoa(i) } name="choice_solution" />
+                                }
                             }
+                        </div>
+                        <div class="pt-5">
+                            <input type="text" id="exame_year" name="exame_year" class="border border-slate-300 px-2 py-2" value={ form.ExameYear }/>
+                            <label for="exame_year">Ano do exame</label><br />
+
+                            <input type="text" id="exame_fase" name="exame_fase" class="border border-slate-300 px-2 py-2" value={ form.ExameFase }/>
+                            <label for="exame_year">Fase do exame</label><br />
+                        </div>
+                        <div class="pt-5">
+                            <label for="category">Categoria</label>
+                            <select name="category" id="category" form="exercise_create_form">
+                                for _, cat := range categories {
+                                    <option value={ strconv.Itoa(cat.Iid) }>{ cat.Category }</option>
+                                }
+                            </select>
                         </div>
                         <div class="pt-5">
                             <input class="btn-primary" type="submit" name="action" value="Preview" />
@@ -38,7 +60,7 @@ templ ShowCreate(problemText string, choices []string) {
                     </form>
                 </div>
                 <div class="w-1/2 shrink px-5 py-5">
-                    for _, line := range strings.Split(problemText, "\n") {
+                    for _, line := range strings.Split(form.ProblemText, "\n") {
                         <p>{line}<br /></p>
                     }
                 </div>
@@ -47,26 +69,34 @@ templ ShowCreate(problemText string, choices []string) {
     }
 }
 
-templ ShowSaveConfirmationPreview(problemText string, choices []string) {
+templ ShowSaveConfirmationPreview(form shared.ExerciseFormResponse) {
     @layouts.Base(layouts.BaseOptions{ WithLatex: true, WithHTMX: false }) {
         <div class="pt-5">
         <form method="post">
             <div class="">
 
-                <input type="hidden" id="problem_text" name="problem_text" value={ problemText } />
+                <input type="hidden" id="problem_text" name="problem_text" value={ form.ProblemText } />
 
-                for _, line := range strings.Split(problemText, "\n") {
+                for _, line := range strings.Split(form.ProblemText, "\n") {
                     <p>{line}<br /></p>
                 }
                 <div class="grid grid-cols-4 pt-7 w-1/2">
-                    for i, choice := range choices {
+                    for i, choice := range form.Choices {
                         <div class="flex">
                             <p class="font-bold">{ []string{"(A) ", "(B) ", "(C) ", "(D) "}[i] }</p>
-                            <p class="pl-5">{ choice }<br /></p>
+                            <p class="pl-5">{ choice.Value }<br /></p>
                         </div>
-                        <input type="hidden" id={ "choice" + strconv.Itoa(i) } name={ "choice" + strconv.Itoa(i) } value={ choice } />
+                        <input type="hidden" id={ "choice" + strconv.Itoa(i) } name={ "choice" + strconv.Itoa(i) } value={ choice.Value } />
+                        if choice.IsSolution {
+                            <input type="hidden" id={ "choice" + strconv.Itoa(i) } name="choice_solution" value={ strconv.Itoa(i) } />
+                        }
                     }
                 </div>
+            </div>
+            <div class="pt-5">
+                <input type="hidden" id="exame_year" name="exame_year" value={ form.ExameYear }/>
+                <input type="hidden" id="exame_fase" name="exame_fase" value={ form.ExameFase }/>
+                <input type="hidden" id="category" name="category" value={ strconv.Itoa(form.Category.Iid) }/>
             </div>
             <div class="pt-7">
                 <input class="btn-primary" type="submit" name="action" value="Voltar atrás" />

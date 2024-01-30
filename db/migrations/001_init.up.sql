@@ -28,6 +28,7 @@ BEGIN;
         id uuid primary key default gen_random_uuid(),
         exercise_id uuid references exercises(id) not null,
         value varchar(10),
+        is_solution boolean default false,
         created_at timestamp default now(),
         updated_at timestamp,
         created_by uuid not null,
