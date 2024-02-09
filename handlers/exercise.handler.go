@@ -213,9 +213,11 @@ func (h *ExerciseHandler) ExerciseSolve(c echo.Context) error {
 	solved := exerciseUser.Solved || isSolution
 
 	if exerciseUser == (entities.ExerciseUserEntity{}) {
-		tx.MustExec("INSERT INTO exercise_users (user_id, exercise_id, solved, updated_at) VALUES ($1, $2, $3, $4)", authUser.Id, exerciseId, solved, time.Now())
+		tx.MustExec("INSERT INTO exercise_users (user_id, exercise_id, solved, updated_at, times_attempted) VALUES ($1, $2, $3, $4, $5)", authUser.Id, exerciseId, solved, time.Now(), 1)
 	} else {
-		tx.MustExec("UPDATE exercise_users SET (solved, updated_at) = ($1, $2) WHERE user_id = $3 AND exercise_id = $4", solved, time.Now(), authUser.Id, exerciseId)
+		if !exerciseUser.Solved && solved {
+			tx.MustExec("UPDATE exercise_users SET (solved, updated_at, times_attempted) = ($1, $2, $3) WHERE user_id = $4 AND exercise_id = $5", solved, time.Now(), authUser.Id, exerciseId, exerciseUser.TimesAttempted+1)
+		}
 	}
 	tx.Commit()
 
