@@ -155,7 +155,7 @@ func homepageExercise(e entities.ExerciseEntity, choices []entities.ExerciseChoi
 			templ_7745c5c3_Var12 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"pt-10 flex\"><div class=\"w-2/3 pr-40\"><h2 class=\"text-3xl font-bold text-gray-900 pb-11\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"mt-10 flex bg-slate-200 rounded-lg p-5\"><div class=\"w-[60%] pr-[10%]\"><h2 class=\"text-3xl font-bold text-gray-900 pb-11\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -183,7 +183,7 @@ func homepageExercise(e entities.ExerciseEntity, choices []entities.ExerciseChoi
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"w-1/3\"><h3 class=\"w-full text-center text-xl font-bold text-gray-900\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"h-[25em] w-px self-stretch bg-gradient-to-tr from-transparent via-neutral-600 to-transparent opacity-20 dark:opacity-100\"></div><div class=\"w-[40%] pl-[5%]\"><h3 class=\"w-full text-center text-xl font-bold text-gray-900\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
