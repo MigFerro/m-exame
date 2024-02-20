@@ -1,14 +1,93 @@
 package homeview
 
 import (
+    "fmt"
+    "strings"
+
+    "github.com/MigFerro/exame/entities"
     "github.com/MigFerro/exame/templates/layouts"
 )
 
 
-templ Show() {
-    @layouts.Base(layouts.BaseOptions{}) {
-        <div class="py-5 text-xl">
-            <h1> Homepage </h1>
+templ Show(e entities.ExerciseEntity, choices []entities.ExerciseChoiceEntity) {
+    @layouts.Base(layouts.BaseOptions{ WithLatex: true, WithHTMX:true }) {
+
+        @homepageExercise(e, choices) {}
+
+        <hr class="h-px my-8 bg-gray-300 border-0 dark:bg-gray-700" />
+
+        <h2 class="text-4xl font-bold text-gray-900 pt-5 pb-5">Descobre mais exercícios para resolver</h2>
+
+        <div class="py-10 ">
+            <a href="#" class="block w-full p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Exames de anos anteriores</h5>
+                <p class="font-normal text-gray-700 dark:text-gray-400">Complementa o teu estudo para os exames nacionais deste ano resolvendo exercícios de exames de anos anteriores com soluções detalhadas.</p>
+            </a>
         </div>
+
+        <div>
+
+            <ul class="flex">
+                <li class="block w-1/3 mr-5">
+                    <a href="#" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Exercícios de 10º ano</h5>
+                        <p class="font-normal text-gray-700 dark:text-gray-400">Cena 1, cena 2, cena 3, etc.</p>
+                    </a>
+                </li>
+                <li class="block w-1/3 mx-2.5">
+                    <a href="#" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Exercícios de 11º ano</h5>
+                        <p class="font-normal text-gray-700 dark:text-gray-400">Cena 1, cena 2, cena 3, etc.</p>
+                    </a>
+                </li>
+                <li class="block w-1/3 ml-5">
+                    <a href="#" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Exercícios de 12º ano</h5>
+                        <p class="font-normal text-gray-700 dark:text-gray-400">Cena 1, cena 2, cena 3, etc.</p>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
     }
+}
+
+templ homepageExercise(e entities.ExerciseEntity, choices []entities.ExerciseChoiceEntity) {
+        <div class="pt-10 flex">
+            <div class="w-2/3 pr-40">
+            <h2 class="text-3xl font-bold text-gray-900 pb-11"> Exercício do dia: </h2>
+
+            for _, line := range strings.Split(e.ProblemText, "\n") {
+                <p>{line}<br /></p>
+            }
+
+            </div>
+
+            <div class="w-1/3">
+                <h3 class="w-full text-center text-xl font-bold text-gray-900"> Sabes a resposta? </h3>
+                <form hx-post={ fmt.Sprintf("%v", templ.URL("/exercises/" + e.Id.String() + "/solve")) } hx-target="#result" hx-swap="innerHTML">
+                    <ul class="grid justify-items-center w-full gap-6 grid-cols-2 grid-rows-2 py-10 px-5">
+                        for i, choice := range choices {
+                            <li class="w-full">
+                                if i == 0 {
+                                    <input type="radio" id={ choice.Id.String() } name="choice" value={ choice.Id.String() } class="hidden peer" required />
+                                } else {
+                                    <input type="radio" id={ choice.Id.String() } name="choice" value={ choice.Id.String() } class="hidden peer" />
+                                }
+
+                                <label for={ choice.Id.String() } class="inline-block w-full py-5 text-center text-gray-800 bg-white border border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-blue-500 peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">                           
+                                    { choice.Value }
+                                </label>
+                            </li>
+                        }
+                    </ul>
+
+                    <div class="py-2.5" id="result"></div>
+                    <div class="flex justify-center">
+                        <input class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xl mx-5 w-full py-2.5 text-center" type="submit" value="Responder" />
+                    </div>
+                </form>
+            </div>
+
+        </div>
 }

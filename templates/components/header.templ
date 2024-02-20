@@ -6,8 +6,8 @@ import (
 
 
 templ Header(authUserName string) {
-    <div class="px-[5%] py-[2.5%] bg-slate-400 flex justify-between items-center">
-        <a href="/" class="text-lg font-bold">Exame App</a>
+    <div class="mx-[10%] pl-[2.5%] pr-[5%] py-[2.5%] bg-slate-400 flex justify-between rounded-b-lg items-center">
+        <a href="/" class="text-3xl font-bold text-gray-200">Exame App</a>
         if authUserName == "" {
             <a href="/auth/google">Login</a>
         } else {

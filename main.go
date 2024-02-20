@@ -21,7 +21,7 @@ func main() {
 
 	app.Static("/static", "templates/static")
 
-	homeHandler := handlers.HomeHandler{}
+	homeHandler := handlers.HomeHandler{DB: sqlxDB}
 	exerciseHandler := handlers.ExerciseHandler{DB: sqlxDB}
 	authHandler := handlers.AuthHandler{DB: sqlxDB}
 

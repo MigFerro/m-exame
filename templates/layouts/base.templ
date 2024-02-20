@@ -34,8 +34,8 @@ templ Base(options BaseOptions) {
             }
         </head>
         <body>
+            @components.HeaderWithAuthUser(ctx)
             <div class="px-[15%]">
-                @components.HeaderWithAuthUser(ctx)
                 { children... }
             </div>
         </body>

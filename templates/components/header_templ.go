@@ -27,7 +27,7 @@ func Header(authUserName string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"px-[5%] py-[2.5%] bg-slate-400 flex justify-between items-center\"><a href=\"/\" class=\"text-lg font-bold\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"mx-[10%] pl-[2.5%] pr-[5%] py-[2.5%] bg-slate-400 flex justify-between rounded-b-lg items-center\"><a href=\"/\" class=\"text-3xl font-bold text-gray-200\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
