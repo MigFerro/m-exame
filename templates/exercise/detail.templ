@@ -21,7 +21,7 @@ templ ShowDetail(e entities.ExerciseEntity, choices []entities.ExerciseChoiceEnt
                 }
             </div>
 
-            <form hx-post={ fmt.Sprintf("%v", templ.URL(e.Id.String() + "/solve")) } hx-target="#result" hx-swap="innerHTML">
+            <form hx-post={ fmt.Sprintf("%v", templ.URL(e.Id.String() + "/solve")) } hx-vals='{"at": "detail"}'hx-target="#result" hx-swap="innerHTML">
                 <ul class="grid w-full gap-6 md:grid-cols-4 pt-10">
                     for i, choice := range choices {
                         <li>

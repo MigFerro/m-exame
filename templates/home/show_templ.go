@@ -155,7 +155,7 @@ func homepageExercise(e entities.ExerciseEntity, choices []entities.ExerciseChoi
 			templ_7745c5c3_Var12 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"mt-10 flex bg-slate-200 rounded-lg p-5\"><div class=\"w-[60%] pr-[10%]\"><h2 class=\"text-3xl font-bold text-gray-900 pb-11\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"mt-10 flex bg-slate-200 rounded-xl p-5\"><div class=\"w-[60%] pr-[10%]\"><h2 class=\"text-3xl font-bold text-gray-900 pb-11\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -183,7 +183,7 @@ func homepageExercise(e entities.ExerciseEntity, choices []entities.ExerciseChoi
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"h-[25em] w-px self-stretch bg-gradient-to-tr from-transparent via-neutral-600 to-transparent opacity-20 dark:opacity-100\"></div><div class=\"w-[40%] pl-[5%]\"><h3 class=\"w-full text-center text-xl font-bold text-gray-900\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"h-[25em] w-px self-stretch bg-gradient-to-tr from-transparent via-neutral-600 to-transparent opacity-20 dark:opacity-100\"></div><div class=\"w-[40%] pl-[5%]\" id=\"choices-container\"><h3 class=\"w-full text-center text-xl font-bold text-gray-900\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -200,7 +200,7 @@ func homepageExercise(e entities.ExerciseEntity, choices []entities.ExerciseChoi
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-target=\"#result\" hx-swap=\"innerHTML\"><ul class=\"grid justify-items-center w-full gap-6 grid-cols-2 grid-rows-2 py-10 px-5\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-vals=\"{&#34;at&#34;: &#34;home&#34;}\" hx-target=\"#choices-container\" hx-swap=\"innerHTML\"><ul class=\"grid justify-items-center w-full gap-6 grid-cols-2 grid-rows-2 py-10 px-5\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -274,7 +274,7 @@ func homepageExercise(e entities.ExerciseEntity, choices []entities.ExerciseChoi
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ul><div class=\"py-2.5\" id=\"result\"></div><div class=\"flex justify-center\"><input class=\"text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xl mx-5 w-full py-2.5 text-center\" type=\"submit\" value=\"Responder\"></div></form></div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ul><div class=\"flex justify-center\"><input class=\"text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xl mx-5 w-full py-2.5 text-center\" type=\"submit\" value=\"Responder\"></div></form></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

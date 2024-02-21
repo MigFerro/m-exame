@@ -53,7 +53,7 @@ templ Show(e entities.ExerciseEntity, choices []entities.ExerciseChoiceEntity) {
 }
 
 templ homepageExercise(e entities.ExerciseEntity, choices []entities.ExerciseChoiceEntity) {
-        <div class="mt-10 flex bg-slate-200 rounded-lg p-5">
+        <div class="mt-10 flex bg-slate-200 rounded-xl p-5">
             <div class="w-[60%] pr-[10%]">
             <h2 class="text-3xl font-bold text-gray-900 pb-11"> Exercício do dia: </h2>
 
@@ -65,9 +65,9 @@ templ homepageExercise(e entities.ExerciseEntity, choices []entities.ExerciseCho
 
             <div class="h-[25em] w-px self-stretch bg-gradient-to-tr from-transparent via-neutral-600 to-transparent opacity-20 dark:opacity-100"></div>
 
-            <div class="w-[40%] pl-[5%]">
+            <div class="w-[40%] pl-[5%]" id="choices-container">
                 <h3 class="w-full text-center text-xl font-bold text-gray-900"> Sabes a resposta? </h3>
-                <form hx-post={ fmt.Sprintf("%v", templ.URL("/exercises/" + e.Id.String() + "/solve")) } hx-target="#result" hx-swap="innerHTML">
+                <form hx-post={ fmt.Sprintf("%v", templ.URL("/exercises/" + e.Id.String() + "/solve")) } hx-vals='{"at": "home"}' hx-target="#choices-container" hx-swap="innerHTML">
                     <ul class="grid justify-items-center w-full gap-6 grid-cols-2 grid-rows-2 py-10 px-5">
                         for i, choice := range choices {
                             <li class="w-full">
@@ -84,7 +84,6 @@ templ homepageExercise(e entities.ExerciseEntity, choices []entities.ExerciseCho
                         }
                     </ul>
 
-                    <div class="py-2.5" id="result"></div>
                     <div class="flex justify-center">
                         <input class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xl mx-5 w-full py-2.5 text-center" type="submit" value="Responder" />
                     </div>

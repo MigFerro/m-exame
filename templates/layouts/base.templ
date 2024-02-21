@@ -32,12 +32,28 @@ templ Base(options BaseOptions) {
             if options.WithHTMX {
                 <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
             }
+
         </head>
         <body>
             @components.HeaderWithAuthUser(ctx)
             <div class="px-[15%]">
                 { children... }
             </div>
+            @components.Footer()
+
+            if options.WithHTMX && options.WithLatex {
+                <script>
+                    document.addEventListener('htmx:afterSwap', function(event) {
+                        console.log('hi');
+                        var div = event.target;
+                        console.log(div);
+                        MathJax.startup.promise.then(function() {
+                            MathJax.typeset([div]);
+                        });
+                    });
+                </script>
+            }
+
         </body>
     </html>
 }

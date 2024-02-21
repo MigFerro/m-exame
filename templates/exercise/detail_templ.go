@@ -73,7 +73,7 @@ func ShowDetail(e entities.ExerciseEntity, choices []entities.ExerciseChoiceEnti
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-target=\"#result\" hx-swap=\"innerHTML\"><ul class=\"grid w-full gap-6 md:grid-cols-4 pt-10\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-vals=\"{&#34;at&#34;: &#34;detail&#34;}\" hx-target=\"#result\" hx-swap=\"innerHTML\"><ul class=\"grid w-full gap-6 md:grid-cols-4 pt-10\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

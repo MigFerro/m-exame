@@ -191,9 +191,27 @@ func (h *ExerciseHandler) ExerciseDetailShow(c echo.Context) error {
 	return render(c, exerciseview.ShowDetail(exercise, exerciseChoices))
 }
 
+func (h *ExerciseHandler) ExerciseChoicesShow(c echo.Context) error {
+	exerciseId := c.Param("id")
+
+	exerciseChoices := []entities.ExerciseChoiceEntity{}
+
+	err := h.DB.Select(&exerciseChoices,
+		`SELECT * FROM exercise_choices
+		WHERE exercise_id = $1`, exerciseId)
+
+	if err != nil {
+		fmt.Println("Error retrieving exercise choices from database: ", err)
+		return err
+	}
+
+	return render(c, exerciseview.ShowExerciseChoices(exerciseId, exerciseChoices))
+}
+
 func (h *ExerciseHandler) ExerciseSolve(c echo.Context) error {
 	exerciseId := c.Param("id")
 	formChoice := c.Request().FormValue("choice")
+	at := c.Request().FormValue("at")
 
 	authUser, ok := c.Request().Context().Value("authUser").(*entities.AuthUser)
 	if !ok {
@@ -221,7 +239,7 @@ func (h *ExerciseHandler) ExerciseSolve(c echo.Context) error {
 	}
 	tx.Commit()
 
-	return render(c, exerciseview.Solve(isSolution))
+	return render(c, exerciseview.SolvedResult(isSolution, at, exerciseId))
 }
 
 func (h *ExerciseHandler) ExerciseCategoriesShow(c echo.Context) error {

@@ -38,6 +38,7 @@ func main() {
 	app.POST("/exercises/create", exerciseHandler.HandleExerciseCreateJourney)
 	app.GET("/exercises/:id", exerciseHandler.ExerciseDetailShow)
 	app.POST("/exercises/:id/solve", exerciseHandler.ExerciseSolve)
+	app.GET("/exercises/:id/choices", exerciseHandler.ExerciseChoicesShow)
 	app.GET("/exercises/categories", exerciseHandler.ExerciseCategoriesShow)
 
 	app.Start(":3000")
