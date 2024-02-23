@@ -13,31 +13,30 @@ templ SolvedResult(solved bool, at string, exerciseId string) {
 
 templ solvedMessage(solved bool, exerciseId string) {
     if solved {
-        <h2 class="text-xl font-bold text-green-900 pt-5 pb-5"> Resposta correcta! </h2>
-
-        <ul class="flex">
-            <li class="block w-1/2 mr-2.5">
+        <h2 class="w-full text-2xl text-center font-bold text-green-900 pt-5 pb-5"> Resposta correcta! </h2>
+        <ul class="flex flex-col w-full px-5">
+            <li class="block w-full m-2.5">
+                <div hx-get={ fmt.Sprintf("%v", templ.URL("/exercises/" + exerciseId)) } class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:cursor-pointer hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Próximo exercício</h5>
+                </div>
+            </li>
+            <li class="block w-full m-2.5">
                 <a href="#" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
                     <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Explora outros exercícios</h5>
                 </a>
             </li>
-            <li class="block w-1/2 ml-2.5">
-                <div hx-get={ fmt.Sprintf("%v", templ.URL("/exercises/" + exerciseId + "/choices")) } class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:cursor-pointer hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Próximo exercício</h5>
-                </div>
-            </li>
         </ul>
 
     } else {
-        <h2 class="text-xl font-bold text-red-900 pt-5 pb-5"> Resposta incorrecta </h2>
+        <h2 class="w-full text-center text-2xl font-bold text-red-900 pt-5 pb-5"> Resposta incorrecta </h2>
 
-        <ul class="flex">
-            <li class="block w-1/2 ml-2.5">
+        <ul class="flex flex-col w-full px-5">
+            <li class="block w-full m-2.5">
                 <div hx-get={ fmt.Sprintf("%v", templ.URL("/exercises/" + exerciseId + "/choices")) } hx-target="#choices-container" hx-swap="outerHTML" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:cursor-pointer hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
                     <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Tenta novamente</h5>
                 </div>
             </li>
-            <li class="block w-1/2 mr-2.5">
+            <li class="block w-full m-2.5">
                 <a href="#" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
                     <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Vê a solução deste exercício</h5>
                 </a>

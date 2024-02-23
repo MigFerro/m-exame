@@ -8,8 +8,8 @@ import (
 
 
 templ ShowExerciseChoices(exerciseId string, choices []entities.ExerciseChoiceEntity) {
-    <div class="w-[40%] pl-[5%]" id="choices-container">
-        <h3 class="w-full text-center text-xl font-bold text-gray-900"> Sabes a resposta? </h3>
+    <div class="w-[40%] pr-2 pl-7" id="choices-container">
+        <h3 class="w-full text-center text-2xl text-gray-500"> Sabes a resposta? </h3>
         <form hx-post={ fmt.Sprintf("%v", templ.URL("/exercises/" + exerciseId + "/solve")) } hx-vals='{"at": "home"}' hx-target="#choices-container" hx-swap="innerHTML">
             <ul class="grid justify-items-center w-full gap-6 grid-cols-2 grid-rows-2 py-10 px-5">
                 for i, choice := range choices {
@@ -20,7 +20,7 @@ templ ShowExerciseChoices(exerciseId string, choices []entities.ExerciseChoiceEn
                             <input type="radio" id={ choice.Id.String() } name="choice" value={ choice.Id.String() } class="hidden peer" />
                         }
 
-                        <label for={ choice.Id.String() } class="inline-block w-full py-5 text-center text-gray-800 bg-white border border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-blue-500 peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">                           
+                        <label for={ choice.Id.String() } class="inline-block w-full py-5 text-center font-bold text-gray-800 bg-white border border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-blue-500 peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">                           
                             { choice.Value }
                         </label>
                     </li>
