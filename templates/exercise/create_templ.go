@@ -14,8 +14,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/MigFerro/exame/data"
 	"github.com/MigFerro/exame/entities"
-	"github.com/MigFerro/exame/shared"
 	"github.com/MigFerro/exame/templates/layouts"
 )
 
@@ -52,7 +52,7 @@ func ShowPreview(previewText string) templ.Component {
 	})
 }
 
-func ShowCreate(form shared.ExerciseFormResponse, categories []entities.ExerciseCategoryEntity) templ.Component {
+func ShowCreate(form data.ExerciseCreationForm, categories []entities.ExerciseCategoryEntity) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -281,7 +281,7 @@ func ShowCreate(form shared.ExerciseFormResponse, categories []entities.Exercise
 	})
 }
 
-func ShowSaveConfirmationPreview(form shared.ExerciseFormResponse) templ.Component {
+func ShowSaveConfirmationPreview(form data.ExerciseCreationForm) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {

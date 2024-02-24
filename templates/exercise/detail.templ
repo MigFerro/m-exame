@@ -5,44 +5,43 @@ import (
     "fmt"
 
     "github.com/MigFerro/exame/templates/layouts"
-    "github.com/MigFerro/exame/entities"
+    "github.com/MigFerro/exame/data"
 )
 
 
-templ ShowDetail(e entities.ExerciseEntity, choices []entities.ExerciseChoiceEntity) {
+templ ShowDetail(exercise data.ExerciseWithChoices) {
     @layouts.Base(layouts.BaseOptions{ WithLatex: true, WithHTMX: true }) {
-        <div class="pt-5">
-
-            <h1 class="pb-5 text-xl"> Exercício </h1>
+        <div class="pt-5" id="exercise-container">
 
             <div class="pt-10">
-                for _, line := range strings.Split(e.ProblemText, "\n") {
+                for _, line := range strings.Split(exercise.Exercise.ProblemText, "\n") {
                     <p>{line}<br /></p>
                 }
             </div>
 
-            <form hx-post={ fmt.Sprintf("%v", templ.URL(e.Id.String() + "/solve")) } hx-vals='{"at": "detail"}'hx-target="#result" hx-swap="innerHTML">
-                <ul class="grid w-full gap-6 md:grid-cols-4 pt-10">
-                    for i, choice := range choices {
-                        <li>
-                            if i == 0 {
-                                <input type="radio" id={ choice.Id.String() } name="choice" value={ choice.Id.String() } class="hidden peer" required />
-                            } else {
-                                <input type="radio" id={ choice.Id.String() } name="choice" value={ choice.Id.String() } class="hidden peer" />
-                            }
+            <div id="choices-container">
+                <form hx-post={ fmt.Sprintf("%v", templ.URL(exercise.Exercise.Id.String() + "/solve")) } hx-vals='{"at": "detail"}' hx-target="#choices-container" hx-swap="innerHTML">
+                    <ul class="grid w-full gap-6 md:grid-cols-4 pt-10">
+                        for i, choice := range exercise.Choices {
+                            <li>
+                                if i == 0 {
+                                    <input type="radio" id={ choice.Id.String() } name="choice" value={ choice.Id.String() } class="hidden peer" required />
+                                } else {
+                                    <input type="radio" id={ choice.Id.String() } name="choice" value={ choice.Id.String() } class="hidden peer" />
+                                }
 
-                            <label for={ choice.Id.String() } class="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-blue-500 peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">                           
-                                <div class="block">
-                                    <div class="w-full">{ choice.Value }</div>
-                                </div>
-                            </label>
-                        </li>
-                    }
-                </ul>
+                                <label for={ choice.Id.String() } class="inline-flex items-center justify-between w-full p-5 text-gray-700 font-bold bg-white border border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-blue-500 peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">                           
+                                    <div class="block w-full text-center">
+                                        { choice.Value }
+                                    </div>
+                                </label>
+                            </li>
+                        }
+                    </ul>
 
-                <div class="py-2.5" id="result"></div>
-                <input class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center" type="submit" value="Responder" />
-            </form>
+                    <input class="text-white text-xl font-bold bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto my-10 px-5 py-2.5 text-center" type="submit" value="Responder" />
+                </form>
+            </div>
 
         </div>
     }

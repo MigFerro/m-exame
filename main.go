@@ -5,6 +5,7 @@ import (
 	"github.com/MigFerro/exame/db"
 	"github.com/MigFerro/exame/handlers"
 	"github.com/MigFerro/exame/middleware"
+	"github.com/MigFerro/exame/services"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 )
@@ -21,8 +22,10 @@ func main() {
 
 	app.Static("/static", "templates/static")
 
-	homeHandler := handlers.HomeHandler{DB: sqlxDB}
-	exerciseHandler := handlers.ExerciseHandler{DB: sqlxDB}
+	exerciseService := services.ExerciseService{DB: sqlxDB}
+
+	homeHandler := handlers.HomeHandler{ExerciseService: &exerciseService}
+	exerciseHandler := handlers.ExerciseHandler{ExerciseService: &exerciseService}
 	authHandler := handlers.AuthHandler{DB: sqlxDB}
 
 	app.GET("/", homeHandler.HomeShow)
@@ -33,13 +36,14 @@ func main() {
 	app.GET("/auth/logout", authHandler.Logout)
 
 	//exercises
-	app.GET("/exercises", exerciseHandler.ExerciseListShow)
-	app.GET("/exercises/create", exerciseHandler.ExerciseCreateShow)
+	app.GET("/exercises", exerciseHandler.ShowExerciseList)
+	app.GET("/exercises/create", exerciseHandler.ShowExerciseCreate)
 	app.POST("/exercises/create", exerciseHandler.HandleExerciseCreateJourney)
-	app.GET("/exercises/:id", exerciseHandler.ExerciseDetailShow)
-	app.POST("/exercises/:id/solve", exerciseHandler.ExerciseSolve)
-	app.GET("/exercises/:id/choices", exerciseHandler.ExerciseChoicesShow)
-	app.GET("/exercises/categories", exerciseHandler.ExerciseCategoriesShow)
+	app.GET("/exercises/:id", exerciseHandler.ShowExerciseDetail)
+	app.GET("/exercises/:id/home", exerciseHandler.ShowExerciseHomepage)
+	app.POST("/exercises/:id/solve", exerciseHandler.HandleExerciseSolve)
+	app.GET("/exercises/:id/choices", exerciseHandler.ShowExerciseChoices)
+	app.GET("/exercises/categories", exerciseHandler.ShowExerciseCategoriesList)
 
 	app.Start(":3000")
 }

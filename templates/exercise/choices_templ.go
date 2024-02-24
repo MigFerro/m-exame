@@ -13,10 +13,10 @@ import "bytes"
 import (
 	"fmt"
 
-	"github.com/MigFerro/exame/entities"
+	"github.com/MigFerro/exame/data"
 )
 
-func ShowExerciseChoices(exerciseId string, choices []entities.ExerciseChoiceEntity) templ.Component {
+func ShowExerciseChoices(choices data.ExerciseChoices) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -42,7 +42,7 @@ func ShowExerciseChoices(exerciseId string, choices []entities.ExerciseChoiceEnt
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(fmt.Sprintf("%v", templ.URL("/exercises/"+exerciseId+"/solve"))))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(fmt.Sprintf("%v", templ.URL("/exercises/"+choices.ExerciseId+"/solve"))))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -50,7 +50,7 @@ func ShowExerciseChoices(exerciseId string, choices []entities.ExerciseChoiceEnt
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		for i, choice := range choices {
+		for i, choice := range choices.Choices {
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li class=\"w-full\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

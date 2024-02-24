@@ -3,16 +3,16 @@ package exerciseview
 import (
     "fmt"
 
-    "github.com/MigFerro/exame/entities"
+    "github.com/MigFerro/exame/data"
 )
 
 
-templ ShowExerciseChoices(exerciseId string, choices []entities.ExerciseChoiceEntity) {
+templ ShowExerciseChoices(choices data.ExerciseChoices) {
     <div class="w-[40%] pr-2 pl-7" id="choices-container">
         <h3 class="w-full text-center text-2xl text-gray-500"> Sabes a resposta? </h3>
-        <form hx-post={ fmt.Sprintf("%v", templ.URL("/exercises/" + exerciseId + "/solve")) } hx-vals='{"at": "home"}' hx-target="#choices-container" hx-swap="innerHTML">
+        <form hx-post={ fmt.Sprintf("%v", templ.URL("/exercises/" + choices.ExerciseId + "/solve")) } hx-vals='{"at": "home"}' hx-target="#choices-container" hx-swap="innerHTML">
             <ul class="grid justify-items-center w-full gap-6 grid-cols-2 grid-rows-2 py-10 px-5">
-                for i, choice := range choices {
+                for i, choice := range choices.Choices {
                     <li class="w-full">
                         if i == 0 {
                             <input type="radio" id={ choice.Id.String() } name="choice" value={ choice.Id.String() } class="hidden peer" required />

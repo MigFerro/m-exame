@@ -14,12 +14,12 @@ import (
 	// "fmt"
 	"strings"
 
-	"github.com/MigFerro/exame/entities"
+	"github.com/MigFerro/exame/data"
 	exerciseview "github.com/MigFerro/exame/templates/exercise"
 	"github.com/MigFerro/exame/templates/layouts"
 )
 
-func Show(e entities.ExerciseEntity, choices []entities.ExerciseChoiceEntity) templ.Component {
+func Show(exercise data.ExerciseWithChoices) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -38,7 +38,7 @@ func Show(e entities.ExerciseEntity, choices []entities.ExerciseChoiceEntity) te
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			templ_7745c5c3_Err = homepageExercise(e, choices).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = HomepageExercise(exercise).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -143,7 +143,7 @@ func Show(e entities.ExerciseEntity, choices []entities.ExerciseChoiceEntity) te
 	})
 }
 
-func homepageExercise(e entities.ExerciseEntity, choices []entities.ExerciseChoiceEntity) templ.Component {
+func HomepageExercise(exercise data.ExerciseWithChoices) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -156,11 +156,11 @@ func homepageExercise(e entities.ExerciseEntity, choices []entities.ExerciseChoi
 			templ_7745c5c3_Var12 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"mt-10 flex bg-slate-200 rounded-xl p-5\"><div class=\"w-[60%] pr-[10%]\"><h2 class=\"text-3xl font-bold text-gray-900 pb-11\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"mt-10 flex bg-slate-200 rounded-xl p-5\" id=\"exercise-container\"><div class=\"w-[60%] pr-[10%]\"><h2 class=\"text-3xl font-bold text-gray-900 pb-11\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var13 := `Exercício do dia: `
+		templ_7745c5c3_Var13 := `Exercício: `
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -169,7 +169,7 @@ func homepageExercise(e entities.ExerciseEntity, choices []entities.ExerciseChoi
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		for _, line := range strings.Split(e.ProblemText, "\n") {
+		for _, line := range strings.Split(exercise.Exercise.ProblemText, "\n") {
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -188,7 +188,7 @@ func homepageExercise(e entities.ExerciseEntity, choices []entities.ExerciseChoi
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = exerciseview.ShowExerciseChoices(e.Id.String(), choices).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = exerciseview.ShowExerciseChoices(data.ExerciseChoices{Choices: exercise.Choices, ExerciseId: exercise.Exercise.Id.String()}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

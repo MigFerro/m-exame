@@ -1,21 +1,21 @@
 package handlers
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
-	"strings"
 	"time"
 
+	"github.com/MigFerro/exame/data"
 	"github.com/MigFerro/exame/entities"
-	"github.com/MigFerro/exame/shared"
+	"github.com/MigFerro/exame/services"
 	exerciseview "github.com/MigFerro/exame/templates/exercise"
-	"github.com/google/uuid"
-	"github.com/jmoiron/sqlx"
+	homeview "github.com/MigFerro/exame/templates/home"
 	"github.com/labstack/echo/v4"
 )
 
 type ExerciseHandler struct {
-	DB *sqlx.DB
+	ExerciseService *services.ExerciseService
 }
 
 func (h *ExerciseHandler) HandleExerciseCreateJourney(c echo.Context) error {
@@ -30,22 +30,22 @@ func (h *ExerciseHandler) HandleExerciseCreateJourney(c echo.Context) error {
 	}
 
 	if formAction == "Confirmar" {
-		return h.saveExerciseWithChoices(c)
+		return h.saveExercise(c)
 	}
 
 	return nil
 }
 
-func (h *ExerciseHandler) ExerciseCreateShow(c echo.Context) error {
+func (h *ExerciseHandler) ShowExerciseCreate(c echo.Context) error {
 
-	err, categories := getAllCategories(h.DB)
+	categories, err := h.ExerciseService.GetAllCategories()
 
 	if err != nil {
 		return err
 	}
 
-	form := shared.ExerciseFormResponse{
-		Choices: []shared.ExerciseChoice{
+	form := data.ExerciseCreationForm{
+		Choices: []data.ExerciseChoice{
 			{Value: "", IsSolution: true}, // default first choice is solution
 			{Value: "", IsSolution: false},
 			{Value: "", IsSolution: false},
@@ -56,108 +56,10 @@ func (h *ExerciseHandler) ExerciseCreateShow(c echo.Context) error {
 	return render(c, exerciseview.ShowCreate(form, categories))
 }
 
-func (h *ExerciseHandler) getExerciseForm(c echo.Context) shared.ExerciseFormResponse {
-	formPreviewText := c.Request().FormValue("problem_text")
-	choices := []shared.ExerciseChoice{}
-	sol, _ := strconv.Atoi(c.Request().FormValue("choice_solution"))
-	isSol := false
-	for i := 0; i < 4; i++ {
-		value := c.Request().FormValue("choice" + strconv.Itoa(i))
-		if i == sol {
-			isSol = true
-		} else {
-			isSol = false
-		}
-		choices = append(choices, shared.ExerciseChoice{
-			Value:      value,
-			IsSolution: isSol,
-		})
-	}
-
-	categoryIid, _ := strconv.Atoi(c.Request().FormValue("category"))
-	var category string
-	res := h.DB.QueryRow("SELECT category from exercise_categories WHERE iid = $1", categoryIid)
-	res.Scan(&category)
-	exameYear := c.Request().FormValue("exame_year")
-	exameFase := c.Request().FormValue("exame_fase")
-
-	formResponse := shared.ExerciseFormResponse{
-		ProblemText: formPreviewText,
-		Choices:     choices,
-		Category: shared.ExerciseCategory{
-			Iid:      categoryIid,
-			Category: category,
-		},
-		ExameYear: exameYear,
-		ExameFase: exameFase,
-	}
-
-	return formResponse
-
-}
-
-func (h *ExerciseHandler) exercisePreviewShow(c echo.Context) error {
-	exerciseForm := h.getExerciseForm(c)
-	err, categories := getAllCategories(h.DB)
-
-	if err != nil {
-		return err
-	}
-
-	return render(c, exerciseview.ShowCreate(exerciseForm, categories))
-}
-
-func (h *ExerciseHandler) exerciseSaveConfirmationPreviewShow(c echo.Context) error {
-	exerciseForm := h.getExerciseForm(c)
-
-	return render(c, exerciseview.ShowSaveConfirmationPreview(exerciseForm))
-}
-
-func saveExerciseChoices(exerciseId uuid.UUID, choices []shared.ExerciseChoice, authUserId uuid.UUID, tx *sqlx.Tx) {
-	valueStrings := make([]string, 0, len(choices))
-	valueArgs := make([]interface{}, 0, len(choices)*4)
-
-	for i, choice := range choices {
-		valueStrings = append(valueStrings, fmt.Sprintf("($%d, $%d, $%d, $%d)", 4*i+1, 4*i+2, 4*i+3, 4*i+4))
-		valueArgs = append(valueArgs, choice.Value)
-		valueArgs = append(valueArgs, choice.IsSolution)
-		valueArgs = append(valueArgs, authUserId)
-		valueArgs = append(valueArgs, exerciseId)
-	}
-
-	query := fmt.Sprintf("INSERT INTO exercise_choices (value, is_solution, created_by, exercise_id) VALUES %s", strings.Join(valueStrings, ","))
-
-	tx.MustExec(query, valueArgs...)
-}
-
-func (h *ExerciseHandler) saveExerciseWithChoices(c echo.Context) error {
-	exerciseForm := h.getExerciseForm(c)
-
-	authUser := getAuthenticatedUser(c.Request().Context())
-
-	exercise := entities.ExerciseEntity{
-		ProblemText: exerciseForm.ProblemText,
-		CategoryIid: exerciseForm.Category.Iid,
-		ExameYear:   exerciseForm.ExameYear,
-		ExameFase:   exerciseForm.ExameFase,
-		CreatedBy:   authUser.Id,
-	}
-
-	tx := h.DB.MustBegin()
-	res := tx.QueryRow("INSERT INTO exercises (problem_text, category_iid, exame, fase, created_by) VALUES ($1, $2, $3, $4, $5) RETURNING id", exercise.ProblemText, exercise.CategoryIid, exercise.ExameYear, exercise.ExameFase, exercise.CreatedBy)
-	var exerciseId uuid.UUID
-	res.Scan(&exerciseId)
-	fmt.Println(exerciseId)
-	saveExerciseChoices(exerciseId, exerciseForm.Choices, authUser.Id, tx)
-	tx.Commit()
-
-	return render(c, exerciseview.ExerciseSavedSuccessShow())
-}
-
-func (h *ExerciseHandler) ExerciseListShow(c echo.Context) error {
+func (h *ExerciseHandler) ShowExerciseList(c echo.Context) error {
 
 	var exercises []entities.ExerciseEntity
-	err := h.DB.Select(&exercises, `SELECT * FROM exercises`)
+	err := h.ExerciseService.DB.Select(&exercises, `SELECT * FROM exercises`)
 
 	if err != nil {
 		fmt.Println("Error retrieving exercise from database: ", err)
@@ -167,36 +69,28 @@ func (h *ExerciseHandler) ExerciseListShow(c echo.Context) error {
 	return render(c, exerciseview.ShowIndex(exercises))
 }
 
-func (h *ExerciseHandler) ExerciseDetailShow(c echo.Context) error {
+func (h *ExerciseHandler) ShowExerciseHomepage(c echo.Context) error {
 	exerciseId := c.Param("id")
 
-	exerciseRow := h.DB.QueryRowx(
-		`SELECT * FROM exercises
-		WHERE id = $1`, exerciseId)
+	exercise := h.ExerciseService.GetExerciseWithChoices(exerciseId)
 
-	var exercise entities.ExerciseEntity
-	err := exerciseRow.StructScan(&exercise)
-
-	exerciseChoices := []entities.ExerciseChoiceEntity{}
-
-	err = h.DB.Select(&exerciseChoices,
-		`SELECT * FROM exercise_choices
-		WHERE exercise_id = $1`, exerciseId)
-
-	if err != nil {
-		fmt.Println("Error retrieving exercise from database: ", err)
-		return err
-	}
-
-	return render(c, exerciseview.ShowDetail(exercise, exerciseChoices))
+	return render(c, homeview.HomepageExercise(exercise))
 }
 
-func (h *ExerciseHandler) ExerciseChoicesShow(c echo.Context) error {
+func (h *ExerciseHandler) ShowExerciseDetail(c echo.Context) error {
+	exerciseId := c.Param("id")
+
+	exercise := h.ExerciseService.GetExerciseWithChoices(exerciseId)
+
+	return render(c, exerciseview.ShowDetail(exercise))
+}
+
+func (h *ExerciseHandler) ShowExerciseChoices(c echo.Context) error {
 	exerciseId := c.Param("id")
 
 	exerciseChoices := []entities.ExerciseChoiceEntity{}
 
-	err := h.DB.Select(&exerciseChoices,
+	err := h.ExerciseService.DB.Select(&exerciseChoices,
 		`SELECT * FROM exercise_choices
 		WHERE exercise_id = $1`, exerciseId)
 
@@ -205,10 +99,15 @@ func (h *ExerciseHandler) ExerciseChoicesShow(c echo.Context) error {
 		return err
 	}
 
-	return render(c, exerciseview.ShowExerciseChoices(exerciseId, exerciseChoices))
+	choices := data.ExerciseChoices{
+		Choices:    exerciseChoices,
+		ExerciseId: exerciseId,
+	}
+
+	return render(c, exerciseview.ShowExerciseChoices(choices))
 }
 
-func (h *ExerciseHandler) ExerciseSolve(c echo.Context) error {
+func (h *ExerciseHandler) HandleExerciseSolve(c echo.Context) error {
 	exerciseId := c.Param("id")
 	formChoice := c.Request().FormValue("choice")
 	at := c.Request().FormValue("at")
@@ -223,7 +122,7 @@ func (h *ExerciseHandler) ExerciseSolve(c echo.Context) error {
 	exerciseUser := entities.ExerciseUserEntity{}
 	var isSolution bool
 
-	tx := h.DB.MustBegin()
+	tx := h.ExerciseService.DB.MustBegin()
 	_ = tx.Get(&exerciseUser, "SELECT * FROM exercise_users WHERE exercise_id = $1 AND user_id = $2", exerciseId, authUser.Id)
 	_ = tx.Get(&exercise, "SELECT * FROM exercises WHERE id = $1", exerciseId)
 	_ = tx.Get(&isSolution, "SELECT is_solution FROM exercise_choices WHERE id = $1", formChoice)
@@ -239,11 +138,18 @@ func (h *ExerciseHandler) ExerciseSolve(c echo.Context) error {
 	}
 	tx.Commit()
 
-	return render(c, exerciseview.SolvedResult(isSolution, at, exerciseId))
+	solvedData := data.ExerciseSolved{
+		ExerciseId: exerciseId,
+		IsSolution: isSolution,
+		NextId:     h.ExerciseService.GetRandomExerciseId(),
+		At:         at,
+	}
+
+	return render(c, exerciseview.SolvedResult(solvedData))
 }
 
-func (h *ExerciseHandler) ExerciseCategoriesShow(c echo.Context) error {
-	err, categories := getAllCategories(h.DB)
+func (h *ExerciseHandler) ShowExerciseCategoriesList(c echo.Context) error {
+	categories, err := h.ExerciseService.GetAllCategories()
 
 	if err != nil {
 		fmt.Println("Error retrieving exercise categories from database: ", err)
@@ -253,14 +159,88 @@ func (h *ExerciseHandler) ExerciseCategoriesShow(c echo.Context) error {
 	return render(c, exerciseview.ShowCategoriesIndex(categories))
 }
 
-func getAllCategories(db *sqlx.DB) (error, []entities.ExerciseCategoryEntity) {
-	var categories []entities.ExerciseCategoryEntity
-	err := db.Select(&categories, `SELECT * FROM exercise_categories`)
+func (h *ExerciseHandler) getExerciseCreationForm(c echo.Context) (data.ExerciseCreationForm, error) {
 
-	if err != nil {
-		fmt.Println("Error retrieving exercise categories from database: ", err)
-		return err, []entities.ExerciseCategoryEntity{}
+	authUser, ok := getAuthenticatedUser(c.Request().Context())
+
+	if !ok {
+		return data.ExerciseCreationForm{}, errors.New("No user authenticated. Can't create exercise.")
 	}
 
-	return nil, categories
+	formPreviewText := c.Request().FormValue("problem_text")
+	choices := []data.ExerciseChoice{}
+	sol, _ := strconv.Atoi(c.Request().FormValue("choice_solution"))
+	isSol := false
+	for i := 0; i < 4; i++ {
+		value := c.Request().FormValue("choice" + strconv.Itoa(i))
+		if i == sol {
+			isSol = true
+		} else {
+			isSol = false
+		}
+		choices = append(choices, data.ExerciseChoice{
+			Value:      value,
+			IsSolution: isSol,
+		})
+	}
+
+	categoryIid, _ := strconv.Atoi(c.Request().FormValue("category"))
+	var category string
+	res := h.ExerciseService.DB.QueryRow("SELECT category from exercise_categories WHERE iid = $1", categoryIid)
+	res.Scan(&category)
+	exameYear := c.Request().FormValue("exame_year")
+	exameFase := c.Request().FormValue("exame_fase")
+
+	formResponse := data.ExerciseCreationForm{
+		ProblemText: formPreviewText,
+		Choices:     choices,
+		Category: data.ExerciseCategory{
+			Iid:      categoryIid,
+			Category: category,
+		},
+		ExameYear: exameYear,
+		ExameFase: exameFase,
+		CreatedBy: authUser.Id,
+	}
+
+	return formResponse, nil
+
+}
+
+func (h *ExerciseHandler) exercisePreviewShow(c echo.Context) error {
+	exerciseForm, err := h.getExerciseCreationForm(c)
+
+	if err != nil {
+		return err
+	}
+
+	categories, err := h.ExerciseService.GetAllCategories()
+
+	if err != nil {
+		return err
+	}
+
+	return render(c, exerciseview.ShowCreate(exerciseForm, categories))
+}
+
+func (h *ExerciseHandler) exerciseSaveConfirmationPreviewShow(c echo.Context) error {
+	exerciseForm, err := h.getExerciseCreationForm(c)
+
+	if err != nil {
+		return err
+	}
+
+	return render(c, exerciseview.ShowSaveConfirmationPreview(exerciseForm))
+}
+
+func (h *ExerciseHandler) saveExercise(c echo.Context) error {
+	exerciseForm, err := h.getExerciseCreationForm(c)
+
+	if err != nil {
+		return err
+	}
+
+	err = h.ExerciseService.SaveExercise(exerciseForm)
+
+	return render(c, exerciseview.ExerciseSavedSuccessShow())
 }

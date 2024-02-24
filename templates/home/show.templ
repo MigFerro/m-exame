@@ -4,16 +4,16 @@ import (
     // "fmt"
     "strings"
 
-    "github.com/MigFerro/exame/entities"
+    "github.com/MigFerro/exame/data"
     "github.com/MigFerro/exame/templates/layouts"
     exerciseview "github.com/MigFerro/exame/templates/exercise"
 )
 
 
-templ Show(e entities.ExerciseEntity, choices []entities.ExerciseChoiceEntity) {
+templ Show(exercise data.ExerciseWithChoices) {
     @layouts.Base(layouts.BaseOptions{ WithLatex: true, WithHTMX:true }) {
 
-        @homepageExercise(e, choices) {}
+        @HomepageExercise(exercise) {}
 
         <hr class="h-px my-8 bg-gray-300 border-0 dark:bg-gray-700" />
 
@@ -53,12 +53,12 @@ templ Show(e entities.ExerciseEntity, choices []entities.ExerciseChoiceEntity) {
     }
 }
 
-templ homepageExercise(e entities.ExerciseEntity, choices []entities.ExerciseChoiceEntity) {
-        <div class="mt-10 flex bg-slate-200 rounded-xl p-5">
+templ HomepageExercise(exercise data.ExerciseWithChoices) {
+        <div class="mt-10 flex bg-slate-200 rounded-xl p-5" id="exercise-container">
             <div class="w-[60%] pr-[10%]">
-            <h2 class="text-3xl font-bold text-gray-900 pb-11"> Exercício do dia: </h2>
+            <h2 class="text-3xl font-bold text-gray-900 pb-11"> Exercício: </h2>
 
-            for _, line := range strings.Split(e.ProblemText, "\n") {
+            for _, line := range strings.Split(exercise.Exercise.ProblemText, "\n") {
                 <p>{line}<br /></p>
             }
 
@@ -66,7 +66,7 @@ templ homepageExercise(e entities.ExerciseEntity, choices []entities.ExerciseCho
 
             <div class="h-[25em] w-px self-stretch bg-gradient-to-tr from-transparent via-neutral-600 to-transparent opacity-20 dark:opacity-100"></div>
 
-            @exerciseview.ShowExerciseChoices(e.Id.String(), choices) {}
+            @exerciseview.ShowExerciseChoices(data.ExerciseChoices{ Choices: exercise.Choices, ExerciseId: exercise.Exercise.Id.String() }) {}
 
 
         </div>

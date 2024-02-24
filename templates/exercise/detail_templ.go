@@ -14,11 +14,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/MigFerro/exame/entities"
+	"github.com/MigFerro/exame/data"
 	"github.com/MigFerro/exame/templates/layouts"
 )
 
-func ShowDetail(e entities.ExerciseEntity, choices []entities.ExerciseChoiceEntity) templ.Component {
+func ShowDetail(exercise data.ExerciseWithChoices) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -37,26 +37,17 @@ func ShowDetail(e entities.ExerciseEntity, choices []entities.ExerciseChoiceEnti
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"pt-5\"><h1 class=\"pb-5 text-xl\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"pt-5\" id=\"exercise-container\"><div class=\"pt-10\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Var3 := `Exercício `
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h1><div class=\"pt-10\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			for _, line := range strings.Split(e.ProblemText, "\n") {
+			for _, line := range strings.Split(exercise.Exercise.ProblemText, "\n") {
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<p>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var4 string = line
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+				var templ_7745c5c3_Var3 string = line
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -65,19 +56,19 @@ func ShowDetail(e entities.ExerciseEntity, choices []entities.ExerciseChoiceEnti
 					return templ_7745c5c3_Err
 				}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><form hx-post=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div id=\"choices-container\"><form hx-post=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(fmt.Sprintf("%v", templ.URL(e.Id.String()+"/solve"))))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(fmt.Sprintf("%v", templ.URL(exercise.Exercise.Id.String()+"/solve"))))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-vals=\"{&#34;at&#34;: &#34;detail&#34;}\" hx-target=\"#result\" hx-swap=\"innerHTML\"><ul class=\"grid w-full gap-6 md:grid-cols-4 pt-10\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-vals=\"{&#34;at&#34;: &#34;detail&#34;}\" hx-target=\"#choices-container\" hx-swap=\"innerHTML\"><ul class=\"grid w-full gap-6 md:grid-cols-4 pt-10\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			for i, choice := range choices {
+			for i, choice := range exercise.Choices {
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -133,21 +124,21 @@ func ShowDetail(e entities.ExerciseEntity, choices []entities.ExerciseChoiceEnti
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-blue-500 peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700\"><div class=\"block\"><div class=\"w-full\">")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"inline-flex items-center justify-between w-full p-5 text-gray-700 font-bold bg-white border border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-blue-500 peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700\"><div class=\"block w-full text-center\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var5 string = choice.Value
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+				var templ_7745c5c3_Var4 string = choice.Value
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div></label></li>")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></label></li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ul><div class=\"py-2.5\" id=\"result\"></div><input class=\"text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center\" type=\"submit\" value=\"Responder\"></form></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ul><input class=\"text-white text-xl font-bold bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto my-10 px-5 py-2.5 text-center\" type=\"submit\" value=\"Responder\"></form></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

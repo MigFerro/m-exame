@@ -6,14 +6,14 @@ import (
 
     "github.com/MigFerro/exame/templates/layouts"
     "github.com/MigFerro/exame/entities"
-    "github.com/MigFerro/exame/shared"
+    "github.com/MigFerro/exame/data"
 )
 
 templ ShowPreview(previewText string) {
    <p id="preview">{ previewText }</p> 
 }
 
-templ ShowCreate(form shared.ExerciseFormResponse, categories []entities.ExerciseCategoryEntity) {
+templ ShowCreate(form data.ExerciseCreationForm, categories []entities.ExerciseCategoryEntity) {
     @layouts.Base(layouts.BaseOptions{ WithLatex: true, WithHTMX: false }) {
         <div class="pt-5">
             <div class="flex justify-between">
@@ -69,7 +69,7 @@ templ ShowCreate(form shared.ExerciseFormResponse, categories []entities.Exercis
     }
 }
 
-templ ShowSaveConfirmationPreview(form shared.ExerciseFormResponse) {
+templ ShowSaveConfirmationPreview(form data.ExerciseCreationForm) {
     @layouts.Base(layouts.BaseOptions{ WithLatex: true, WithHTMX: false }) {
         <div class="pt-5">
         <form method="post">

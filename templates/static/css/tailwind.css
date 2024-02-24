@@ -634,6 +634,11 @@ video {
   margin-right: 10%;
 }
 
+.my-10 {
+  margin-top: 2.5rem;
+  margin-bottom: 2.5rem;
+}
+
 .my-8 {
   margin-top: 2rem;
   margin-bottom: 2rem;
@@ -689,6 +694,10 @@ video {
 
 .h-\[25em\] {
   height: 25em;
+}
+
+.h-full {
+  height: 100%;
 }
 
 .h-px {
