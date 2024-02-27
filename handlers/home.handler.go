@@ -12,8 +12,11 @@ type HomeHandler struct {
 }
 
 func (h *HomeHandler) HomeShow(c echo.Context) error {
+	exerciseId := c.Param("id")
+	if exerciseId == "" {
+		exerciseId = h.ExerciseService.GetRandomExerciseId()
+	}
 
-	exerciseId := h.ExerciseService.GetRandomExerciseId()
 	exercise := h.ExerciseService.GetExerciseWithChoices(exerciseId)
 
 	exercises := data.ExerciseWithChoices{

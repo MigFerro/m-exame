@@ -41,6 +41,17 @@ func (s *ExerciseService) GetExerciseWithChoices(exerciseId string) data.Exercis
 	return exerciseWithChoices
 }
 
+func (s *ExerciseService) GetPreviouslyAttemptedExercise(exerciseId string, userId string) string {
+
+	exerciseUserRow := s.DB.QueryRowx(
+		`SELECT exercise_id FROM exercise_users
+		WHERE id = $1`, exerciseId)
+
+	fmt.Println(exerciseUserRow)
+	return ""
+
+}
+
 func (s *ExerciseService) GetRandomExerciseId() string {
 	exerciseRow := s.DB.QueryRowx(
 		`SELECT id FROM exercises

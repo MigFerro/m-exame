@@ -5,15 +5,16 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/MigFerro/exame/entities"
-	"github.com/jmoiron/sqlx"
-	"github.com/labstack/echo-contrib/session"
+	"github.com/MigFerro/exame/data"
+	"github.com/MigFerro/exame/local"
+	"github.com/MigFerro/exame/services"
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/markbates/goth/gothic"
 )
 
 type AuthHandler struct {
-	DB *sqlx.DB
+	UserService *services.UserService
 }
 
 func (h *AuthHandler) GetAuthProvider(c echo.Context) error {
@@ -43,40 +44,28 @@ func (h *AuthHandler) Login(c echo.Context) error {
 		return err
 	}
 
-	// check if user exists in DB
-	row := h.DB.QueryRowx("SELECT * FROM users where auth_id = $1", gothUser.UserID)
+	userExistsInDB := h.UserService.UserExistsInDB(gothUser.UserID)
 
-	var dbUser entities.UserEntity
-	err = row.StructScan(&dbUser)
+	var dbUserId uuid.UUID
 
-	if err != nil {
+	if !userExistsInDB {
 
-		// create user in database
-		tx := h.DB.MustBegin()
-		tx.MustExec("INSERT INTO users (auth_id, email, name) VALUES ($1, $2, $3)",
-			gothUser.UserID,
-			gothUser.Email,
-			gothUser.Name,
-		)
-		row = tx.QueryRowx("SELECT * FROM users where auth_id = $1", gothUser.UserID)
-		err = row.StructScan(&dbUser)
-		tx.Commit()
+		dbUserId, err = h.UserService.CreateUserFromGoth(gothUser)
 
 		if err != nil {
-			fmt.Println("Couldn't retrieve created user. ", err)
+			fmt.Println("error creating user in DB after login. ", err)
 			return err
 		}
 	}
 
-	// save user cookie
-	session, _ := session.Get("auth-cookie", c)
-	session.Values["logged-user"] = entities.AuthUser{
-		Id:     dbUser.Id,
+	loggedUser := data.LoggedUser{
+		Id:     dbUserId,
 		AuthId: gothUser.UserID,
 		Email:  gothUser.Email,
 		Name:   gothUser.Name,
 	}
-	err = session.Save(c.Request().WithContext(ctx), c.Response())
+
+	err = local.SaveLoggedUser(loggedUser, c, ctx)
 
 	if err != nil {
 		fmt.Println("error saving session: ", err)
@@ -87,16 +76,7 @@ func (h *AuthHandler) Login(c echo.Context) error {
 }
 
 func (h *AuthHandler) Logout(c echo.Context) error {
-	session, _ := session.Get("auth-cookie", c)
-
-	val := session.Values["logged-user"]
-	if _, ok := val.(*entities.AuthUser); ok {
-		session.Values["logged-user"] = entities.AuthUser{}
-	} else {
-		fmt.Println("Could not retrieve logged user from cookies.")
-	}
-
-	session.Save(c.Request(), c.Response())
+	local.RemoveLoggedUser(c)
 
 	return c.Redirect(http.StatusFound, "/")
 }

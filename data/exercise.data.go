@@ -5,6 +5,13 @@ import (
 	"github.com/google/uuid"
 )
 
+type LoggedUser struct {
+	Id     uuid.UUID
+	AuthId string
+	Email  string
+	Name   string
+}
+
 type ExerciseChoices struct {
 	Choices    []entities.ExerciseChoiceEntity
 	ExerciseId string
@@ -20,6 +27,8 @@ type ExerciseSolved struct {
 type ExerciseWithChoices struct {
 	Choices  []entities.ExerciseChoiceEntity
 	Exercise entities.ExerciseEntity
+	PrevId   string
+	NextId   string
 }
 
 type ExerciseChoice struct {

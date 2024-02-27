@@ -24,10 +24,3 @@ type UserEntity struct {
 	CreatedAt time.Time    `json:"created_at" db:"created_at"`
 	UpdatedAt sql.NullTime `json:"updated_at" db:"updated_at"`
 }
-
-type AuthUser struct {
-	AuthId string
-	Id     uuid.UUID
-	Name   string
-	Email  string
-}

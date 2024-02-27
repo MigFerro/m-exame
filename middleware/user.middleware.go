@@ -3,19 +3,17 @@ package middleware
 import (
 	"context"
 
-	"github.com/MigFerro/exame/entities"
-	"github.com/labstack/echo-contrib/session"
+	"github.com/MigFerro/exame/local"
 	"github.com/labstack/echo/v4"
 )
 
 func WithAuthenticatedUser(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 
-		session, _ := session.Get("auth-cookie", c)
-		val := session.Values["logged-user"]
+		loggedUser, ok := local.GetLoggedUser(c)
 
-		if _, ok := val.(*entities.AuthUser); ok {
-			ctx := context.WithValue(c.Request().Context(), "authUser", val)
+		if ok {
+			ctx := context.WithValue(c.Request().Context(), "authUser", loggedUser)
 			c.SetRequest(c.Request().WithContext(ctx))
 		}
 

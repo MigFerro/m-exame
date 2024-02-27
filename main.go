@@ -23,12 +23,14 @@ func main() {
 	app.Static("/static", "templates/static")
 
 	exerciseService := services.ExerciseService{DB: sqlxDB}
+	userService := services.UserService{DB: sqlxDB}
 
 	homeHandler := handlers.HomeHandler{ExerciseService: &exerciseService}
 	exerciseHandler := handlers.ExerciseHandler{ExerciseService: &exerciseService}
-	authHandler := handlers.AuthHandler{DB: sqlxDB}
+	authHandler := handlers.AuthHandler{UserService: &userService}
 
 	app.GET("/", homeHandler.HomeShow)
+	app.GET("/:id", homeHandler.HomeShow)
 
 	// auth
 	app.GET("/auth/:provider", authHandler.GetAuthProvider)

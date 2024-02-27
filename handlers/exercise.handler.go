@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+
 	"time"
 
 	"github.com/MigFerro/exame/data"
@@ -112,31 +113,14 @@ func (h *ExerciseHandler) HandleExerciseSolve(c echo.Context) error {
 	formChoice := c.Request().FormValue("choice")
 	at := c.Request().FormValue("at")
 
-	authUser, ok := c.Request().Context().Value("authUser").(*entities.AuthUser)
-	if !ok {
-		fmt.Println("Error retrieving auth user")
-		return nil
-	}
+	loggedUser, ok := c.Request().Context().Value("authUser").(*data.LoggedUser)
 
 	exercise := entities.ExerciseEntity{}
-	exerciseUser := entities.ExerciseUserEntity{}
 	var isSolution bool
 
 	tx := h.ExerciseService.DB.MustBegin()
-	_ = tx.Get(&exerciseUser, "SELECT * FROM exercise_users WHERE exercise_id = $1 AND user_id = $2", exerciseId, authUser.Id)
 	_ = tx.Get(&exercise, "SELECT * FROM exercises WHERE id = $1", exerciseId)
 	_ = tx.Get(&isSolution, "SELECT is_solution FROM exercise_choices WHERE id = $1", formChoice)
-
-	solved := exerciseUser.Solved || isSolution
-
-	if exerciseUser == (entities.ExerciseUserEntity{}) {
-		tx.MustExec("INSERT INTO exercise_users (user_id, exercise_id, solved, updated_at, times_attempted) VALUES ($1, $2, $3, $4, $5)", authUser.Id, exerciseId, solved, time.Now(), 1)
-	} else {
-		if !exerciseUser.Solved && solved {
-			tx.MustExec("UPDATE exercise_users SET (solved, updated_at, times_attempted) = ($1, $2, $3) WHERE user_id = $4 AND exercise_id = $5", solved, time.Now(), authUser.Id, exerciseId, exerciseUser.TimesAttempted+1)
-		}
-	}
-	tx.Commit()
 
 	solvedData := data.ExerciseSolved{
 		ExerciseId: exerciseId,
@@ -144,6 +128,34 @@ func (h *ExerciseHandler) HandleExerciseSolve(c echo.Context) error {
 		NextId:     h.ExerciseService.GetRandomExerciseId(),
 		At:         at,
 	}
+
+	if !ok {
+		return render(c, exerciseview.SolvedResult(solvedData))
+	}
+
+	exerciseUser := entities.ExerciseUserEntity{}
+	_ = tx.Get(&exerciseUser, "SELECT * FROM exercise_users WHERE exercise_id = $1 AND user_id = $2", exerciseId, loggedUser.Id)
+
+	now := time.Now()
+
+	if exerciseUser == (entities.ExerciseUserEntity{}) {
+		if isSolution {
+			tx.MustExec("INSERT INTO exercise_users (user_id, exercise_id, last_attempted_at, first_solved_at, last_solved_at) VALUES ($1, $2, $3, $4, $5)", loggedUser.Id, exerciseId, now, now, now)
+		} else {
+			tx.MustExec("INSERT INTO exercise_users (user_id, exercise_id, last_attempted_at) VALUES ($1, $2, $3)", loggedUser.Id, exerciseId, now)
+		}
+	} else {
+		if isSolution {
+			if exerciseUser.FirstSolvedAt.Valid {
+				tx.MustExec("UPDATE exercise_users SET (last_attempted_at, last_solved_at) = ($1, $2) WHERE user_id = $3 AND exercise_id = $4", now, now, loggedUser.Id, exerciseId)
+			} else {
+				tx.MustExec("UPDATE exercise_users SET (last_attempted_at, first_solved_at, last_solved_at) = ($1, $2, $3) WHERE user_id = $4 AND exercise_id = $5", now, now, now, loggedUser.Id, exerciseId)
+			}
+		} else {
+			tx.MustExec("UPDATE exercise_users SET last_attempted_at = $1 WHERE user_id = $2 AND exercise_id = $3", now, loggedUser.Id, exerciseId)
+		}
+	}
+	tx.Commit()
 
 	return render(c, exerciseview.SolvedResult(solvedData))
 }

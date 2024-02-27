@@ -38,10 +38,10 @@ type ExerciseCategoryEntity struct {
 }
 
 type ExerciseUserEntity struct {
-	UserId         uuid.UUID    `db:"user_id"`
-	ExerciseId     uuid.UUID    `db:"exercise_id"`
-	Solved         bool         `db:"solved"`
-	CreatedAt      time.Time    `db:"created_at"`
-	UpdatedAt      sql.NullTime `db:"updated_at"`
-	TimesAttempted int32        `db:"times_attempted"`
+	UserId           uuid.UUID    `db:"user_id"`
+	ExerciseId       uuid.UUID    `db:"exercise_id"`
+	FirstAttemptedAt time.Time    `db:"first_attempted_at"`
+	LastAttemptedAt  sql.NullTime `db:"last_attempted_at"`
+	FirstSolvedAt    sql.NullTime `db:"first_solved_at"`
+	LastSolvedAt     sql.NullTime `db:"last_solved_at"`
 }

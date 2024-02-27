@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/MigFerro/exame/entities"
+	"github.com/MigFerro/exame/data"
 	"github.com/gorilla/sessions"
 	"github.com/joho/godotenv"
 	"github.com/markbates/goth"
@@ -24,7 +24,8 @@ func InitCookieStore() *sessions.CookieStore {
 	//COOKIE STORE
 	key := os.Getenv("COOKIE_SESSION_KEY")
 
-	gob.Register(&entities.AuthUser{})
+	// I don't really understand this
+	gob.Register(&data.LoggedUser{})
 
 	maxAge := 86400 * 30 // 30 days
 	isProd := false      // Set to true when serving over https

@@ -11,7 +11,6 @@ import "io"
 import "bytes"
 
 import (
-	// "fmt"
 	"strings"
 
 	"github.com/MigFerro/exame/data"
