@@ -13,7 +13,7 @@ templ ShowPreview(previewText string) {
    <p id="preview">{ previewText }</p> 
 }
 
-templ ShowCreate(form data.ExerciseCreationForm, categories []entities.ExerciseCategoryEntity) {
+templ ShowCreate(form *data.ExerciseUpsertForm, categories []entities.ExerciseCategoryEntity) {
     @layouts.Base(layouts.BaseOptions{ WithLatex: true, WithHTMX: false }) {
         <div class="pt-5">
             <div class="flex justify-between">
@@ -54,8 +54,8 @@ templ ShowCreate(form data.ExerciseCreationForm, categories []entities.ExerciseC
                             </select>
                         </div>
                         <div class="pt-5">
-                            <input class="btn-primary" type="submit" name="action" value="Preview" />
-                            <input class="btn-primary" type="submit" name="action" value="Save" />
+                            <button class="btn-primary" type="submit" name="action" value="preview">Preview</button>
+                            <button class="btn-primary" type="submit" name="action" value="save">Avançar</button>
                         </div>
                     </form>
                 </div>
@@ -69,7 +69,7 @@ templ ShowCreate(form data.ExerciseCreationForm, categories []entities.ExerciseC
     }
 }
 
-templ ShowSaveConfirmationPreview(form data.ExerciseCreationForm) {
+templ ShowSaveConfirmationPreview(form *data.ExerciseUpsertForm) {
     @layouts.Base(layouts.BaseOptions{ WithLatex: true, WithHTMX: false }) {
         <div class="pt-5">
         <form method="post">
@@ -99,8 +99,8 @@ templ ShowSaveConfirmationPreview(form data.ExerciseCreationForm) {
                 <input type="hidden" id="category" name="category" value={ strconv.Itoa(form.Category.Iid) }/>
             </div>
             <div class="pt-7">
-                <input class="btn-primary" type="submit" name="action" value="Voltar atrás" />
-                <input class="btn-primary" type="submit" name="action" value="Confirmar" />
+                <button class="btn-primary" type="submit" name="action" value="back">Voltar atrás</button>
+                <button class="btn-primary" type="submit" name="action" value="confirm">Confirmar</button>
             </div>
         </form>
         </div>

@@ -40,8 +40,9 @@ func main() {
 	//exercises
 	app.GET("/exercises", exerciseHandler.ShowExerciseList)
 	app.GET("/exercises/create", exerciseHandler.ShowExerciseCreate)
-	app.POST("/exercises/create", exerciseHandler.HandleExerciseCreateJourney)
-	app.GET("/exercises/update/:id", exerciseHandler.ShowExerciseUpdate)
+	app.POST("/exercises/create", exerciseHandler.HandleExerciseUpsertJourney)
+	app.GET("/exercises/:id/update", exerciseHandler.ShowExerciseUpdate)
+	app.POST("/exercises/:id/update", exerciseHandler.HandleExerciseUpsertJourney)
 	app.GET("/exercises/:id", exerciseHandler.ShowExerciseDetail)
 	app.GET("/exercises/:id/home", exerciseHandler.ShowExerciseHomepage)
 	app.POST("/exercises/:id/solve", exerciseHandler.HandleExerciseSolve)

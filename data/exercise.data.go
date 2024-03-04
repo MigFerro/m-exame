@@ -41,7 +41,8 @@ type ExerciseCategory struct {
 	Category string
 }
 
-type ExerciseCreationForm struct {
+type ExerciseUpsertForm struct {
+	Id          string
 	ProblemText string
 	Choices     []ExerciseChoice
 	Category    ExerciseCategory

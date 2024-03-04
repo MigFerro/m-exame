@@ -19,18 +19,26 @@ type ExerciseHandler struct {
 	ExerciseService *services.ExerciseService
 }
 
-func (h *ExerciseHandler) HandleExerciseCreateJourney(c echo.Context) error {
+func (h *ExerciseHandler) HandleExerciseUpsertJourney(c echo.Context) error {
 	formAction := c.Request().FormValue("action")
 
-	if formAction == "Preview" {
+	if formAction == "preview" {
 		return h.exercisePreviewShow(c)
 	}
 
-	if formAction == "Save" {
+	if formAction == "save" {
 		return h.exerciseSaveConfirmationPreviewShow(c)
 	}
 
-	if formAction == "Confirmar" {
+	if formAction == "back" {
+		exerciseId := c.Param("id")
+		if exerciseId != "" {
+			return h.ShowExerciseUpdateBack(c)
+		}
+		return h.ShowExerciseCreate(c)
+	}
+
+	if formAction == "confirm" {
 		return h.saveExercise(c)
 	}
 
@@ -38,29 +46,20 @@ func (h *ExerciseHandler) HandleExerciseCreateJourney(c echo.Context) error {
 }
 
 func (h *ExerciseHandler) ShowExerciseCreate(c echo.Context) error {
-
+	exerciseForm, err := h.getExerciseUpsertForm(c)
 	categories, err := h.ExerciseService.GetAllCategories()
 
 	if err != nil {
 		return err
 	}
 
-	form := data.ExerciseCreationForm{
-		Choices: []data.ExerciseChoice{
-			{Value: "", IsSolution: true}, // default first choice is solution
-			{Value: "", IsSolution: false},
-			{Value: "", IsSolution: false},
-			{Value: "", IsSolution: false},
-		},
-	}
-
-	return render(c, exerciseview.ShowCreate(form, categories))
+	return render(c, exerciseview.ShowCreate(exerciseForm, categories))
 }
 
 func (h *ExerciseHandler) ShowExerciseUpdate(c echo.Context) error {
 	exerciseId := c.Param("id")
 
-	exercise := h.ExerciseService.GetExerciseWithChoices(exerciseId)
+	exercise := h.ExerciseService.GetExerciseUpsertForm(exerciseId)
 	categories, err := h.ExerciseService.GetAllCategories()
 
 	if err != nil {
@@ -68,6 +67,20 @@ func (h *ExerciseHandler) ShowExerciseUpdate(c echo.Context) error {
 	}
 
 	return render(c, exerciseview.ShowUpdate(exercise, categories))
+}
+
+func (h *ExerciseHandler) ShowExerciseUpdateBack(c echo.Context) error {
+	exerciseId := c.Param("id")
+	exerciseForm, _ := h.getExerciseUpsertForm(c)
+	categories, err := h.ExerciseService.GetAllCategories()
+
+	if err != nil {
+		return err
+	}
+
+	exerciseForm.Id = exerciseId
+
+	return render(c, exerciseview.ShowUpdate(exerciseForm, categories))
 }
 
 func (h *ExerciseHandler) ShowExerciseList(c echo.Context) error {
@@ -184,12 +197,12 @@ func (h *ExerciseHandler) ShowExerciseCategoriesList(c echo.Context) error {
 	return render(c, exerciseview.ShowCategoriesIndex(categories))
 }
 
-func (h *ExerciseHandler) getExerciseCreationForm(c echo.Context) (data.ExerciseCreationForm, error) {
+func (h *ExerciseHandler) getExerciseUpsertForm(c echo.Context) (*data.ExerciseUpsertForm, error) {
 
 	authUser, ok := getAuthenticatedUser(c.Request().Context())
 
 	if !ok {
-		return data.ExerciseCreationForm{}, errors.New("No user authenticated. Can't create exercise.")
+		return &data.ExerciseUpsertForm{}, errors.New("No user authenticated.")
 	}
 
 	formPreviewText := c.Request().FormValue("problem_text")
@@ -216,7 +229,7 @@ func (h *ExerciseHandler) getExerciseCreationForm(c echo.Context) (data.Exercise
 	exameYear := c.Request().FormValue("exame_year")
 	exameFase := c.Request().FormValue("exame_fase")
 
-	formResponse := data.ExerciseCreationForm{
+	formResponse := data.ExerciseUpsertForm{
 		ProblemText: formPreviewText,
 		Choices:     choices,
 		Category: data.ExerciseCategory{
@@ -228,12 +241,12 @@ func (h *ExerciseHandler) getExerciseCreationForm(c echo.Context) (data.Exercise
 		CreatedBy: authUser.Id,
 	}
 
-	return formResponse, nil
+	return &formResponse, nil
 
 }
 
 func (h *ExerciseHandler) exercisePreviewShow(c echo.Context) error {
-	exerciseForm, err := h.getExerciseCreationForm(c)
+	exerciseForm, err := h.getExerciseUpsertForm(c)
 
 	if err != nil {
 		return err
@@ -249,7 +262,7 @@ func (h *ExerciseHandler) exercisePreviewShow(c echo.Context) error {
 }
 
 func (h *ExerciseHandler) exerciseSaveConfirmationPreviewShow(c echo.Context) error {
-	exerciseForm, err := h.getExerciseCreationForm(c)
+	exerciseForm, err := h.getExerciseUpsertForm(c)
 
 	if err != nil {
 		return err
@@ -259,7 +272,7 @@ func (h *ExerciseHandler) exerciseSaveConfirmationPreviewShow(c echo.Context) er
 }
 
 func (h *ExerciseHandler) saveExercise(c echo.Context) error {
-	exerciseForm, err := h.getExerciseCreationForm(c)
+	exerciseForm, err := h.getExerciseUpsertForm(c)
 
 	if err != nil {
 		return err

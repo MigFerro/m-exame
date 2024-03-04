@@ -41,6 +41,50 @@ func (s *ExerciseService) GetExerciseWithChoices(exerciseId string) data.Exercis
 	return exerciseWithChoices
 }
 
+func (s *ExerciseService) GetExerciseUpsertForm(exerciseId string) *data.ExerciseUpsertForm {
+	exerciseWithChoices := s.GetExerciseWithChoices(exerciseId)
+
+	catRow := s.DB.QueryRowx(
+		`SELECT * FROM exercise_categories
+		WHERE iid = $1`, exerciseWithChoices.Exercise.CategoryIid)
+
+	var cat entities.ExerciseCategoryEntity
+	err := catRow.StructScan(&cat)
+
+	var choices []entities.ExerciseChoiceEntity
+	err = s.DB.Select(&choices,
+		`SELECT * FROM exercise_choices
+		WHERE exercise_id = $1`, exerciseWithChoices.Exercise.Id)
+
+	if err != nil {
+		fmt.Println("Error retrieving exercise from database: ", err)
+	}
+
+	formChoices := []data.ExerciseChoice{}
+	var c data.ExerciseChoice
+	for _, choice := range choices {
+		c = data.ExerciseChoice{
+			Value:      choice.Value,
+			IsSolution: choice.IsSolution,
+		}
+		formChoices = append(formChoices, c)
+	}
+
+	form := data.ExerciseUpsertForm{
+		Id:          exerciseWithChoices.Exercise.Id.String(),
+		ProblemText: exerciseWithChoices.Exercise.ProblemText,
+		ExameYear:   exerciseWithChoices.Exercise.ExameYear,
+		ExameFase:   exerciseWithChoices.Exercise.ExameFase,
+		Category: data.ExerciseCategory{
+			Iid:      cat.Iid,
+			Category: cat.Category,
+		},
+		Choices: formChoices,
+	}
+
+	return &form
+}
+
 func (s *ExerciseService) GetPreviouslyAttemptedExercise(exerciseId string, userId string) string {
 
 	exerciseUserRow := s.DB.QueryRowx(
@@ -64,7 +108,7 @@ func (s *ExerciseService) GetRandomExerciseId() string {
 	return exerciseId
 }
 
-func (s *ExerciseService) SaveExercise(exerciseForm data.ExerciseCreationForm) error {
+func (s *ExerciseService) SaveExercise(exerciseForm *data.ExerciseUpsertForm) error {
 	// Begin transaction
 	tx := s.DB.MustBegin()
 	res := tx.QueryRow("INSERT INTO exercises (problem_text, category_iid, exame, fase, created_by) VALUES ($1, $2, $3, $4, $5) RETURNING id", exerciseForm.ProblemText, exerciseForm.Category.Iid, exerciseForm.ExameYear, exerciseForm.ExameFase, exerciseForm.CreatedBy)
