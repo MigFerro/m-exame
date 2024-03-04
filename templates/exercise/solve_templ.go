@@ -56,7 +56,7 @@ func SolvedResult(result data.ExerciseSolved) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(fmt.Sprintf("%v", templ.URL("/"+result.NextId))))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(fmt.Sprintf("%v", templ.URL("/home/"+result.NextId))))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

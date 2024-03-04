@@ -30,7 +30,7 @@ func main() {
 	authHandler := handlers.AuthHandler{UserService: &userService}
 
 	app.GET("/", homeHandler.HomeShow)
-	app.GET("/:id", homeHandler.HomeShow)
+	app.GET("/home/:id", homeHandler.HomeShow)
 
 	// auth
 	app.GET("/auth/:provider", authHandler.GetAuthProvider)
@@ -41,6 +41,7 @@ func main() {
 	app.GET("/exercises", exerciseHandler.ShowExerciseList)
 	app.GET("/exercises/create", exerciseHandler.ShowExerciseCreate)
 	app.POST("/exercises/create", exerciseHandler.HandleExerciseCreateJourney)
+	app.GET("/exercises/update/:id", exerciseHandler.ShowExerciseUpdate)
 	app.GET("/exercises/:id", exerciseHandler.ShowExerciseDetail)
 	app.GET("/exercises/:id/home", exerciseHandler.ShowExerciseHomepage)
 	app.POST("/exercises/:id/solve", exerciseHandler.HandleExerciseSolve)

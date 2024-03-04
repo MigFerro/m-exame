@@ -57,6 +57,19 @@ func (h *ExerciseHandler) ShowExerciseCreate(c echo.Context) error {
 	return render(c, exerciseview.ShowCreate(form, categories))
 }
 
+func (h *ExerciseHandler) ShowExerciseUpdate(c echo.Context) error {
+	exerciseId := c.Param("id")
+
+	exercise := h.ExerciseService.GetExerciseWithChoices(exerciseId)
+	categories, err := h.ExerciseService.GetAllCategories()
+
+	if err != nil {
+		return err
+	}
+
+	return render(c, exerciseview.ShowUpdate(exercise, categories))
+}
+
 func (h *ExerciseHandler) ShowExerciseList(c echo.Context) error {
 
 	var exercises []entities.ExerciseEntity

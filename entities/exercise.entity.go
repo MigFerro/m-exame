@@ -35,6 +35,7 @@ type ExerciseCategoryEntity struct {
 	Category  string       `db:"category"`
 	CreatedAt time.Time    `db:"created_at"`
 	UpdatedAt sql.NullTime `db:"updated_at"`
+	Year      string       `db:"year"`
 }
 
 type ExerciseUserEntity struct {
