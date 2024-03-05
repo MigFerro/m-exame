@@ -75,6 +75,10 @@ templ ShowSaveConfirmationPreview(form *data.ExerciseUpsertForm) {
         <form method="post">
             <div class="">
 
+                if form.Id != "" {
+                    <input type="hidden" id="id" name="id" value={ form.Id } />
+                }
+
                 <input type="hidden" id="problem_text" name="problem_text" value={ form.ProblemText } />
 
                 for _, line := range strings.Split(form.ProblemText, "\n") {

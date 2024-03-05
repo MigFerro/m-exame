@@ -32,6 +32,7 @@ type ExerciseWithChoices struct {
 }
 
 type ExerciseChoice struct {
+	Id         uuid.UUID
 	Value      string
 	IsSolution bool
 }
@@ -49,4 +50,5 @@ type ExerciseUpsertForm struct {
 	ExameYear   string
 	ExameFase   string
 	CreatedBy   uuid.UUID
+	UpdatedBy   uuid.UUID
 }

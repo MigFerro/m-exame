@@ -15,6 +15,10 @@ templ ShowUpdate(exercise *data.ExerciseUpsertForm, categories []entities.Exerci
             <div class="flex justify-between">
                 <div class="w-1/2 shrink container">
                     <form method="POST" id="exercise_update_form">
+                        if exercise.Id != "" {
+                            <input type="hidden" id="" name="id" value={ exercise.Id } />
+                        }
+
                         if exercise.ProblemText == "" {
                             <textarea class="border border-slate-300 px-5 py-5 w-full h-[15em]" id="problem_text" name="problem_text"
                             placeholder="Escreve aqui o texto do exercício...">
@@ -43,7 +47,7 @@ templ ShowUpdate(exercise *data.ExerciseUpsertForm, categories []entities.Exerci
                         </div>
                         <div class="pt-5">
                             <label for="category">Categoria</label>
-                            <select name="category" id="category" form="exercise_create_form">
+                            <select name="category" id="category" form="exercise_update_form">
                                 for _, cat := range categories {
                                     <option value={ strconv.Itoa(cat.Iid) }>{ cat.Category }</option>
                                 }

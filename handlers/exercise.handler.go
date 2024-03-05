@@ -21,6 +21,7 @@ type ExerciseHandler struct {
 
 func (h *ExerciseHandler) HandleExerciseUpsertJourney(c echo.Context) error {
 	formAction := c.Request().FormValue("action")
+	exerciseId := c.Param("id")
 
 	if formAction == "preview" {
 		return h.exercisePreviewShow(c)
@@ -31,7 +32,6 @@ func (h *ExerciseHandler) HandleExerciseUpsertJourney(c echo.Context) error {
 	}
 
 	if formAction == "back" {
-		exerciseId := c.Param("id")
 		if exerciseId != "" {
 			return h.ShowExerciseUpdateBack(c)
 		}
@@ -59,12 +59,20 @@ func (h *ExerciseHandler) ShowExerciseCreate(c echo.Context) error {
 func (h *ExerciseHandler) ShowExerciseUpdate(c echo.Context) error {
 	exerciseId := c.Param("id")
 
+	authUser, ok := getAuthenticatedUser(c.Request().Context())
+
+	if !ok {
+		return errors.New("No user authenticated.")
+	}
+
 	exercise := h.ExerciseService.GetExerciseUpsertForm(exerciseId)
 	categories, err := h.ExerciseService.GetAllCategories()
 
 	if err != nil {
 		return err
 	}
+
+	exercise.UpdatedBy = authUser.Id
 
 	return render(c, exerciseview.ShowUpdate(exercise, categories))
 }
@@ -198,7 +206,6 @@ func (h *ExerciseHandler) ShowExerciseCategoriesList(c echo.Context) error {
 }
 
 func (h *ExerciseHandler) getExerciseUpsertForm(c echo.Context) (*data.ExerciseUpsertForm, error) {
-
 	authUser, ok := getAuthenticatedUser(c.Request().Context())
 
 	if !ok {
@@ -239,6 +246,12 @@ func (h *ExerciseHandler) getExerciseUpsertForm(c echo.Context) (*data.ExerciseU
 		ExameYear: exameYear,
 		ExameFase: exameFase,
 		CreatedBy: authUser.Id,
+		UpdatedBy: authUser.Id,
+	}
+
+	exerciseId := c.Param("id")
+	if exerciseId != "" {
+		formResponse.Id = exerciseId
 	}
 
 	return &formResponse, nil
@@ -273,12 +286,21 @@ func (h *ExerciseHandler) exerciseSaveConfirmationPreviewShow(c echo.Context) er
 
 func (h *ExerciseHandler) saveExercise(c echo.Context) error {
 	exerciseForm, err := h.getExerciseUpsertForm(c)
+	exerciseId := c.Param("id")
 
 	if err != nil {
 		return err
 	}
 
-	err = h.ExerciseService.SaveExercise(exerciseForm)
+	if exerciseId != "" {
+		err = h.ExerciseService.UpdateExercise(exerciseForm)
+	} else {
+		err = h.ExerciseService.SaveExercise(exerciseForm)
+	}
+
+	if err != nil {
+		return err
+	}
 
 	return render(c, exerciseview.ExerciseSavedSuccessShow())
 }

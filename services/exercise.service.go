@@ -1,8 +1,10 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/MigFerro/exame/data"
 	"github.com/MigFerro/exame/entities"
@@ -64,6 +66,7 @@ func (s *ExerciseService) GetExerciseUpsertForm(exerciseId string) *data.Exercis
 	var c data.ExerciseChoice
 	for _, choice := range choices {
 		c = data.ExerciseChoice{
+			Id:         choice.Id,
 			Value:      choice.Value,
 			IsSolution: choice.IsSolution,
 		}
@@ -130,6 +133,45 @@ func (s *ExerciseService) SaveExercise(exerciseForm *data.ExerciseUpsertForm) er
 
 	query := fmt.Sprintf("INSERT INTO exercise_choices (value, is_solution, created_by, exercise_id) VALUES %s", strings.Join(valueStrings, ","))
 	tx.MustExec(query, valueArgs...)
+
+	// End transaction
+	tx.Commit()
+
+	return nil
+}
+
+func (s *ExerciseService) UpdateExercise(exerciseForm *data.ExerciseUpsertForm) error {
+	if exerciseForm.Id == "" {
+		return errors.New("no valid exercise id")
+	}
+
+	now := time.Now()
+
+	// Begin transaction
+	tx := s.DB.MustBegin()
+
+	// Save exercise
+	_, err := tx.Exec(`UPDATE exercises
+		SET (problem_text, category_iid, exame, fase, updated_by, updated_at) = ($1, $2, $3, $4, $5, $6)
+		WHERE id = $7`, exerciseForm.ProblemText, exerciseForm.Category.Iid, exerciseForm.ExameYear, exerciseForm.ExameFase, exerciseForm.UpdatedBy, now, exerciseForm.Id)
+
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	// Save exercise choices
+	for _, choice := range exerciseForm.Choices {
+		_, err = tx.Exec(`UPDATE exercise_choices SET
+			(value, is_solution, updated_by, updated_at) = ($1, $2, $3, $4)
+			WHERE id = $5
+		`, choice.Value, choice.IsSolution, exerciseForm.UpdatedBy, now, choice.Id)
+
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+	}
 
 	// End transaction
 	tx.Commit()

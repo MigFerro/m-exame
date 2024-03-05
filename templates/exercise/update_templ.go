@@ -42,6 +42,20 @@ func ShowUpdate(exercise *data.ExerciseUpsertForm, categories []entities.Exercis
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
+			if exercise.Id != "" {
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<input type=\"hidden\" id=\"\" name=\"id\" value=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(exercise.Id))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
 			if exercise.ProblemText == "" {
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<textarea class=\"border border-slate-300 px-5 py-5 w-full h-[15em]\" id=\"problem_text\" name=\"problem_text\" placeholder=\"Escreve aqui o texto do exercício...\"></textarea>")
 				if templ_7745c5c3_Err != nil {
@@ -182,7 +196,7 @@ func ShowUpdate(exercise *data.ExerciseUpsertForm, categories []entities.Exercis
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</label> <select name=\"category\" id=\"category\" form=\"exercise_create_form\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</label> <select name=\"category\" id=\"category\" form=\"exercise_update_form\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
