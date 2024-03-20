@@ -8,7 +8,6 @@ import (
 	"github.com/MigFerro/exame/data"
 	"github.com/MigFerro/exame/local"
 	"github.com/MigFerro/exame/services"
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/markbates/goth/gothic"
 )
@@ -44,13 +43,11 @@ func (h *AuthHandler) Login(c echo.Context) error {
 		return err
 	}
 
-	userExistsInDB := h.UserService.UserExistsInDB(gothUser.UserID)
-
-	var dbUserId uuid.UUID
+	dbUser, userExistsInDB := h.UserService.UserExistsInDB(gothUser.UserID)
 
 	if !userExistsInDB {
 
-		dbUserId, err = h.UserService.CreateUserFromGoth(gothUser)
+		dbUser, err = h.UserService.CreateUserFromGoth(gothUser)
 
 		if err != nil {
 			fmt.Println("error creating user in DB after login. ", err)
@@ -59,11 +56,13 @@ func (h *AuthHandler) Login(c echo.Context) error {
 	}
 
 	loggedUser := data.LoggedUser{
-		Id:     dbUserId,
+		Id:     dbUser.Id,
 		AuthId: gothUser.UserID,
 		Email:  gothUser.Email,
 		Name:   gothUser.Name,
 	}
+
+	fmt.Println(loggedUser)
 
 	err = local.SaveLoggedUser(loggedUser, c, ctx)
 

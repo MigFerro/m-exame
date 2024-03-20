@@ -10,9 +10,9 @@ import (
 type UserRoleEnum string
 
 const (
-	Student UserRoleEnum = "STUDENT"
-	Prof    UserRoleEnum = "PROF"
-	Admin   UserRoleEnum = "ADMIN"
+	Student UserRoleEnum = "student"
+	Prof    UserRoleEnum = "prof"
+	Admin   UserRoleEnum = "admin"
 )
 
 type UserEntity struct {

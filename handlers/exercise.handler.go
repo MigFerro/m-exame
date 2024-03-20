@@ -10,6 +10,7 @@ import (
 	"github.com/MigFerro/exame/data"
 	"github.com/MigFerro/exame/entities"
 	"github.com/MigFerro/exame/services"
+	errorsview "github.com/MigFerro/exame/templates/errors"
 	exerciseview "github.com/MigFerro/exame/templates/exercise"
 	homeview "github.com/MigFerro/exame/templates/home"
 	"github.com/labstack/echo/v4"
@@ -17,6 +18,7 @@ import (
 
 type ExerciseHandler struct {
 	ExerciseService *services.ExerciseService
+	UsersService    *services.UserService
 }
 
 func (h *ExerciseHandler) HandleExerciseUpsertJourney(c echo.Context) error {
@@ -46,6 +48,14 @@ func (h *ExerciseHandler) HandleExerciseUpsertJourney(c echo.Context) error {
 }
 
 func (h *ExerciseHandler) ShowExerciseCreate(c echo.Context) error {
+	authUser, _ := getAuthenticatedUser(c.Request().Context())
+
+	userRole := h.UsersService.GetUserRole(authUser.Id)
+
+	if userRole != "admin" {
+		return render(c, errorsview.PermissionDenied())
+	}
+
 	exerciseForm, err := h.getExerciseUpsertForm(c)
 	categories, err := h.ExerciseService.GetAllCategories()
 
@@ -57,13 +67,15 @@ func (h *ExerciseHandler) ShowExerciseCreate(c echo.Context) error {
 }
 
 func (h *ExerciseHandler) ShowExerciseUpdate(c echo.Context) error {
-	exerciseId := c.Param("id")
+	authUser, _ := getAuthenticatedUser(c.Request().Context())
 
-	authUser, ok := getAuthenticatedUser(c.Request().Context())
+	userRole := h.UsersService.GetUserRole(authUser.Id)
 
-	if !ok {
-		return errors.New("No user authenticated.")
+	if userRole != "admin" {
+		return render(c, errorsview.PermissionDenied())
 	}
+
+	exerciseId := c.Param("id")
 
 	exercise := h.ExerciseService.GetExerciseUpsertForm(exerciseId)
 	categories, err := h.ExerciseService.GetAllCategories()
@@ -78,6 +90,14 @@ func (h *ExerciseHandler) ShowExerciseUpdate(c echo.Context) error {
 }
 
 func (h *ExerciseHandler) ShowExerciseUpdateBack(c echo.Context) error {
+	authUser, _ := getAuthenticatedUser(c.Request().Context())
+
+	userRole := h.UsersService.GetUserRole(authUser.Id)
+
+	if userRole != "admin" {
+		return render(c, errorsview.PermissionDenied())
+	}
+
 	exerciseId := c.Param("id")
 	exerciseForm, _ := h.getExerciseUpsertForm(c)
 	categories, err := h.ExerciseService.GetAllCategories()

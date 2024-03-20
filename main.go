@@ -26,7 +26,7 @@ func main() {
 	userService := services.UserService{DB: sqlxDB}
 
 	homeHandler := handlers.HomeHandler{ExerciseService: &exerciseService}
-	exerciseHandler := handlers.ExerciseHandler{ExerciseService: &exerciseService}
+	exerciseHandler := handlers.ExerciseHandler{ExerciseService: &exerciseService, UsersService: &userService}
 	authHandler := handlers.AuthHandler{UserService: &userService}
 
 	app.GET("/", homeHandler.HomeShow)
@@ -40,14 +40,15 @@ func main() {
 	//exercises
 	app.GET("/exercises", exerciseHandler.ShowExerciseList)
 	app.GET("/exercises/create", exerciseHandler.ShowExerciseCreate)
-	app.POST("/exercises/create", exerciseHandler.HandleExerciseUpsertJourney)
 	app.GET("/exercises/:id/update", exerciseHandler.ShowExerciseUpdate)
-	app.POST("/exercises/:id/update", exerciseHandler.HandleExerciseUpsertJourney)
 	app.GET("/exercises/:id", exerciseHandler.ShowExerciseDetail)
 	app.GET("/exercises/:id/home", exerciseHandler.ShowExerciseHomepage)
-	app.POST("/exercises/:id/solve", exerciseHandler.HandleExerciseSolve)
 	app.GET("/exercises/:id/choices", exerciseHandler.ShowExerciseChoices)
 	app.GET("/exercises/categories", exerciseHandler.ShowExerciseCategoriesList)
+
+	app.POST("/exercises/create", exerciseHandler.HandleExerciseUpsertJourney)
+	app.POST("/exercises/:id/update", exerciseHandler.HandleExerciseUpsertJourney)
+	app.POST("/exercises/:id/solve", exerciseHandler.HandleExerciseSolve)
 
 	app.Start(":3000")
 }
