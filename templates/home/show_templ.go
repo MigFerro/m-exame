@@ -16,6 +16,7 @@ import (
 	"github.com/MigFerro/exame/data"
 	exerciseview "github.com/MigFerro/exame/templates/exercise"
 	"github.com/MigFerro/exame/templates/layouts"
+	templateutils "github.com/MigFerro/exame/templates/utils"
 )
 
 func Show(exercise data.ExerciseWithChoices) templ.Component {
@@ -155,7 +156,7 @@ func HomepageExercise(exercise data.ExerciseWithChoices) templ.Component {
 			templ_7745c5c3_Var12 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"mt-10 flex bg-slate-200 rounded-xl p-5\" id=\"exercise-container\"><div class=\"w-[60%] pr-[10%]\"><h2 class=\"text-3xl font-bold text-gray-900 pb-11\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"mt-10 flex bg-slate-200 rounded-xl p-5\" id=\"exercise-container\"><div class=\"w-[60%] pr-[10%] relative\"><h2 class=\"text-3xl font-bold text-gray-900 pb-11\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -183,7 +184,25 @@ func HomepageExercise(exercise data.ExerciseWithChoices) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"h-[25em] w-px self-stretch bg-gradient-to-tr from-transparent via-neutral-600 to-transparent opacity-20 dark:opacity-100\"></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"absolute inset-x-0 bottom-0 pb-5\"><p class=\"italic pb-5\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var15 string = templateutils.GetExameString(exercise.Exercise.ExameYear, exercise.Exercise.ExameFase)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p><div class=\"inline-flex items-center justify-between p-1.5 text-gray-100 bg-blue-950 border border-gray-200 rounded-lg\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var16 string = exercise.Category
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div></div><div class=\"h-[25em] w-px self-stretch bg-gradient-to-tr from-transparent via-neutral-600 to-transparent opacity-20 dark:opacity-100\"></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

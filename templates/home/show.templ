@@ -4,6 +4,7 @@ import (
     "strings"
 
     "github.com/MigFerro/exame/data"
+    templateutils "github.com/MigFerro/exame/templates/utils"
     "github.com/MigFerro/exame/templates/layouts"
     exerciseview "github.com/MigFerro/exame/templates/exercise"
 )
@@ -54,19 +55,26 @@ templ Show(exercise data.ExerciseWithChoices) {
 
 templ HomepageExercise(exercise data.ExerciseWithChoices) {
         <div class="mt-10 flex bg-slate-200 rounded-xl p-5" id="exercise-container">
-            <div class="w-[60%] pr-[10%]">
-            <h2 class="text-3xl font-bold text-gray-900 pb-11"> Exercício: </h2>
+            <div class="w-[60%] pr-[10%] relative">
+                <h2 class="text-3xl font-bold text-gray-900 pb-11"> Exercício: </h2>
+                
+                for _, line := range strings.Split(exercise.Exercise.ProblemText, "\n") {
+                    <p>{line}<br /></p>
+                }
 
-            for _, line := range strings.Split(exercise.Exercise.ProblemText, "\n") {
-                <p>{line}<br /></p>
-            }
+                <div class="absolute inset-x-0 bottom-0 pb-5">
+                    <p class="italic pb-5">{ templateutils.GetExameString(exercise.Exercise.ExameYear, exercise.Exercise.ExameFase) }</p>
+
+                    <div class="inline-flex items-center justify-between p-1.5 text-gray-100 bg-blue-950 border border-gray-200 rounded-lg">
+                        { exercise.Category }
+                    </div>
+                </div>
 
             </div>
 
             <div class="h-[25em] w-px self-stretch bg-gradient-to-tr from-transparent via-neutral-600 to-transparent opacity-20 dark:opacity-100"></div>
 
             @exerciseview.ShowExerciseChoices(data.ExerciseChoices{ Choices: exercise.Choices, ExerciseId: exercise.Exercise.Id.String() }) {}
-
 
         </div>
 }

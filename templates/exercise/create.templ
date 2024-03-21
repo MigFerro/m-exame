@@ -5,6 +5,7 @@ import (
     "strconv"
 
     "github.com/MigFerro/exame/templates/layouts"
+    templateutils "github.com/MigFerro/exame/templates/utils"
     "github.com/MigFerro/exame/entities"
     "github.com/MigFerro/exame/data"
 )
@@ -79,11 +80,18 @@ templ ShowSaveConfirmationPreview(form *data.ExerciseUpsertForm) {
                     <input type="hidden" id="id" name="id" value={ form.Id } />
                 }
 
-                <input type="hidden" id="problem_text" name="problem_text" value={ form.ProblemText } required/>
+                <input type="hidden" id="problem_text" name="problem_text" value={ form.ProblemText } />
 
                 for _, line := range strings.Split(form.ProblemText, "\n") {
                     <p>{line}<br /></p>
                 }
+
+                <p class="italic pb-5">{ templateutils.GetExameString(form.ExameYear, form.ExameFase) }<br /></p>
+
+                <div class="inline-flex items-center justify-between p-1.5 text-gray-100 bg-blue-950 border border-gray-200 rounded-lg">
+                    { form.Category.Category }
+                </div>
+
                 <div class="grid grid-cols-4 pt-7 w-1/2">
                     for i, choice := range form.Choices {
                         <div class="flex">
@@ -101,6 +109,8 @@ templ ShowSaveConfirmationPreview(form *data.ExerciseUpsertForm) {
                     }
                 </div>
             </div>
+
+
             <div class="pt-5">
                 <input type="hidden" id="exame_year" name="exame_year" value={ form.ExameYear }/>
                 <input type="hidden" id="exame_fase" name="exame_fase" value={ form.ExameFase }/>
@@ -118,7 +128,7 @@ templ ShowSaveConfirmationPreview(form *data.ExerciseUpsertForm) {
 templ ExerciseSavedSuccessShow() {
     @layouts.Base(layouts.BaseOptions{ WithLatex: false, WithHTMX: false }) {
         <div class="pt-5">
-            <p>O exercício foi criado com sucesso!</p>
+            <p>O exercício foi guardado com sucesso!</p>
         </div>
     }
     

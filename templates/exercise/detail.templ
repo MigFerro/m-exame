@@ -5,6 +5,7 @@ import (
     "fmt"
 
     "github.com/MigFerro/exame/templates/layouts"
+    templateutils "github.com/MigFerro/exame/templates/utils"
     "github.com/MigFerro/exame/data"
 )
 
@@ -17,6 +18,12 @@ templ ShowDetail(exercise data.ExerciseWithChoices) {
                 for _, line := range strings.Split(exercise.Exercise.ProblemText, "\n") {
                     <p>{line}<br /></p>
                 }
+
+                <p class="italic pb-5">{ templateutils.GetExameString(exercise.Exercise.ExameYear, exercise.Exercise.ExameFase) }</p>
+
+                <div class="inline-flex items-center justify-between p-1.5 text-gray-100 bg-blue-950 border border-gray-200 rounded-lg">
+                    { exercise.Category }
+                </div>
             </div>
 
             <div id="choices-container">

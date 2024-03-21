@@ -27,6 +27,7 @@ type ExerciseSolved struct {
 type ExerciseWithChoices struct {
 	Choices  []entities.ExerciseChoiceEntity
 	Exercise entities.ExerciseEntity
+	Category string
 	PrevId   string
 	NextId   string
 }

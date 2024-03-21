@@ -46,6 +46,20 @@ func (s *ExerciseService) GetExerciseWithChoices(exerciseId string) (data.Exerci
 		Exercise: exercise,
 	}
 
+	catRow := s.DB.QueryRowx(
+		`SELECT category FROM exercise_categories
+		WHERE iid = $1`, exercise.CategoryIid)
+
+	var category string
+	err = catRow.Scan(&category)
+
+	if err != nil {
+		fmt.Println("Error retrieving category from database: ", err)
+		return data.ExerciseWithChoices{}, err
+	}
+
+	exerciseWithChoices.Category = category
+
 	return exerciseWithChoices, nil
 }
 

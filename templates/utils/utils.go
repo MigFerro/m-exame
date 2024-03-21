@@ -13,3 +13,7 @@ func GetAuthenticatedUserName(c context.Context) string {
 	}
 	return authUser.Name
 }
+
+func GetExameString(exameYear string, exameFase string) string {
+	return "Exame Nacional de " + exameYear + ", " + exameFase + "ª fase"
+}
