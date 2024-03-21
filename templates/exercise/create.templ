@@ -21,20 +21,20 @@ templ ShowCreate(form *data.ExerciseUpsertForm, categories []entities.ExerciseCa
                     <form method="post" id="exercise_create_form">
                         if form.ProblemText == "" {
                             <textarea class="border border-slate-300 px-5 py-5 w-full h-[15em]" id="problem_text" name="problem_text"
-                            placeholder="Escreve aqui o texto do exercício...">
+                            placeholder="Escreve aqui o texto do exercício..." required>
                             </textarea>
                         } else {
-                            <textarea class="border border-slate-300 px-5 py-5 w-full h-[15em]" id="problem_text" name="problem_text" rows="20" cols="50">
+                            <textarea class="border border-slate-300 px-5 py-5 w-full h-[15em]" id="problem_text" name="problem_text" rows="20" cols="50" required>
                                 { form.ProblemText }
                             </textarea>
                         }
                         <div class="pt-5">
                             for i, choice := range form.Choices {
-                                <input type="text" id={ "choice" + strconv.Itoa(i) } name={ "choice" + strconv.Itoa(i) } value={ choice.Value } class="border border-slate-300 px-2 py-2"/>
+                                <input type="text" id={ "choice" + strconv.Itoa(i) } name={ "choice" + strconv.Itoa(i) } value={ choice.Value } class="border border-slate-300 px-2 py-2" required/>
                                 if choice.IsSolution {
                                     <input type="radio" id={ "choice" + strconv.Itoa(i) } value={ strconv.Itoa(i) } name="choice_solution" checked="checked"/>
                                 } else {
-                                    <input type="radio" id={ "choice" + strconv.Itoa(i) } value={ strconv.Itoa(i) } name="choice_solution" />
+                                    <input type="radio" id={ "choice" + strconv.Itoa(i) } value={ strconv.Itoa(i) } name="choice_solution"/>
                                 }
                             }
                         </div>
@@ -79,7 +79,7 @@ templ ShowSaveConfirmationPreview(form *data.ExerciseUpsertForm) {
                     <input type="hidden" id="id" name="id" value={ form.Id } />
                 }
 
-                <input type="hidden" id="problem_text" name="problem_text" value={ form.ProblemText } />
+                <input type="hidden" id="problem_text" name="problem_text" value={ form.ProblemText } required/>
 
                 for _, line := range strings.Split(form.ProblemText, "\n") {
                     <p>{line}<br /></p>
@@ -88,12 +88,16 @@ templ ShowSaveConfirmationPreview(form *data.ExerciseUpsertForm) {
                     for i, choice := range form.Choices {
                         <div class="flex">
                             <p class="font-bold">{ []string{"(A) ", "(B) ", "(C) ", "(D) "}[i] }</p>
-                            <p class="pl-5">{ choice.Value }<br /></p>
+                            if choice.IsSolution {
+                                <p class="pl-5 text-blue-500">{ choice.Value }<br /></p>
+                                <input type="hidden" id={ "choice" + strconv.Itoa(i) } name="choice_solution" value={ strconv.Itoa(i) } />
+                            } else {
+                                <p class="pl-5">{ choice.Value }<br /></p>
+                            }
+
+                            <input type="hidden" id={ "choice" + strconv.Itoa(i) } name={ "choice" + strconv.Itoa(i) } value={ choice.Value } />
+                            
                         </div>
-                        <input type="hidden" id={ "choice" + strconv.Itoa(i) } name={ "choice" + strconv.Itoa(i) } value={ choice.Value } />
-                        if choice.IsSolution {
-                            <input type="hidden" id={ "choice" + strconv.Itoa(i) } name="choice_solution" value={ strconv.Itoa(i) } />
-                        }
                     }
                 </div>
             </div>

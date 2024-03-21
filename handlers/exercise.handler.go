@@ -77,7 +77,11 @@ func (h *ExerciseHandler) ShowExerciseUpdate(c echo.Context) error {
 
 	exerciseId := c.Param("id")
 
-	exercise := h.ExerciseService.GetExerciseUpsertForm(exerciseId)
+	exercise, err := h.ExerciseService.GetExerciseUpsertForm(exerciseId)
+	if err != nil {
+		return err
+	}
+
 	categories, err := h.ExerciseService.GetAllCategories()
 
 	if err != nil {
@@ -127,7 +131,7 @@ func (h *ExerciseHandler) ShowExerciseList(c echo.Context) error {
 func (h *ExerciseHandler) ShowExerciseHomepage(c echo.Context) error {
 	exerciseId := c.Param("id")
 
-	exercise := h.ExerciseService.GetExerciseWithChoices(exerciseId)
+	exercise, _ := h.ExerciseService.GetExerciseWithChoices(exerciseId)
 
 	return render(c, homeview.HomepageExercise(exercise))
 }
@@ -135,7 +139,7 @@ func (h *ExerciseHandler) ShowExerciseHomepage(c echo.Context) error {
 func (h *ExerciseHandler) ShowExerciseDetail(c echo.Context) error {
 	exerciseId := c.Param("id")
 
-	exercise := h.ExerciseService.GetExerciseWithChoices(exerciseId)
+	exercise, _ := h.ExerciseService.GetExerciseWithChoices(exerciseId)
 
 	return render(c, exerciseview.ShowDetail(exercise))
 }
@@ -235,17 +239,11 @@ func (h *ExerciseHandler) getExerciseUpsertForm(c echo.Context) (*data.ExerciseU
 	formPreviewText := c.Request().FormValue("problem_text")
 	choices := []data.ExerciseChoice{}
 	sol, _ := strconv.Atoi(c.Request().FormValue("choice_solution"))
-	isSol := false
 	for i := 0; i < 4; i++ {
 		value := c.Request().FormValue("choice" + strconv.Itoa(i))
-		if i == sol {
-			isSol = true
-		} else {
-			isSol = false
-		}
 		choices = append(choices, data.ExerciseChoice{
 			Value:      value,
-			IsSolution: isSol,
+			IsSolution: i == sol,
 		})
 	}
 

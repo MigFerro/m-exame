@@ -62,8 +62,6 @@ func (h *AuthHandler) Login(c echo.Context) error {
 		Name:   gothUser.Name,
 	}
 
-	fmt.Println(loggedUser)
-
 	err = local.SaveLoggedUser(loggedUser, c, ctx)
 
 	if err != nil {

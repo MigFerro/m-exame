@@ -16,13 +16,18 @@ type ExerciseService struct {
 	DB *sqlx.DB
 }
 
-func (s *ExerciseService) GetExerciseWithChoices(exerciseId string) data.ExerciseWithChoices {
+func (s *ExerciseService) GetExerciseWithChoices(exerciseId string) (data.ExerciseWithChoices, error) {
 	exerciseRow := s.DB.QueryRowx(
 		`SELECT * FROM exercises
 		WHERE id = $1`, exerciseId)
 
 	var exercise entities.ExerciseEntity
 	err := exerciseRow.StructScan(&exercise)
+
+	if err != nil {
+		fmt.Println("Error retrieving exercise from database: ", err)
+		return data.ExerciseWithChoices{}, err
+	}
 
 	exerciseChoices := []entities.ExerciseChoiceEntity{}
 
@@ -33,6 +38,7 @@ func (s *ExerciseService) GetExerciseWithChoices(exerciseId string) data.Exercis
 
 	if err != nil {
 		fmt.Println("Error retrieving exercise from database: ", err)
+		return data.ExerciseWithChoices{}, err
 	}
 
 	exerciseWithChoices := data.ExerciseWithChoices{
@@ -40,27 +46,28 @@ func (s *ExerciseService) GetExerciseWithChoices(exerciseId string) data.Exercis
 		Exercise: exercise,
 	}
 
-	return exerciseWithChoices
+	return exerciseWithChoices, nil
 }
 
-func (s *ExerciseService) GetExerciseUpsertForm(exerciseId string) *data.ExerciseUpsertForm {
-	exerciseWithChoices := s.GetExerciseWithChoices(exerciseId)
+func (s *ExerciseService) GetExerciseUpsertForm(exerciseId string) (*data.ExerciseUpsertForm, error) {
+	exerciseWithChoices, err := s.GetExerciseWithChoices(exerciseId)
+
+	if err != nil {
+		fmt.Println("Error retrieving exercise from database: ", err)
+		return &data.ExerciseUpsertForm{}, err
+	}
 
 	catRow := s.DB.QueryRowx(
 		`SELECT * FROM exercise_categories
 		WHERE iid = $1`, exerciseWithChoices.Exercise.CategoryIid)
 
 	var cat entities.ExerciseCategoryEntity
-	err := catRow.StructScan(&cat)
+	err = catRow.StructScan(&cat)
 
 	var choices []entities.ExerciseChoiceEntity
 	err = s.DB.Select(&choices,
 		`SELECT * FROM exercise_choices
 		WHERE exercise_id = $1`, exerciseWithChoices.Exercise.Id)
-
-	if err != nil {
-		fmt.Println("Error retrieving exercise from database: ", err)
-	}
 
 	formChoices := []data.ExerciseChoice{}
 	var c data.ExerciseChoice
@@ -85,9 +92,10 @@ func (s *ExerciseService) GetExerciseUpsertForm(exerciseId string) *data.Exercis
 		Choices: formChoices,
 	}
 
-	return &form
+	return &form, nil
 }
 
+// check if this is used
 func (s *ExerciseService) GetPreviouslyAttemptedExercise(exerciseId string, userId string) string {
 
 	exerciseUserRow := s.DB.QueryRowx(
@@ -161,11 +169,24 @@ func (s *ExerciseService) UpdateExercise(exerciseForm *data.ExerciseUpsertForm) 
 	}
 
 	// Save exercise choices
-	for _, choice := range exerciseForm.Choices {
+	dbChoices := []entities.ExerciseChoiceEntity{}
+
+	err = s.DB.Select(&dbChoices,
+		`SELECT * FROM exercise_choices
+		WHERE exercise_id = $1`, exerciseForm.Id)
+
+	if err != nil {
+		fmt.Println("Error retrieving exercise from database: ", err)
+	}
+
+	fmt.Println(exerciseForm.Choices)
+	fmt.Println(dbChoices)
+
+	for i, choice := range exerciseForm.Choices {
 		_, err = tx.Exec(`UPDATE exercise_choices SET
 			(value, is_solution, updated_by, updated_at) = ($1, $2, $3, $4)
 			WHERE id = $5
-		`, choice.Value, choice.IsSolution, exerciseForm.UpdatedBy, now, choice.Id)
+		`, choice.Value, choice.IsSolution, exerciseForm.UpdatedBy, now, dbChoices[i].Id)
 
 		if err != nil {
 			fmt.Println(err)

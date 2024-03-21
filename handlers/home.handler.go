@@ -17,7 +17,7 @@ func (h *HomeHandler) HomeShow(c echo.Context) error {
 		exerciseId = h.ExerciseService.GetRandomExerciseId()
 	}
 
-	exercise := h.ExerciseService.GetExerciseWithChoices(exerciseId)
+	exercise, _ := h.ExerciseService.GetExerciseWithChoices(exerciseId)
 
 	exercises := data.ExerciseWithChoices{
 		Exercise: exercise.Exercise,

@@ -21,16 +21,16 @@ templ ShowUpdate(exercise *data.ExerciseUpsertForm, categories []entities.Exerci
 
                         if exercise.ProblemText == "" {
                             <textarea class="border border-slate-300 px-5 py-5 w-full h-[15em]" id="problem_text" name="problem_text"
-                            placeholder="Escreve aqui o texto do exercício...">
+                            placeholder="Escreve aqui o texto do exercício..." required>
                             </textarea>
                         } else {
-                            <textarea class="border border-slate-300 px-5 py-5 w-full h-[15em]" id="problem_text" name="problem_text" rows="20" cols="50">
+                            <textarea class="border border-slate-300 px-5 py-5 w-full h-[15em]" id="problem_text" name="problem_text" rows="20" cols="50" required>
                                 { exercise.ProblemText }
                             </textarea>
                         }
                         <div class="pt-5">
                             for i, choice := range exercise.Choices {
-                                <input type="text" id={ "choice" + strconv.Itoa(i) } name={ "choice" + strconv.Itoa(i) } value={ choice.Value } class="border border-slate-300 px-2 py-2"/>
+                                <input type="text" id={ "choice" + strconv.Itoa(i) } name={ "choice" + strconv.Itoa(i) } value={ choice.Value } class="border border-slate-300 px-2 py-2" required/>
                                 if choice.IsSolution {
                                     <input type="radio" id={ "choice" + strconv.Itoa(i) } value={ strconv.Itoa(i) } name="choice_solution" checked="checked"/>
                                 } else {
