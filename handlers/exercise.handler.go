@@ -229,6 +229,24 @@ func (h *ExerciseHandler) ShowExerciseCategoriesList(c echo.Context) error {
 	return render(c, exerciseview.ShowCategoriesIndex(categories))
 }
 
+func (h *ExerciseHandler) ShowCreateExerciseCategory(c echo.Context) error {
+	return render(c, exerciseview.ShowCategoryCreate())
+}
+
+func (h *ExerciseHandler) CreateExerciseCategory(c echo.Context) error {
+
+	category := c.Request().FormValue("category")
+	year := c.Request().FormValue("category_year")
+
+	err := h.ExerciseService.SaveCategory(category, year)
+
+	if err != nil {
+		return err
+	}
+
+	return render(c, exerciseview.ShowCategoryCreateSuccess(category, year))
+}
+
 func (h *ExerciseHandler) getExerciseUpsertForm(c echo.Context) (*data.ExerciseUpsertForm, error) {
 	authUser, ok := getAuthenticatedUser(c.Request().Context())
 

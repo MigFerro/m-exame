@@ -1,0 +1,35 @@
+package exerciseview
+
+import (
+    "github.com/MigFerro/exame/templates/layouts"
+)
+
+templ ShowCategoryCreate() {
+    @layouts.Base(layouts.BaseOptions{ WithLatex: false, WithHTMX: false }) {
+        <h1 class="text-2xl font-bold py-5">Criar categoria:</h1>
+        <form class="p-5" method="post" id="category_create_form">
+            <div class="pb-5">
+                <label for="category">Nome da categoria</label><br />
+                <input type="text" id="category" name="category" class="border border-slate-300 px-2 py-2" required/>
+            </div>
+
+            <div>
+                <label for="category_year">Ano escolar</label><br />
+                <input type="text" id="category_year" name="category_year" class="border border-slate-300 px-2 py-2" required/>
+            </div>
+
+            <div class="pt-7">
+                <button class="btn-primary" type="submit" name="action" value="confirm">Confirmar</button>
+            </div>
+        </form>
+    }
+}
+
+templ ShowCategoryCreateSuccess(category string, year string) {
+    @layouts.Base(layouts.BaseOptions{ WithLatex: false, WithHTMX: false }) {
+        <h1 class="py-5 text-xl">Sucesso!</h1>
+        <p class="pt-5">
+            A categoria { category + " (" + year + "º ano)" } foi criada.
+        </p>
+    }
+}

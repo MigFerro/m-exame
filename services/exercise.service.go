@@ -139,7 +139,6 @@ func (s *ExerciseService) SaveExercise(exerciseForm *data.ExerciseUpsertForm) er
 	res := tx.QueryRow("INSERT INTO exercises (problem_text, category_iid, exame, fase, created_by) VALUES ($1, $2, $3, $4, $5) RETURNING id", exerciseForm.ProblemText, exerciseForm.Category.Iid, exerciseForm.ExameYear, exerciseForm.ExameFase, exerciseForm.CreatedBy)
 	var exerciseId uuid.UUID
 	res.Scan(&exerciseId)
-	fmt.Println(exerciseId)
 
 	// Save exercise choices
 	valueStrings := make([]string, 0, len(exerciseForm.Choices))
@@ -193,9 +192,6 @@ func (s *ExerciseService) UpdateExercise(exerciseForm *data.ExerciseUpsertForm) 
 		fmt.Println("Error retrieving exercise from database: ", err)
 	}
 
-	fmt.Println(exerciseForm.Choices)
-	fmt.Println(dbChoices)
-
 	for i, choice := range exerciseForm.Choices {
 		_, err = tx.Exec(`UPDATE exercise_choices SET
 			(value, is_solution, updated_by, updated_at) = ($1, $2, $3, $4)
@@ -224,4 +220,15 @@ func (s *ExerciseService) GetAllCategories() ([]entities.ExerciseCategoryEntity,
 	}
 
 	return categories, nil
+}
+
+func (s *ExerciseService) SaveCategory(category string, year string) error {
+	// Begin transaction
+	tx := s.DB.MustBegin()
+	tx.QueryRow("INSERT INTO exercise_categories (category, year) VALUES ($1, $2)", category, year)
+
+	// End transaction
+	tx.Commit()
+
+	return nil
 }
