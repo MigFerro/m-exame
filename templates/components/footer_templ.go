@@ -25,7 +25,7 @@ func Footer() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<footer class=\"mt-20 pl-[2.5%] pr-[5%] py-[2.5%] bg-slate-300 flex justify-between items-center\"></footer>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<footer class=\"mt-20 pl-[2.5%] pr-[5%] py-[2.5%] bg-slate-400 flex justify-between items-center\"></footer>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
