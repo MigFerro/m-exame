@@ -222,6 +222,36 @@ func (s *ExerciseService) GetAllCategories() ([]entities.ExerciseCategoryEntity,
 	return categories, nil
 }
 
+func (s *ExerciseService) GetExerciseCategory(iid string) (entities.ExerciseCategoryEntity, error) {
+	catRow := s.DB.QueryRowx(
+		`SELECT * FROM exercise_categories
+		WHERE iid = $1`, iid)
+
+	var category entities.ExerciseCategoryEntity
+	err := catRow.StructScan(&category)
+
+	if err != nil {
+		fmt.Println("Error retrieving category from database: ", err)
+		return entities.ExerciseCategoryEntity{}, err
+	}
+
+	return category, nil
+}
+
+func (s *ExerciseService) UpdateCategory(category entities.ExerciseCategoryEntity) error {
+	// Begin transaction
+	tx := s.DB.MustBegin()
+
+	_, err := tx.Exec(`UPDATE exercise_categories
+		SET (category, year) = ($1, $2)
+		WHERE iid = $3`, category.Category, category.Year, category.Iid)
+
+	// End transaction
+	tx.Commit()
+
+	return err
+}
+
 func (s *ExerciseService) SaveCategory(category string, year string) error {
 	// Begin transaction
 	tx := s.DB.MustBegin()

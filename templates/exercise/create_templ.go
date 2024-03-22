@@ -247,7 +247,7 @@ func ShowCreate(form *data.ExerciseUpsertForm, categories []entities.ExerciseCat
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Var10 := `Preview`
+			templ_7745c5c3_Var10 := `Pré-visualização`
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

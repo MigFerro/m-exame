@@ -45,12 +45,15 @@ func main() {
 	app.GET("/exercises/:id/home", exerciseHandler.ShowExerciseHomepage)
 	app.GET("/exercises/:id/choices", exerciseHandler.ShowExerciseChoices)
 	app.GET("/exercises/categories", exerciseHandler.ShowExerciseCategoriesList)
+	app.GET("/exercises/category/:id", exerciseHandler.ShowExerciseCategoryDetail)
 	app.GET("/exercises/category/create", exerciseHandler.ShowCreateExerciseCategory)
+	app.GET("/exercises/category/:id/edit", exerciseHandler.ShowUpdateExerciseCategory)
 
 	app.POST("/exercises/create", exerciseHandler.HandleExerciseUpsertJourney)
 	app.POST("/exercises/:id/update", exerciseHandler.HandleExerciseUpsertJourney)
 	app.POST("/exercises/:id/solve", exerciseHandler.HandleExerciseSolve)
 	app.POST("/exercises/category/create", exerciseHandler.CreateExerciseCategory)
+	app.POST("/exercises/category/:id", exerciseHandler.UpdateExerciseCategory)
 
 	app.Start(":3000")
 }

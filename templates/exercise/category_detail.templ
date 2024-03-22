@@ -1,0 +1,49 @@
+package exerciseview
+
+import (
+    "fmt"
+    "strconv"
+
+    "github.com/MigFerro/exame/templates/layouts"
+    "github.com/MigFerro/exame/entities"
+)
+
+templ categoryDetail(ec entities.ExerciseCategoryEntity, isAdmin bool) {
+    <div id="category-info">
+        <h1 class="pt-5 pb-2.5 text-2xl font-bold">{ ec.Category }</h1>
+        <h2 class="pt-2.5 pb-5"> Ano: { ec.Year } </h2>
+
+        if isAdmin {
+            <div class="btn-primary inline-block p-2.5" hx-get={ fmt.Sprintf("%v", templ.URL("/exercises/category/" + strconv.Itoa(ec.Iid) + "/edit")) } hx-swap="outerHTML" hx-target="#category-info">Edit</div>
+        }
+
+        <div class="py-5">
+            { children... } 
+        </div>
+
+    </div>
+} 
+
+templ ShowCategoryDetail(ec entities.ExerciseCategoryEntity, isAdmin bool) {
+    @layouts.Base(layouts.BaseOptions{ WithLatex: false, WithHTMX: true }) {
+        @categoryDetail(ec, isAdmin) {}
+    }
+}
+
+templ ShowUpdateCategory(ec entities.ExerciseCategoryEntity) {
+    <h1 class="py-5 text-2xl font-bold">Editar categoria</h1>
+    <form id="category-form" method="post">
+        <input type="text" id="category" name="category" value={ ec.Category } class="border border-slate-300 px-2 py-2" required/>
+        <input type="text" id="year" name="year" value={ ec.Year} class="border border-slate-300 px-2 py-2" required/>
+        <button class="btn-primary" type="submit">Guardar</button>
+    </form>
+}
+
+templ ShowUpdateCategorySuccess(ec entities.ExerciseCategoryEntity) {
+
+    @layouts.Base(layouts.BaseOptions{ WithLatex: false, WithHTMX: true }) {
+        @categoryDetail(ec, true) {
+            <p class="text-green-600">Alterações guardadas!</p>
+        }
+    }
+}

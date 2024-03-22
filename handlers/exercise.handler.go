@@ -229,11 +229,90 @@ func (h *ExerciseHandler) ShowExerciseCategoriesList(c echo.Context) error {
 	return render(c, exerciseview.ShowCategoriesIndex(categories))
 }
 
+func (h *ExerciseHandler) ShowExerciseCategoryDetail(c echo.Context) error {
+	authUser, _ := getAuthenticatedUser(c.Request().Context())
+	userRole := h.UsersService.GetUserRole(authUser.Id)
+
+	categoryIid := c.Param("id")
+
+	category, err := h.ExerciseService.GetExerciseCategory(categoryIid)
+
+	if err != nil {
+		return err
+	}
+
+	return render(c, exerciseview.ShowCategoryDetail(category, userRole == "admin"))
+}
+
 func (h *ExerciseHandler) ShowCreateExerciseCategory(c echo.Context) error {
+	authUser, _ := getAuthenticatedUser(c.Request().Context())
+
+	userRole := h.UsersService.GetUserRole(authUser.Id)
+
+	if userRole != "admin" {
+		return render(c, errorsview.PermissionDenied())
+	}
+
 	return render(c, exerciseview.ShowCategoryCreate())
 }
 
+func (h *ExerciseHandler) ShowUpdateExerciseCategory(c echo.Context) error {
+	authUser, _ := getAuthenticatedUser(c.Request().Context())
+
+	userRole := h.UsersService.GetUserRole(authUser.Id)
+
+	if userRole != "admin" {
+		return render(c, errorsview.PermissionDenied())
+	}
+
+	categoryIid := c.Param("id")
+
+	category, err := h.ExerciseService.GetExerciseCategory(categoryIid)
+
+	if err != nil {
+		return err
+	}
+
+	return render(c, exerciseview.ShowUpdateCategory(category))
+}
+
+func (h *ExerciseHandler) UpdateExerciseCategory(c echo.Context) error {
+	authUser, _ := getAuthenticatedUser(c.Request().Context())
+
+	userRole := h.UsersService.GetUserRole(authUser.Id)
+
+	if userRole != "admin" {
+		return render(c, errorsview.PermissionDenied())
+	}
+
+	categoryIid, _ := strconv.Atoi(c.Param("id"))
+	categoryName := c.Request().FormValue("category")
+	year := c.Request().FormValue("year")
+
+	category := entities.ExerciseCategoryEntity{
+		Iid:      categoryIid,
+		Category: categoryName,
+		Year:     year,
+	}
+
+	err := h.ExerciseService.UpdateCategory(category)
+
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	return render(c, exerciseview.ShowUpdateCategorySuccess(category))
+}
+
 func (h *ExerciseHandler) CreateExerciseCategory(c echo.Context) error {
+	authUser, _ := getAuthenticatedUser(c.Request().Context())
+
+	userRole := h.UsersService.GetUserRole(authUser.Id)
+
+	if userRole != "admin" {
+		return render(c, errorsview.PermissionDenied())
+	}
 
 	category := c.Request().FormValue("category")
 	year := c.Request().FormValue("category_year")

@@ -13,6 +13,7 @@ import "bytes"
 import (
 	"github.com/MigFerro/exame/entities"
 	"github.com/MigFerro/exame/templates/layouts"
+	"strconv"
 )
 
 func ShowCategoriesIndex(ecs []entities.ExerciseCategoryEntity) templ.Component {
@@ -34,11 +35,11 @@ func ShowCategoriesIndex(ecs []entities.ExerciseCategoryEntity) templ.Component 
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h1 class=\"py-5 text-xl\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h1 class=\"py-5 text-2xl font-bold\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Var3 := `Exercise Categories List`
+			templ_7745c5c3_Var3 := `Categorias`
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -48,12 +49,21 @@ func ShowCategoriesIndex(ecs []entities.ExerciseCategoryEntity) templ.Component 
 				return templ_7745c5c3_Err
 			}
 			for _, ec := range ecs {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li><a class=\"text-blue-500 underline hover:text-yellow-500\" href=\"/\">")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li class=\"py-1.5\"><a class=\"text-blue-500 underline hover:text-yellow-500\" href=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var4 string = ec.Category
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+				var templ_7745c5c3_Var4 templ.SafeURL = templ.URL("/exercises/category/" + strconv.Itoa(ec.Iid))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var4)))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var5 string = ec.Category
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
