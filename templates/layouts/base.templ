@@ -36,17 +36,17 @@ templ Base(options BaseOptions) {
         </head>
         <body>
             @components.HeaderWithAuthUser(ctx)
-            <div class="px-[15%] h-full">
+
+            <div class="px-[15%] pb-10">
                 { children... }
             </div>
+            
             @components.Footer()
 
             if options.WithHTMX && options.WithLatex {
                 <script>
                     document.addEventListener('htmx:afterSwap', function(event) {
-                        console.log('hi');
                         var div = event.target;
-                        console.log(div);
                         MathJax.startup.promise.then(function() {
                             MathJax.typeset([div]);
                         });

@@ -99,7 +99,7 @@ func Base(options BaseOptions) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"px-[15%] h-full\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"px-[15%] pb-10\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -122,9 +122,7 @@ func Base(options BaseOptions) templ.Component {
 			}
 			templ_7745c5c3_Var6 := `
                     document.addEventListener('htmx:afterSwap', function(event) {
-                        console.log('hi');
                         var div = event.target;
-                        console.log(div);
                         MathJax.startup.promise.then(function() {
                             MathJax.typeset([div]);
                         });
