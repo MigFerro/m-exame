@@ -11,13 +11,11 @@ import "io"
 import "bytes"
 
 import (
-	"strconv"
-
 	"github.com/MigFerro/exame/templates/layouts"
 	"github.com/google/uuid"
 )
 
-func ShowIndex(ids uuid.UUIDs) templ.Component {
+func ShowHistory(ids uuid.UUIDs) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -40,7 +38,7 @@ func ShowIndex(ids uuid.UUIDs) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Var3 := `Exercise List`
+			templ_7745c5c3_Var3 := `Exercise History`
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -49,7 +47,7 @@ func ShowIndex(ids uuid.UUIDs) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			for i, id := range ids {
+			for _, id := range ids {
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li><a class=\"text-blue-500 underline hover:text-yellow-500\" href=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -68,7 +66,7 @@ func ShowIndex(ids uuid.UUIDs) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var6 string = strconv.Itoa(i + 1)
+				var templ_7745c5c3_Var6 string = id.String()
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err

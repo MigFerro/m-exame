@@ -1,20 +1,18 @@
 package exerciseview
 
 import (
-    "strconv"
-
 	"github.com/google/uuid"
     "github.com/MigFerro/exame/templates/layouts"
 )
 
-templ ShowIndex(ids uuid.UUIDs) {
+templ ShowHistory(ids uuid.UUIDs) {
     @layouts.Base(layouts.BaseOptions{ WithLatex: false, WithHTMX: false }) {
-        <h1 class="py-5 text-xl"> Exercise List</h1>
+        <h1 class="py-5 text-xl"> Exercise History</h1>
         <div class="pt-5">
             <ul>
-                for i, id := range ids {
+                for _, id := range ids {
                     <li>
-                        <a class="text-blue-500 underline hover:text-yellow-500" href={ templ.URL("/exercises/" + id.String()) }>Exercise {strconv.Itoa(i+1)}</a>
+                        <a class="text-blue-500 underline hover:text-yellow-500" href={ templ.URL("/exercises/" + id.String()) }>Exercise { id.String() }</a>
                     </li>
                 } 
             </ul>

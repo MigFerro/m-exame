@@ -16,6 +16,45 @@ type ExerciseService struct {
 	DB *sqlx.DB
 }
 
+func (s *ExerciseService) GetExerciseList() (uuid.UUIDs, error) {
+
+	var exerciseIds uuid.UUIDs
+	err := s.DB.Select(&exerciseIds, `SELECT id FROM exercises`)
+
+	return exerciseIds, err
+}
+
+func (s *ExerciseService) GetExerciseListOfCategory(categoryIid string) (uuid.UUIDs, error) {
+
+	var exerciseIds uuid.UUIDs
+	err := s.DB.Select(&exerciseIds, `
+		SELECT id FROM exercises e
+		INNER JOIN exercise_categories ec
+		ON ec.iid = e.category_iid
+		AND ec.iid = $1
+		`, categoryIid)
+
+	return exerciseIds, err
+}
+
+func (s *ExerciseService) GetExerciseHistory(userId uuid.UUID) (uuid.UUIDs, error) {
+
+	var exerciseIds uuid.UUIDs
+	err := s.DB.Select(&exerciseIds,
+		`
+		SELECT exercise_id FROM exercise_users
+		WHERE user_id = $1
+		ORDER BY last_attempted_at DESC
+	`, userId)
+
+	if err != nil {
+		fmt.Println("Error retrieving exercise from database: ", err)
+		return exerciseIds, err
+	}
+
+	return exerciseIds, err
+}
+
 func (s *ExerciseService) GetExerciseWithChoices(exerciseId string) (data.ExerciseWithChoices, error) {
 	exerciseRow := s.DB.QueryRowx(
 		`SELECT * FROM exercises

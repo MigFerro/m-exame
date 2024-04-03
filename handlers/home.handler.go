@@ -11,12 +11,11 @@ type HomeHandler struct {
 }
 
 func (h *HomeHandler) HomeShow(c echo.Context) error {
-	exerciseId := c.Param("id")
-	if exerciseId == "" {
-		exerciseId = h.ExerciseService.GetRandomExerciseId()
-	}
+	return render(c, homeview.Show())
+}
 
-	exercise, _ := h.ExerciseService.GetExerciseWithChoices(exerciseId)
+func (h *HomeHandler) ExameExerciseListShow(c echo.Context) error {
+	showList := c.QueryParam("show")
 
-	return render(c, homeview.Show(exercise))
+	return render(c, homeview.ExameExerciseChoiceList(showList == "show"))
 }

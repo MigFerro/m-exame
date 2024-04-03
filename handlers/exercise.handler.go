@@ -12,7 +12,7 @@ import (
 	"github.com/MigFerro/exame/services"
 	errorsview "github.com/MigFerro/exame/templates/errors"
 	exerciseview "github.com/MigFerro/exame/templates/exercise"
-	homeview "github.com/MigFerro/exame/templates/home"
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
@@ -116,24 +116,29 @@ func (h *ExerciseHandler) ShowExerciseUpdateBack(c echo.Context) error {
 }
 
 func (h *ExerciseHandler) ShowExerciseList(c echo.Context) error {
+	category := c.QueryParam("category")
 
-	var exercises []entities.ExerciseEntity
-	err := h.ExerciseService.DB.Select(&exercises, `SELECT * FROM exercises`)
+	var exerciseIds uuid.UUIDs
+
+	if category != "" {
+		exerciseIds, _ = h.ExerciseService.GetExerciseListOfCategory(category)
+	} else {
+		exerciseIds, _ = h.ExerciseService.GetExerciseList()
+	}
+
+	return render(c, exerciseview.ShowIndex(exerciseIds))
+}
+
+func (h *ExerciseHandler) ShowExerciseHistory(c echo.Context) error {
+	authUser, _ := getAuthenticatedUser(c.Request().Context())
+
+	exerciseIds, err := h.ExerciseService.GetExerciseHistory(authUser.Id)
 
 	if err != nil {
-		fmt.Println("Error retrieving exercise from database: ", err)
 		return err
 	}
 
-	return render(c, exerciseview.ShowIndex(exercises))
-}
-
-func (h *ExerciseHandler) ShowExerciseHomepage(c echo.Context) error {
-	exerciseId := c.Param("id")
-
-	exercise, _ := h.ExerciseService.GetExerciseWithChoices(exerciseId)
-
-	return render(c, homeview.HomepageExercise(exercise))
+	return render(c, exerciseview.ShowHistory(exerciseIds))
 }
 
 func (h *ExerciseHandler) ShowExerciseDetail(c echo.Context) error {
