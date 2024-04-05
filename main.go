@@ -31,6 +31,7 @@ func main() {
 
 	app.GET("/", homeHandler.HomeShow)
 	app.GET("/exam-list", homeHandler.ExameExerciseListShow)
+	app.GET("/year-category-list", homeHandler.YearExerciseCategoryListShow)
 
 	// auth
 	app.GET("/auth/:provider", authHandler.GetAuthProvider)

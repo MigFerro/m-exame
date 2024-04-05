@@ -24,6 +24,16 @@ func (s *ExerciseService) GetExerciseList() (uuid.UUIDs, error) {
 	return exerciseIds, err
 }
 
+func (s *ExerciseService) GetCategoriesByYear(year string) ([]data.ExerciseCategory, error) {
+
+	var categories []data.ExerciseCategory
+	err := s.DB.Select(&categories, `
+		SELECT iid, category FROM exercise_categories ec
+		WHERE ec.year = $1`, year)
+
+	return categories, err
+}
+
 func (s *ExerciseService) GetExerciseListOfCategory(categoryIid string) (uuid.UUIDs, error) {
 
 	var exerciseIds uuid.UUIDs

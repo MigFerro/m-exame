@@ -2,6 +2,8 @@ package homeview
 
 import (
     "github.com/MigFerro/exame/templates/layouts"
+    "github.com/MigFerro/exame/data"
+
 )
 
 
@@ -17,29 +19,17 @@ templ Show() {
             </div>
         </div>
 
-        <div>
-            <ul class="flex">
-                <li class="block w-1/3 mr-5">
-                    <a href="#" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Exercícios de 10º ano</h5>
-                        <p class="font-normal text-gray-700 dark:text-gray-400">Cena 1, cena 2, cena 3, etc.</p>
-                    </a>
-                </li>
-                <li class="block w-1/3 mx-2.5">
-                    <a href="#" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Exercícios de 11º ano</h5>
-                        <p class="font-normal text-gray-700 dark:text-gray-400">Cena 1, cena 2, cena 3, etc.</p>
-                    </a>
-                </li>
-                <li class="block w-1/3 ml-5">
-                    <a href="#" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Exercícios de 12º ano</h5>
-                        <p class="font-normal text-gray-700 dark:text-gray-400">Cena 1, cena 2, cena 3, etc.</p>
-                    </a>
-                </li>
+        <div id="year_container">
+            <ul class="flex -mx-2.5">
+                for _, year := range []string{"10", "11", "12"} {
+                    <li class="block w-1/3 mx-2.5">
+                        <div hx-get={ "/year-category-list?show=show&showYear=" + year } hx-target="#year_container" hx-swap="outerHTML" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Exercícios de {year}º ano</h5>
+                        </div>
+                    </li>
+                }
             </ul>
         </div>
-
     }
 }
 
@@ -61,6 +51,47 @@ templ ExameExerciseChoiceList(showList bool) {
                 <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Exames de anos anteriores</h5>
                 <p class="font-normal text-gray-700 dark:text-gray-400">Complementa o teu estudo para os exames nacionais deste ano resolvendo exercícios de exames de anos anteriores com soluções detalhadas.</p>
             </div>
+        </div>
+    }
+}
+
+templ YearExerciseCategoryList(showList bool, showListYear string, categoryList []data.ExerciseCategory) {
+    if showList {
+        <div id="year_container">
+            <ul class="flex -mx-2.5">
+                for _, year := range []string{"10", "11", "12"} {
+                    if (year == showListYear) {
+                        <li class="block w-1/3 mx-2.5">
+                            <div hx-get={ "/year-category-list?show=hide&showYear=" + year } hx-target="#year_container" hx-swap="outerHTML" class="block p-6 border border-gray-200 rounded-lg bg-gray-100 ">
+                                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Exercícios de {year}º ano</h5>
+                            </div>
+                        </li>
+                    } else {
+                        <li class="block w-1/3 mx-2.5">
+                            <div hx-get={ "/year-category-list?show=show&showYear=" + year } hx-target="#year_container" hx-swap="outerHTML" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Exercícios de {year}º ano</h5>
+                            </div>
+                        </li>
+                    }
+                }
+            </ul>
+            <ul class="pt-5">
+                for _, category := range categoryList {
+                    <li class="block w-full p-4 border-y border-gray-200 bg-white text-xl text-center font-medium hover:bg-gray-100">{ category.Category }</li>
+                }
+            </ul>
+        </div>
+    } else {
+        <div id="year_container">
+            <ul class="flex -mx-2.5">
+                for _, year := range []string{"10", "11", "12"} {
+                    <li class="block w-1/3 mx-2.5">
+                        <div hx-get={ "/year-category-list?show=show&showYear=" + year } hx-target="#year_container" hx-swap="outerHTML" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Exercícios de {year}º ano</h5>
+                        </div>
+                    </li>
+                }
+            </ul>
         </div>
     }
 }
