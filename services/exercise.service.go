@@ -65,6 +65,37 @@ func (s *ExerciseService) GetExerciseHistory(userId uuid.UUID) (uuid.UUIDs, erro
 	return exerciseIds, err
 }
 
+func (s *ExerciseService) GetTestExercises(testType string, userId uuid.UUID) ([]data.ExerciseWithChoices, error) {
+
+	var dbExercises []entities.ExerciseEntity
+	err := s.DB.Select(&dbExercises, `
+		SELECT * FROM exercises
+	`)
+
+	if err != nil {
+		fmt.Println("Error retrieving exercises")
+	}
+
+	exercises := []data.ExerciseWithChoices{}
+	dbChoices := []entities.ExerciseChoiceEntity{}
+	for _, exercise := range dbExercises {
+		err = s.DB.Select(&dbChoices, `
+		SELECT * FROM exercise_choices
+		WHERE exercise_id = $1
+		ORDER BY random()`, exercise.Id)
+
+		exerciseWithChoices := data.ExerciseWithChoices{
+			Choices:  dbChoices,
+			Exercise: exercise,
+		}
+
+		exercises = append(exercises, exerciseWithChoices)
+	}
+
+	return exercises, nil
+
+}
+
 func (s *ExerciseService) GetExerciseWithChoices(exerciseId string) (data.ExerciseWithChoices, error) {
 	exerciseRow := s.DB.QueryRowx(
 		`SELECT * FROM exercises

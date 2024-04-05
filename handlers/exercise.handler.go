@@ -129,6 +129,23 @@ func (h *ExerciseHandler) ShowExerciseList(c echo.Context) error {
 	return render(c, exerciseview.ShowIndex(exerciseIds))
 }
 
+func (h *ExerciseHandler) ShowTest(c echo.Context) error {
+	testType := c.QueryParam("type")
+	loggedUser, ok := c.Request().Context().Value("authUser").(*data.LoggedUser)
+
+	if !ok {
+		return errors.New("No logged user")
+	}
+
+	exercises, err := h.ExerciseService.GetTestExercises(testType, loggedUser.Id)
+
+	if err != nil {
+		return err
+	}
+
+	return render(c, exerciseview.ShowTest(exercises))
+}
+
 func (h *ExerciseHandler) ShowExerciseHistory(c echo.Context) error {
 	authUser, _ := getAuthenticatedUser(c.Request().Context())
 

@@ -50,6 +50,9 @@ func main() {
 	app.GET("/exercises/category/:id/edit", exerciseHandler.ShowUpdateExerciseCategory)
 	app.GET("/exercises/history", exerciseHandler.ShowExerciseHistory)
 
+	//test
+	app.GET("/test", exerciseHandler.ShowTest)
+
 	app.POST("/exercises/create", exerciseHandler.HandleExerciseUpsertJourney)
 	app.POST("/exercises/:id/update", exerciseHandler.HandleExerciseUpsertJourney)
 	app.POST("/exercises/:id/solve", exerciseHandler.HandleExerciseSolve)

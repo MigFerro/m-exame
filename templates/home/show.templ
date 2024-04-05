@@ -9,7 +9,6 @@ import (
 
 templ Show() {
     @layouts.Base(layouts.BaseOptions{ WithLatex: true, WithHTMX:true }) {
-
         <h2 class="w-full text-center text-4xl font-bold text-gray-900 pt-10 pb-5">Resolve exercícios, ganha prática</h2>
 
         <div class="py-10" id="exame_container">
@@ -41,8 +40,13 @@ templ ExameExerciseChoiceList(showList bool) {
                 <p class="font-normal text-gray-700 dark:text-gray-400">Complementa o teu estudo para os exames nacionais deste ano resolvendo exercícios de exames de anos anteriores com soluções detalhadas.</p>
             </div>
             <ul class="pt-5">
-                <li class="block w-full p-4 border-y border-gray-200 bg-white text-xl text-center font-medium hover:bg-gray-100">Exercícios novos</li>
-                <li class="block w-full p-4 border-y border-gray-200 bg-white text-xl text-center font-medium hover:bg-gray-100">Exercícios falhados</li>
+                <li class="block w-full p-4 border-y border-gray-200 bg-white text-xl text-center font-medium hover:bg-gray-100">
+                    <a class="w-full" href="/test">
+                        Aleatório
+                    </a>
+                </li>
+                <li class="block w-full p-4 border-y border-gray-200 bg-white text-xl text-center font-medium hover:bg-gray-100">Novos</li>
+                <li class="block w-full p-4 border-y border-gray-200 bg-white text-xl text-center font-medium hover:bg-gray-100">Errados</li>
             </ul>
         </div>
     } else {
