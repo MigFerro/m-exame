@@ -1,0 +1,58 @@
+package exerciseview
+
+import (
+    "strings"
+    "strconv"
+
+    "github.com/MigFerro/exame/templates/layouts"
+    templateutils "github.com/MigFerro/exame/templates/utils"
+    "github.com/MigFerro/exame/data"
+)
+
+
+templ ShowTest(exercises []data.ExerciseWithChoices) {
+    @layouts.Base(layouts.BaseOptions{ WithLatex: true, WithHTMX: true }) {
+        <form hx-post="/test/solve" hx-target="#test-container" hx-swap="innerHTML">
+        for i, exercise := range exercises {
+            <div class="p-10 my-10 bg-slate-200 rounded-lg" id={ "exercise-container-" + strconv.Itoa(i) }>
+                <div>
+                    for _, line := range strings.Split(exercise.Exercise.ProblemText, "\n") {
+                        <p>{line}<br /></p>
+                    }
+
+                    if exercise.Exercise.ExameYear != "" && exercise.Exercise.ExameFase != "" {
+                        <p class="italic py-5">{ templateutils.GetExameString(exercise.Exercise.ExameYear, exercise.Exercise.ExameFase) }</p>
+                    }
+
+                    if exercise.Category != "" {
+                        <div class="inline-flex items-center justify-between p-1.5 text-gray-100 bg-blue-950 border border-gray-200 rounded-lg">
+                            { exercise.Category }
+                        </div>
+                    }
+                </div>
+
+                <div id={ "choices-container-" + strconv.Itoa(i) }>
+                    <ul class="grid w-full gap-6 md:grid-cols-4 pt-10">
+                        for j, choice := range exercise.Choices {
+                            <li>
+                                if j == 0 {
+                                    <input type="radio" id={ choice.Id.String() } name={ "choice-" + strconv.Itoa(i) } value={ choice.Id.String() } class="hidden peer" required />
+                                } else {
+                                    <input type="radio" id={ choice.Id.String() } name={ "choice-" + strconv.Itoa(i) } value={ choice.Id.String() } class="hidden peer" />
+                                }
+
+                                <label for={ choice.Id.String() } class="inline-flex items-center justify-between w-full p-5 text-gray-700 font-bold bg-white border border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-blue-500 peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">                           
+                                    <div class="block w-full text-center">
+                                        { choice.Value }
+                                    </div>
+                                </label>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        }
+        <input class="text-white text-xl font-bold bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto my-10 px-5 py-2.5 text-center" type="submit" value="Terminar" />
+        </form>
+    }
+}

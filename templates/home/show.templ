@@ -1,6 +1,8 @@
 package homeview
 
 import (
+    "strconv"
+
     "github.com/MigFerro/exame/templates/layouts"
     "github.com/MigFerro/exame/data"
 
@@ -40,13 +42,21 @@ templ ExameExerciseChoiceList(showList bool) {
                 <p class="font-normal text-gray-700 dark:text-gray-400">Complementa o teu estudo para os exames nacionais deste ano resolvendo exercícios de exames de anos anteriores com soluções detalhadas.</p>
             </div>
             <ul class="pt-5">
-                <li class="block w-full p-4 border-y border-gray-200 bg-white text-xl text-center font-medium hover:bg-gray-100">
-                    <a class="w-full" href="/test">
+                <li class="block w-full border-y border-gray-200 bg-white text-xl text-center font-medium hover:bg-gray-100">
+                    <a class="block w-full py-4" href="/test?type=random">
                         Aleatório
                     </a>
                 </li>
-                <li class="block w-full p-4 border-y border-gray-200 bg-white text-xl text-center font-medium hover:bg-gray-100">Novos</li>
-                <li class="block w-full p-4 border-y border-gray-200 bg-white text-xl text-center font-medium hover:bg-gray-100">Errados</li>
+                <li class="block w-full border-y border-gray-200 bg-white text-xl text-center font-medium hover:bg-gray-100">
+                    <a class="block w-full py-4" href="/test?type=new">
+                        Novos
+                    </a>
+                </li>
+                <li class="block w-full border-y border-gray-200 bg-white text-xl text-center font-medium hover:bg-gray-100">
+                    <a class="block w-full py-4" href="/test?type=wrong">
+                        Errados
+                    </a>
+                </li>
             </ul>
         </div>
     } else {
@@ -81,7 +91,11 @@ templ YearExerciseCategoryList(showList bool, showListYear string, categoryList 
             </ul>
             <ul class="pt-5">
                 for _, category := range categoryList {
-                    <li class="block w-full p-4 border-y border-gray-200 bg-white text-xl text-center font-medium hover:bg-gray-100">{ category.Category }</li>
+                    <li class="block w-full border-y border-gray-200 bg-white text-xl text-center font-medium hover:bg-gray-100">
+                        <a class="block w-full py-4" href={ templ.URL("/test?cat=" + strconv.Itoa(category.Iid)) }>
+                            { category.Category }
+                        </a>
+                    </li>
                 }
             </ul>
         </div>

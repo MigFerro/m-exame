@@ -68,17 +68,47 @@ func (s *ExerciseService) GetExerciseHistory(userId uuid.UUID) (uuid.UUIDs, erro
 func (s *ExerciseService) GetTestExercises(testType string, userId uuid.UUID) ([]data.ExerciseWithChoices, error) {
 
 	var dbExercises []entities.ExerciseEntity
-	err := s.DB.Select(&dbExercises, `
-		SELECT * FROM exercises
-	`)
+	query := `SELECT * FROM exercises e`
+
+	if testType == "new" {
+		query += `
+			WHERE e.id NOT IN (
+				SELECT exercise_id FROM exercise_users eu
+				WHERE eu.user_id = $1
+			)
+		`
+	}
+	if testType == "wrong" {
+		query += `
+			WHERE e.id IN (
+				SELECT exercise_id FROM exercise_users eu
+				WHERE eu.user_id = $1
+				AND eu.first_attempted_at != eu.first_solved_at
+			)
+		`
+	}
+
+	query += `
+	ORDER BY random()
+	LIMIT 10
+	`
+
+	var err error
+	if testType == "random" {
+		err = s.DB.Select(&dbExercises, query)
+	} else {
+		err = s.DB.Select(&dbExercises, query, userId)
+	}
 
 	if err != nil {
 		fmt.Println("Error retrieving exercises")
+		fmt.Println(err)
 	}
 
 	exercises := []data.ExerciseWithChoices{}
-	dbChoices := []entities.ExerciseChoiceEntity{}
+	var dbChoices []entities.ExerciseChoiceEntity
 	for _, exercise := range dbExercises {
+		dbChoices = []entities.ExerciseChoiceEntity{}
 		err = s.DB.Select(&dbChoices, `
 		SELECT * FROM exercise_choices
 		WHERE exercise_id = $1
