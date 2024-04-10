@@ -6,28 +6,28 @@ import (
 
     "github.com/MigFerro/exame/templates/layouts"
     templateutils "github.com/MigFerro/exame/templates/utils"
-    "github.com/MigFerro/exame/data"
+    "github.com/MigFerro/exame/entities"
 )
 
 
-templ ShowDetail(exercise data.ExerciseWithChoices) {
+templ ShowDetail(exercise entities.ExerciseWithChoicesEntity) {
     @layouts.Base(layouts.BaseOptions{ WithLatex: true, WithHTMX: true }) {
         <div class="pt-5" id="exercise-container">
 
             <div class="pt-10">
-                for _, line := range strings.Split(exercise.Exercise.ProblemText, "\n") {
+                for _, line := range strings.Split(exercise.ProblemText, "\n") {
                     <p>{line}<br /></p>
                 }
 
-                <p class="italic pb-5">{ templateutils.GetExameString(exercise.Exercise.ExameYear, exercise.Exercise.ExameFase) }</p>
+                <p class="italic pb-5">{ templateutils.GetExameString(exercise.ExameYear, exercise.ExameFase) }</p>
 
-                <div class="inline-flex items-center justify-between p-1.5 text-gray-100 bg-blue-950 border border-gray-200 rounded-lg">
-                    { exercise.Category }
-                </div>
+                //<div class="inline-flex items-center justify-between p-1.5 text-gray-100 bg-blue-950 border border-gray-200 rounded-lg">
+                 //   { exercise.Category }
+                //</div>
             </div>
 
             <div id="choices-container">
-                <form hx-post={ fmt.Sprintf("%v", templ.URL(exercise.Exercise.Id.String() + "/solve")) } hx-vals='{"at": "detail"}' hx-target="#choices-container" hx-swap="innerHTML">
+                <form hx-post={ fmt.Sprintf("%v", templ.URL(exercise.Id.String() + "/solve")) } hx-vals='{"at": "detail"}' hx-target="#choices-container" hx-swap="innerHTML">
                     <ul class="grid w-full gap-6 md:grid-cols-4 pt-10">
                         for i, choice := range exercise.Choices {
                             <li>

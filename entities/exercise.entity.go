@@ -30,6 +30,12 @@ type ExerciseChoiceEntity struct {
 	UpdatedBy  uuid.NullUUID `db:"updated_by"`
 }
 
+type ExerciseWithChoicesEntity struct {
+	ExerciseEntity
+	Category ExerciseCategoryEntity `db:"category"`
+	Choices  []ExerciseChoiceEntity
+}
+
 type ExerciseCategoryEntity struct {
 	Iid       int          `db:"iid"`
 	Category  string       `db:"category"`

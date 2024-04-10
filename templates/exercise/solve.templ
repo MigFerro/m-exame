@@ -1,8 +1,6 @@
 package exerciseview
 
 import (
-    "fmt"
-
     "github.com/MigFerro/exame/data"
 )
 
@@ -11,15 +9,9 @@ templ SolvedResult(result data.ExerciseSolved) {
         <h2 class="w-full text-2xl text-center font-bold text-green-900 pt-5 pb-5"> Resposta correcta! </h2>
         <ul class="flex flex-col w-full px-5">
             <li class="block w-full m-2.5">
-            if result.At == "home" {
-                <div hx-get={ fmt.Sprintf("%v", templ.URL("/exercises/" + result.NextId + "/home")) } hx-target="#exercise-container" hx-swap="outerHTML" hx-push-url={ fmt.Sprintf("%v", templ.URL("/home/" + result.NextId)) } class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:cursor-pointer hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Próximo exercício</h5>
-                </div>
-            } else {
                 <a href={ templ.URL("/exercises/" + result.NextId) } class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:cursor-pointer hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
                     <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Próximo exercício</h5>
                 </a>
-            }
             </li>
             <li class="block w-full m-2.5">
                 <a href="#" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
@@ -33,15 +25,9 @@ templ SolvedResult(result data.ExerciseSolved) {
 
         <ul class="flex flex-col w-full px-5">
             <li class="block w-full m-2.5">
-            if result.At == "home" {
-                <div hx-get={ fmt.Sprintf("%v", templ.URL("/exercises/" + result.ExerciseId + "/home")) } hx-target="#exercise-container" hx-swap="outerHTML" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:cursor-pointer hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Tenta novamente</h5>
-                </div>
-            } else {
                 <a href={ templ.URL("/exercises/" + result.ExerciseId) } class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:cursor-pointer hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
                     <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Tenta novamente</h5>
                 </a>
-            }
             </li>
             <li class="block w-full m-2.5">
                 <a href="#" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">

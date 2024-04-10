@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"strconv"
 
-	"time"
-
 	"github.com/MigFerro/exame/data"
 	"github.com/MigFerro/exame/entities"
 	"github.com/MigFerro/exame/services"
@@ -146,6 +144,43 @@ func (h *ExerciseHandler) ShowTest(c echo.Context) error {
 	return render(c, exerciseview.ShowTest(exercises))
 }
 
+func (h *ExerciseHandler) SolveTest(c echo.Context) error {
+	loggedUser, ok := c.Request().Context().Value("authUser").(*data.LoggedUser)
+
+	if !ok {
+		return errors.New("No logged user")
+	}
+
+	answers := h.readTestForm(c)
+	res, err := h.ExerciseService.EvaluateAndSaveTest(loggedUser.Id, answers)
+
+	if err != nil {
+		return err
+	}
+
+	return render(c, exerciseview.ShowTestResult(res))
+}
+
+func (h *ExerciseHandler) readTestForm(c echo.Context) []data.ExerciseAnswer {
+	exerciseCount, _ := strconv.Atoi(c.Request().FormValue("exercise_count"))
+
+	answers := []data.ExerciseAnswer{}
+	ans := data.ExerciseAnswer{}
+
+	for i := 0; i < exerciseCount; i++ {
+		id := c.Request().FormValue("exercise-" + strconv.Itoa(i))
+		choiceId := c.Request().FormValue("choice-" + strconv.Itoa(i))
+
+		ans.Id = id
+		ans.ChoiceId = choiceId
+
+		answers = append(answers, ans)
+	}
+
+	return answers
+
+}
+
 func (h *ExerciseHandler) ShowExerciseHistory(c echo.Context) error {
 	authUser, _ := getAuthenticatedUser(c.Request().Context())
 
@@ -191,53 +226,21 @@ func (h *ExerciseHandler) ShowExerciseChoices(c echo.Context) error {
 func (h *ExerciseHandler) HandleExerciseSolve(c echo.Context) error {
 	exerciseId := c.Param("id")
 	formChoice := c.Request().FormValue("choice")
-	at := c.Request().FormValue("at")
 
 	loggedUser, ok := c.Request().Context().Value("authUser").(*data.LoggedUser)
 
-	exercise := entities.ExerciseEntity{}
-	var isSolution bool
-
-	tx := h.ExerciseService.DB.MustBegin()
-	_ = tx.Get(&exercise, "SELECT * FROM exercises WHERE id = $1", exerciseId)
-	_ = tx.Get(&isSolution, "SELECT is_solution FROM exercise_choices WHERE id = $1", formChoice)
-
-	solvedData := data.ExerciseSolved{
-		ExerciseId: exerciseId,
-		IsSolution: isSolution,
-		NextId:     h.ExerciseService.GetRandomExerciseId(),
-		At:         at,
-	}
-
 	if !ok {
-		return render(c, exerciseview.SolvedResult(solvedData))
+		return errors.New("No user logged in")
 	}
 
-	exerciseUser := entities.ExerciseUserEntity{}
-	_ = tx.Get(&exerciseUser, "SELECT * FROM exercise_users WHERE exercise_id = $1 AND user_id = $2", exerciseId, loggedUser.Id)
+	result, err := h.ExerciseService.SolveExercise(loggedUser.Id, exerciseId, formChoice, true)
 
-	now := time.Now()
-
-	if exerciseUser == (entities.ExerciseUserEntity{}) {
-		if isSolution {
-			tx.MustExec("INSERT INTO exercise_users (user_id, exercise_id, last_attempted_at, first_solved_at, last_solved_at) VALUES ($1, $2, $3, $4, $5)", loggedUser.Id, exerciseId, now, now, now)
-		} else {
-			tx.MustExec("INSERT INTO exercise_users (user_id, exercise_id, last_attempted_at) VALUES ($1, $2, $3)", loggedUser.Id, exerciseId, now)
-		}
-	} else {
-		if isSolution {
-			if exerciseUser.FirstSolvedAt.Valid {
-				tx.MustExec("UPDATE exercise_users SET (last_attempted_at, last_solved_at) = ($1, $2) WHERE user_id = $3 AND exercise_id = $4", now, now, loggedUser.Id, exerciseId)
-			} else {
-				tx.MustExec("UPDATE exercise_users SET (last_attempted_at, first_solved_at, last_solved_at) = ($1, $2, $3) WHERE user_id = $4 AND exercise_id = $5", now, now, now, loggedUser.Id, exerciseId)
-			}
-		} else {
-			tx.MustExec("UPDATE exercise_users SET last_attempted_at = $1 WHERE user_id = $2 AND exercise_id = $3", now, loggedUser.Id, exerciseId)
-		}
+	if err != nil {
+		fmt.Println("Error saving exercise in database: ", err)
+		return err
 	}
-	tx.Commit()
 
-	return render(c, exerciseview.SolvedResult(solvedData))
+	return render(c, exerciseview.SolvedResult(result))
 }
 
 func (h *ExerciseHandler) ShowExerciseCategoriesList(c echo.Context) error {

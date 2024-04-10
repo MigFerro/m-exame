@@ -6,29 +6,31 @@ import (
 
     "github.com/MigFerro/exame/templates/layouts"
     templateutils "github.com/MigFerro/exame/templates/utils"
+    "github.com/MigFerro/exame/entities"
     "github.com/MigFerro/exame/data"
 )
 
 
-templ ShowTest(exercises []data.ExerciseWithChoices) {
+templ ShowTest(exercises []entities.ExerciseWithChoicesEntity) {
     @layouts.Base(layouts.BaseOptions{ WithLatex: true, WithHTMX: true }) {
-        <form hx-post="/test/solve" hx-target="#test-container" hx-swap="innerHTML">
+        <form method="post" action="/test/solve">
         for i, exercise := range exercises {
-            <div class="p-10 my-10 bg-slate-200 rounded-lg" id={ "exercise-container-" + strconv.Itoa(i) }>
+            <div class="p-10 my-10 bg-slate-200 rounded-lg relative" id={ "exercise-container-" + strconv.Itoa(i) }>
                 <div>
-                    for _, line := range strings.Split(exercise.Exercise.ProblemText, "\n") {
-                        <p>{line}<br /></p>
+                    for _, line := range strings.Split(exercise.ProblemText, "\n") {
+                        <p class="text-lg">{line}<br /></p>
                     }
 
-                    if exercise.Exercise.ExameYear != "" && exercise.Exercise.ExameFase != "" {
-                        <p class="italic py-5">{ templateutils.GetExameString(exercise.Exercise.ExameYear, exercise.Exercise.ExameFase) }</p>
+                    if exercise.ExameYear != "" && exercise.ExameFase != "" {
+                        <p class="italic py-5">{ templateutils.GetExameString(exercise.ExameYear, exercise.ExameFase) }</p>
                     }
 
-                    if exercise.Category != "" {
-                        <div class="inline-flex items-center justify-between p-1.5 text-gray-100 bg-blue-950 border border-gray-200 rounded-lg">
-                            { exercise.Category }
-                        </div>
-                    }
+                </div>
+
+                <input type="hidden" name={ "exercise-" + strconv.Itoa(i) } value={ exercise.Id.String() } class="hidden" />
+
+                <div class="absolute top-0 right-0 inline-flex items-center justify-between p-1.5 text-gray-100 bg-blue-950 border border-gray-200 rounded-lg">
+                    { exercise.Category.Category }
                 </div>
 
                 <div id={ "choices-container-" + strconv.Itoa(i) }>
@@ -53,6 +55,13 @@ templ ShowTest(exercises []data.ExerciseWithChoices) {
             </div>
         }
         <input class="text-white text-xl font-bold bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto my-10 px-5 py-2.5 text-center" type="submit" value="Terminar" />
+        <input type="hidden" name="exercise_count" value={ strconv.Itoa(len(exercises)) } />
         </form>
+    }
+}
+
+templ ShowTestResult(result data.TestResult) {
+    @layouts.Base(layouts.BaseOptions{ WithLatex: true, WithHTMX: true }) {
+        <h1 class="w-full text-center text-2xl font-bold">{ strconv.Itoa(result.CorrectCount) + "/" + strconv.Itoa(len(result.Exercises)) }</h1>
     }
 }

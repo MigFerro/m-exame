@@ -65,10 +65,97 @@ func (s *ExerciseService) GetExerciseHistory(userId uuid.UUID) (uuid.UUIDs, erro
 	return exerciseIds, err
 }
 
-func (s *ExerciseService) GetTestExercises(testType string, userId uuid.UUID) ([]data.ExerciseWithChoices, error) {
+func (s *ExerciseService) SolveExercise(userId uuid.UUID, exerciseId string, choiceId string, getNextExercise bool) (data.ExerciseSolved, error) {
+	solvedData, err := s.solveExercise(userId, exerciseId, choiceId)
 
-	var dbExercises []entities.ExerciseEntity
-	query := `SELECT * FROM exercises e`
+	if getNextExercise {
+		solvedData.NextId = s.GetRandomExerciseId()
+	}
+
+	return solvedData, err
+}
+
+func (s *ExerciseService) solveExercise(userId uuid.UUID, exerciseId string, choiceId string) (data.ExerciseSolved, error) {
+	var exercise entities.ExerciseEntity
+	var solutionId uuid.UUID
+
+	tx := s.DB.MustBegin()
+	err := tx.Get(&exercise, "SELECT * FROM exercises WHERE id = $1", exerciseId)
+	err = tx.Get(&solutionId, "SELECT id FROM exercise_choices WHERE exercise_id = $1 AND is_solution = TRUE", exerciseId)
+
+	exerciseUser := entities.ExerciseUserEntity{}
+	err = tx.Get(&exerciseUser, "SELECT * FROM exercise_users WHERE exercise_id = $1 AND user_id = $2", exerciseId, userId)
+
+	now := time.Now()
+
+	isSolution := solutionId.String() == choiceId
+
+	if exerciseUser == (entities.ExerciseUserEntity{}) {
+		if isSolution {
+			tx.MustExec("INSERT INTO exercise_users (user_id, exercise_id, last_attempted_at, first_solved_at, last_solved_at) VALUES ($1, $2, $3, $4, $5)", userId, exerciseId, now, now, now)
+		} else {
+			tx.MustExec("INSERT INTO exercise_users (user_id, exercise_id, last_attempted_at) VALUES ($1, $2, $3)", userId, exerciseId, now)
+		}
+	} else {
+		if isSolution {
+			if exerciseUser.FirstSolvedAt.Valid {
+				tx.MustExec("UPDATE exercise_users SET (last_attempted_at, last_solved_at) = ($1, $2) WHERE user_id = $3 AND exercise_id = $4", now, now, userId, exerciseId)
+			} else {
+				tx.MustExec("UPDATE exercise_users SET (last_attempted_at, first_solved_at, last_solved_at) = ($1, $2, $3) WHERE user_id = $4 AND exercise_id = $5", now, now, now, userId, exerciseId)
+			}
+		} else {
+			tx.MustExec("UPDATE exercise_users SET last_attempted_at = $1 WHERE user_id = $2 AND exercise_id = $3", now, userId, exerciseId)
+		}
+	}
+	tx.Commit()
+
+	solvedData := data.ExerciseSolved{
+		ExerciseId:       exerciseId,
+		ChoiceSelectedId: choiceId,
+		ChoiceCorrectId:  solutionId.String(),
+		IsSolution:       isSolution,
+	}
+
+	return solvedData, err
+}
+
+func (s *ExerciseService) EvaluateAndSaveTest(userId uuid.UUID, answers []data.ExerciseAnswer) (data.TestResult, error) {
+	var res data.ExerciseSolved
+	testResult := data.TestResult{}
+
+	var err error
+
+	for _, ans := range answers {
+		res, err = s.solveExercise(userId, ans.Id, ans.ChoiceId)
+
+		if err != nil {
+			return testResult, err
+		}
+
+		if res.IsSolution {
+			testResult.CorrectCount += 1
+		}
+		testResult.Exercises = append(testResult.Exercises, res)
+	}
+
+	return testResult, nil
+}
+
+func (s *ExerciseService) GetTestExercises(testType string, userId uuid.UUID) ([]entities.ExerciseWithChoicesEntity, error) {
+
+	var dbExercises []entities.ExerciseWithChoicesEntity
+	query := `
+        SELECT
+            e.*,
+            cat.iid AS category_iid,
+            cat.category AS "category.category",
+            cat.created_at AS "category.created_at",
+            cat.updated_at AS "category.updated_at"
+        FROM
+            exercises e
+        LEFT JOIN
+            exercise_categories cat ON e.category_iid = cat.iid
+	`
 
 	if testType == "new" {
 		query += `
@@ -105,38 +192,43 @@ func (s *ExerciseService) GetTestExercises(testType string, userId uuid.UUID) ([
 		fmt.Println(err)
 	}
 
-	exercises := []data.ExerciseWithChoices{}
 	var dbChoices []entities.ExerciseChoiceEntity
-	for _, exercise := range dbExercises {
+	for i, exercise := range dbExercises {
 		dbChoices = []entities.ExerciseChoiceEntity{}
 		err = s.DB.Select(&dbChoices, `
 		SELECT * FROM exercise_choices
 		WHERE exercise_id = $1
 		ORDER BY random()`, exercise.Id)
 
-		exerciseWithChoices := data.ExerciseWithChoices{
-			Choices:  dbChoices,
-			Exercise: exercise,
-		}
-
-		exercises = append(exercises, exerciseWithChoices)
+		dbExercises[i].Choices = dbChoices
 	}
 
-	return exercises, nil
+	return dbExercises, nil
 
 }
 
-func (s *ExerciseService) GetExerciseWithChoices(exerciseId string) (data.ExerciseWithChoices, error) {
-	exerciseRow := s.DB.QueryRowx(
-		`SELECT * FROM exercises
-		WHERE id = $1`, exerciseId)
+func (s *ExerciseService) GetExerciseWithChoices(exerciseId string) (entities.ExerciseWithChoicesEntity, error) {
 
-	var exercise entities.ExerciseEntity
-	err := exerciseRow.StructScan(&exercise)
+	var ex entities.ExerciseWithChoicesEntity
+	query := `
+        SELECT
+            e.*,
+            cat.iid AS category_iid,
+            cat.category AS "category.category",
+            cat.created_at AS "category.created_at",
+            cat.updated_at AS "category.updated_at"
+        FROM
+            exercises e
+        LEFT JOIN
+            exercise_categories cat ON e.category_iid = cat.iid
+        WHERE
+            e.id = $1
+    `
+	err := s.DB.Get(&ex, query, exerciseId)
 
 	if err != nil {
 		fmt.Println("Error retrieving exercise from database: ", err)
-		return data.ExerciseWithChoices{}, err
+		return entities.ExerciseWithChoicesEntity{}, err
 	}
 
 	exerciseChoices := []entities.ExerciseChoiceEntity{}
@@ -148,29 +240,12 @@ func (s *ExerciseService) GetExerciseWithChoices(exerciseId string) (data.Exerci
 
 	if err != nil {
 		fmt.Println("Error retrieving exercise from database: ", err)
-		return data.ExerciseWithChoices{}, err
+		return entities.ExerciseWithChoicesEntity{}, err
 	}
 
-	exerciseWithChoices := data.ExerciseWithChoices{
-		Choices:  exerciseChoices,
-		Exercise: exercise,
-	}
+	ex.Choices = exerciseChoices
 
-	catRow := s.DB.QueryRowx(
-		`SELECT category FROM exercise_categories
-		WHERE iid = $1`, exercise.CategoryIid)
-
-	var category string
-	err = catRow.Scan(&category)
-
-	if err != nil {
-		fmt.Println("Error retrieving category from database: ", err)
-		return data.ExerciseWithChoices{}, err
-	}
-
-	exerciseWithChoices.Category = category
-
-	return exerciseWithChoices, nil
+	return ex, nil
 }
 
 func (s *ExerciseService) GetExerciseUpsertForm(exerciseId string) (*data.ExerciseUpsertForm, error) {
@@ -183,7 +258,7 @@ func (s *ExerciseService) GetExerciseUpsertForm(exerciseId string) (*data.Exerci
 
 	catRow := s.DB.QueryRowx(
 		`SELECT * FROM exercise_categories
-		WHERE iid = $1`, exerciseWithChoices.Exercise.CategoryIid)
+		WHERE iid = $1`, exerciseWithChoices.Category.Iid)
 
 	var cat entities.ExerciseCategoryEntity
 	err = catRow.StructScan(&cat)
@@ -191,7 +266,7 @@ func (s *ExerciseService) GetExerciseUpsertForm(exerciseId string) (*data.Exerci
 	var choices []entities.ExerciseChoiceEntity
 	err = s.DB.Select(&choices,
 		`SELECT * FROM exercise_choices
-		WHERE exercise_id = $1`, exerciseWithChoices.Exercise.Id)
+		WHERE exercise_id = $1`, exerciseWithChoices.Id)
 
 	formChoices := []data.ExerciseChoice{}
 	var c data.ExerciseChoice
@@ -205,10 +280,10 @@ func (s *ExerciseService) GetExerciseUpsertForm(exerciseId string) (*data.Exerci
 	}
 
 	form := data.ExerciseUpsertForm{
-		Id:          exerciseWithChoices.Exercise.Id.String(),
-		ProblemText: exerciseWithChoices.Exercise.ProblemText,
-		ExameYear:   exerciseWithChoices.Exercise.ExameYear,
-		ExameFase:   exerciseWithChoices.Exercise.ExameFase,
+		Id:          exerciseWithChoices.Id.String(),
+		ProblemText: exerciseWithChoices.ProblemText,
+		ExameYear:   exerciseWithChoices.ExameYear,
+		ExameFase:   exerciseWithChoices.ExameFase,
 		Category: data.ExerciseCategory{
 			Iid:      cat.Iid,
 			Category: cat.Category,

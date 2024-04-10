@@ -52,6 +52,7 @@ func main() {
 
 	//test
 	app.GET("/test", exerciseHandler.ShowTest)
+	app.POST("/test/solve", exerciseHandler.SolveTest)
 
 	app.POST("/exercises/create", exerciseHandler.HandleExerciseUpsertJourney)
 	app.POST("/exercises/:id/update", exerciseHandler.HandleExerciseUpsertJourney)

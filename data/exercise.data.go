@@ -18,10 +18,11 @@ type ExerciseChoices struct {
 }
 
 type ExerciseSolved struct {
-	ExerciseId string
-	IsSolution bool
-	NextId     string
-	At         string
+	ExerciseId       string
+	IsSolution       bool
+	ChoiceSelectedId string
+	ChoiceCorrectId  string
+	NextId           string
 }
 
 type ExerciseWithChoices struct {
@@ -52,4 +53,14 @@ type ExerciseUpsertForm struct {
 	ExameFase   string
 	CreatedBy   uuid.UUID
 	UpdatedBy   uuid.UUID
+}
+
+type ExerciseAnswer struct {
+	Id       string
+	ChoiceId string
+}
+
+type TestResult struct {
+	Exercises    []ExerciseSolved
+	CorrectCount int
 }
