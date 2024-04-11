@@ -76,11 +76,31 @@ func (s *ExerciseService) SolveExercise(userId uuid.UUID, exerciseId string, cho
 }
 
 func (s *ExerciseService) solveExercise(userId uuid.UUID, exerciseId string, choiceId string) (data.ExerciseSolved, error) {
-	var exercise entities.ExerciseEntity
+	var exercise entities.ExerciseWithChoicesEntity
 	var solutionId uuid.UUID
 
 	tx := s.DB.MustBegin()
-	err := tx.Get(&exercise, "SELECT * FROM exercises WHERE id = $1", exerciseId)
+	err := tx.Get(&exercise, `
+        SELECT
+            e.*,
+            cat.iid AS category_iid,
+            cat.category AS "category.category",
+            cat.created_at AS "category.created_at",
+            cat.updated_at AS "category.updated_at"
+        FROM
+            exercises e
+        LEFT JOIN
+            exercise_categories cat ON e.category_iid = cat.iid
+		WHERE e.id = $1`, exerciseId)
+
+	dbChoices := []entities.ExerciseChoiceEntity{}
+	err = s.DB.Select(&dbChoices, `
+	SELECT * FROM exercise_choices
+	WHERE exercise_id = $1
+	ORDER BY random()`, exercise.Id)
+
+	exercise.Choices = dbChoices
+
 	err = tx.Get(&solutionId, "SELECT id FROM exercise_choices WHERE exercise_id = $1 AND is_solution = TRUE", exerciseId)
 
 	exerciseUser := entities.ExerciseUserEntity{}
@@ -110,7 +130,7 @@ func (s *ExerciseService) solveExercise(userId uuid.UUID, exerciseId string, cho
 	tx.Commit()
 
 	solvedData := data.ExerciseSolved{
-		ExerciseId:       exerciseId,
+		Exercise:         exercise,
 		ChoiceSelectedId: choiceId,
 		ChoiceCorrectId:  solutionId.String(),
 		IsSolution:       isSolution,

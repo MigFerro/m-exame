@@ -77,7 +77,7 @@ func Base(options BaseOptions) templ.Component {
 			}
 		}
 		if options.WithHTMX {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script src=\"https://unpkg.com/htmx.org@1.9.10\" integrity=\"sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC\" crossorigin=\"anonymous\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script src=\"/static/htmx/htmx.min.js\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

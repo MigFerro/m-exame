@@ -18,7 +18,7 @@ type ExerciseChoices struct {
 }
 
 type ExerciseSolved struct {
-	ExerciseId       string
+	Exercise         entities.ExerciseWithChoicesEntity
 	IsSolution       bool
 	ChoiceSelectedId string
 	ChoiceCorrectId  string

@@ -25,7 +25,7 @@ templ SolvedResult(result data.ExerciseSolved) {
 
         <ul class="flex flex-col w-full px-5">
             <li class="block w-full m-2.5">
-                <a href={ templ.URL("/exercises/" + result.ExerciseId) } class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:cursor-pointer hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                <a href={ templ.URL("/exercises/" + result.Exercise.Id.String()) } class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:cursor-pointer hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
                     <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Tenta novamente</h5>
                 </a>
             </li>
