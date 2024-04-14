@@ -9,11 +9,17 @@ templ Header(authUserName string) {
     <div class="mx-[10%] pl-[2.5%] pr-[5%] py-[2.5%] bg-slate-400 flex justify-between rounded-b-lg items-center">
         <a href="/" class="text-3xl font-bold text-gray-200">+Exame</a>
         if authUserName == "" {
-            <a href="/auth/google">Login</a>
+            <a class="flex flex-row items-center justify-center bg-white py-1 px-3 rounded-2xl" href="/auth/google">
+                <p class="pr-1">Login</p>
+                <img class="h-[15px] w-[15px] -rotate-90" src="/static/icons/login.svg" alt="Login icon" />
+            </a>
         } else {
-            <div>
-                <p>{ templateutils.GetAuthenticatedUserName(ctx) }</p>
-                <a href="/auth/logout">Logout</a>
+            <div class="flex flex-row items-center justify-center">
+                <p class="text-lg font-bold mr-5">{ templateutils.GetAuthenticatedUserName(ctx) }</p>
+                <a class="flex flex-row items-center justify-center bg-white py-1 px-3 rounded-2xl" href="/auth/logout">
+                    <p class="pr-1">Logout</p>
+                    <img class="h-[15px] w-[15px]" src="/static/icons/logout.svg" alt="Logout icon" />
+                </a>
             </div>
         }
     </div>
