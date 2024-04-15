@@ -197,7 +197,7 @@ func (s *ExerciseService) GetTestExercises(testType string, userId uuid.UUID) ([
 
 	query += `
 	ORDER BY random()
-	LIMIT 10
+	LIMIT 5
 	`
 
 	var err error
