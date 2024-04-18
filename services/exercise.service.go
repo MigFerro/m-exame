@@ -158,7 +158,84 @@ func (s *ExerciseService) EvaluateAndSaveTest(userId uuid.UUID, answers []data.E
 		testResult.Exercises = append(testResult.Exercises, res)
 	}
 
+	s.attributePoints(userId, &testResult)
+
 	return testResult, nil
+}
+
+func (s *ExerciseService) attributePoints(userId uuid.UUID, result *data.TestResult) {
+	points := 0
+	if result.CorrectCount < 2 {
+		result.PointsGained = points
+		return
+	}
+
+	points = []int{5, 10, 15, 25}[result.CorrectCount-2]
+	exerciseIds := []uuid.UUID{}
+	for _, exercise := range result.Exercises {
+		if exercise.IsSolution {
+			exerciseIds = append(exerciseIds, exercise.Exercise.Id)
+		}
+	}
+
+	var repeatedCount []int
+	query, args, err := sqlx.In(`
+		SELECT COUNT(*) FROM exercise_users eu
+		WHERE eu.user_id = ?
+		AND eu.exercise_id IN (?)
+		AND eu.last_solved_at IS NOT NULL
+	`, userId, exerciseIds)
+
+	query = s.DB.Rebind(query)
+
+	if err != nil {
+		result.PointsGained = 0
+		fmt.Println(err)
+		return
+	}
+
+	err = s.DB.Select(&repeatedCount, query, args...)
+
+	if err != nil {
+		result.PointsGained = 0
+		fmt.Println(err)
+		return
+	}
+
+	points = points - 2*repeatedCount[0]
+
+	if points < 0 {
+		points = 0
+	}
+
+	s.updateUserPoints(userId, points)
+
+	result.PointsGained = points
+}
+
+func (s *ExerciseService) updateUserPoints(userId uuid.UUID, points int) {
+	if points == 0 {
+		return
+	}
+
+	var currPoints int
+	query := `SELECT points FROM user_points WHERE user_id = $1`
+	err := s.DB.Get(&currPoints, query, userId)
+
+	if err != nil {
+		fmt.Println("here")
+		fmt.Println(err)
+		return
+	}
+
+	// upsert
+	now := time.Now()
+	query = `UPDATE user_points SET points=$1, updated_at=$2 WHERE user_id=$3`
+	_, err = s.DB.Exec(query, currPoints+points, now, userId)
+
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func (s *ExerciseService) GetTestExercises(testType string, userId uuid.UUID) ([]entities.ExerciseWithChoicesEntity, error) {

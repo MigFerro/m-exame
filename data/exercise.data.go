@@ -63,4 +63,5 @@ type ExerciseAnswer struct {
 type TestResult struct {
 	Exercises    []ExerciseSolved
 	CorrectCount int
+	PointsGained int
 }

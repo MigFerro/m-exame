@@ -5,6 +5,7 @@ import "github.com/MigFerro/exame/templates/components"
 type BaseOptions struct {
     WithLatex bool
     WithHTMX bool
+    WithHyperscript bool
 }
 
 templ Base(options BaseOptions) {
@@ -13,7 +14,9 @@ templ Base(options BaseOptions) {
             <link rel="stylesheet" href="/static/css/tailwind.css" />
 
             // Hyperscript
-            <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>           
+            if options.WithHyperscript {
+                <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>           
+            }
 
             // LaTeX support
             if options.WithLatex {
@@ -32,9 +35,8 @@ templ Base(options BaseOptions) {
             }
 
             // HTMX support
-            if options.WithHTMX {
-                <script src="/static/htmx/htmx.min.js"></script>
-            }
+            <script src="/static/htmx/htmx.min.js"></script>
+
         </head>
         <body>
             @components.HeaderWithAuthUser(ctx)

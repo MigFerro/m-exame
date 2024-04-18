@@ -28,6 +28,7 @@ func main() {
 	homeHandler := handlers.HomeHandler{ExerciseService: &exerciseService}
 	exerciseHandler := handlers.ExerciseHandler{ExerciseService: &exerciseService, UsersService: &userService}
 	authHandler := handlers.AuthHandler{UserService: &userService}
+	userHandler := handlers.UserHandler{UsersService: &userService}
 
 	app.GET("/", homeHandler.HomeShow)
 	app.GET("/exam-list", homeHandler.ExameExerciseListShow)
@@ -37,6 +38,9 @@ func main() {
 	app.GET("/auth/:provider", authHandler.GetAuthProvider)
 	app.GET("/auth/:provider/callback", authHandler.Login)
 	app.GET("/auth/logout", authHandler.Logout)
+
+	// users
+	app.GET("/user/points", userHandler.GetLoggedUserPoints)
 
 	//exercises
 	app.GET("/exercises", exerciseHandler.ShowExerciseList)

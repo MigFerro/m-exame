@@ -1,21 +1,46 @@
 package components
 
 import (
+    "strconv"
 	templateutils "github.com/MigFerro/exame/templates/utils"
+	"github.com/MigFerro/exame/data"
 )
 
+func HeaderWithAuthUser(c context.Context) templ.Component {
+    authUser := templateutils.GetAuthenticatedUserInfo(c)
+    return header(authUser)
+}
 
-templ Header(authUserName string) {
+templ HeaderUserPoints(points int) {
+    <p class={ "font-bold " + pointsColor(points) }>{ strconv.Itoa(points) }</p>
+}
+
+func pointsColor(points int) string {
+    if points < 250 {
+        return "text-red-700"
+    }
+
+    if points < 500 {
+        return "text-yellow-700"
+    }
+
+    return "text-green-700"
+}
+
+templ header(authUser *data.LoggedUser) {
     <div class="mx-[10%] pl-[2.5%] pr-[5%] py-[2.5%] bg-slate-400 flex justify-between rounded-b-lg items-center">
         <a href="/" class="text-3xl font-bold text-gray-200">+Exame</a>
-        if authUserName == "" {
+        if authUser.Name == "" {
             <a class="flex flex-row items-center justify-center bg-white py-1 px-3 rounded-2xl" href="/auth/google">
                 <p class="pr-1">Login</p>
                 <img class="h-[15px] w-[15px] -rotate-90" src="/static/icons/login.svg" alt="Login icon" />
             </a>
         } else {
             <div class="flex flex-row items-center justify-center">
-                <p class="text-lg font-bold mr-5">{ templateutils.GetAuthenticatedUserName(ctx) }</p>
+                <div class="flex flex-col items-center align-center mx-3">
+                    <p class="text-lg">{ authUser.Name }</p>
+                    <div hx-get="/user/points" hx-trigger="load"></div>
+                </div>
                 <a class="flex flex-row items-center justify-center bg-white py-1 px-3 rounded-2xl" href="/auth/logout">
                     <p class="pr-1">Logout</p>
                     <img class="h-[15px] w-[15px]" src="/static/icons/logout.svg" alt="Logout icon" />
@@ -23,9 +48,4 @@ templ Header(authUserName string) {
             </div>
         }
     </div>
-}
-
-func HeaderWithAuthUser(c context.Context) templ.Component {
-    authUserName := templateutils.GetAuthenticatedUserName(c)
-    return Header(authUserName)
 }

@@ -12,7 +12,7 @@ import (
 )
 
 templ ShowTest(exercises []entities.ExerciseWithChoicesEntity) {
-    @layouts.Base(layouts.BaseOptions{ WithLatex: true, WithHTMX: true }) {
+    @layouts.Base(layouts.BaseOptions{ WithLatex: true, WithHTMX: true, WithHyperscript: true }) {
         <form method="post" action="/test/solve">
         for i, exercise := range exercises {
             <div class="p-10 my-10 bg-slate-200 rounded-lg relative" id={ "exercise-container-" + strconv.Itoa(i) }>
@@ -69,15 +69,26 @@ templ ShowTest(exercises []entities.ExerciseWithChoicesEntity) {
 
 templ ShowTestResult(result data.TestResult) {
     @layouts.Base(layouts.BaseOptions{ WithLatex: true, WithHTMX: true }) {
-        if float32(result.CorrectCount) / float32(len(result.Exercises)) < float32(1)/float32(2) {
-            <h1 class="w-full pt-10 text-center text-6xl font-bold text-red-500">{ fmt.Sprintf("%.0f", 100 * float32(result.CorrectCount) / float32(len(result.Exercises))) + "%" }</h1>
-        }
+        
+        <div class="text-center">
+            if float32(result.CorrectCount) / float32(len(result.Exercises)) < float32(1)/float32(2) {
+                <h1 class="py-10 text-center text-6xl font-bold text-red-500">{ fmt.Sprintf("%.0f", 100 * float32(result.CorrectCount) / float32(len(result.Exercises))) + "%" }</h1>
+            }
 
-        else if float32(result.CorrectCount) / float32(len(result.Exercises)) < float32(3)/float32(4) {
-            <h1 class="w-full pt-10 text-center text-6xl font-bold text-yellow-500">{ fmt.Sprintf("%.0f", 100 * float32(result.CorrectCount) / float32(len(result.Exercises))) + "%" }</h1>
-        } else {
-            <h1 class="w-full pt-10 text-center text-6xl font-bold text-green-500">{ fmt.Sprintf("%.0f", 100 * float32(result.CorrectCount) / float32(len(result.Exercises))) + "%" }</h1>
-        }
+            else if float32(result.CorrectCount) / float32(len(result.Exercises)) < float32(3)/float32(4) {
+                <h1 class="pt-10 py-3 text-center text-6xl font-bold text-yellow-500">{ fmt.Sprintf("%.0f", 100 * float32(result.CorrectCount) / float32(len(result.Exercises))) + "%" }</h1>
+            } else {
+                <h1 class="py-10 text-center text-6xl font-bold text-green-500">{ fmt.Sprintf("%.0f", 100 * float32(result.CorrectCount) / float32(len(result.Exercises))) + "%" }</h1>
+            }
+            <div class="text-lg">
+                Ganhaste
+                <span class="text-lg font-bold">
+                +{ strconv.Itoa(result.PointsGained) }
+                </span>
+                pontos
+            </div>
+        </div>
+        
 
         for i, exercise := range result.Exercises {
             @ExerciseResult(exercise.IsSolution) {

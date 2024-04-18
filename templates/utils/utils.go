@@ -6,12 +6,14 @@ import (
 	"github.com/MigFerro/exame/data"
 )
 
-func GetAuthenticatedUserName(c context.Context) string {
+func GetAuthenticatedUserInfo(c context.Context) *data.LoggedUser {
 	authUser, ok := c.Value("authUser").(*data.LoggedUser)
+
 	if !ok {
-		return ""
+		return &data.LoggedUser{}
 	}
-	return authUser.Name
+
+	return authUser
 }
 
 func GetExameString(exameYear string, exameFase string) string {
