@@ -92,7 +92,7 @@ func header(authUser *data.LoggedUser) templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"mx-[10%] pl-[2.5%] pr-[5%] py-[2.5%] bg-slate-400 flex justify-between rounded-b-lg items-center\"><a href=\"/\" class=\"text-3xl font-bold text-gray-200\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"w-full pl-[5%] pr-[5%] py-[2.5%] bg-white flex justify-between items-center\"><a href=\"/\" class=\"text-3xl font-bold text-blue-500\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -120,7 +120,7 @@ func header(authUser *data.LoggedUser) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex flex-row items-center justify-center\"><div class=\"flex flex-col items-center align-center mx-3\"><p class=\"text-lg\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex flex-row items-center justify-center\"><div class=\"flex flex-col items-center align-center mx-10\"><p class=\"text-lg\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

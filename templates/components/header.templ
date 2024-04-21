@@ -28,8 +28,8 @@ func pointsColor(points int) string {
 }
 
 templ header(authUser *data.LoggedUser) {
-    <div class="mx-[10%] pl-[2.5%] pr-[5%] py-[2.5%] bg-slate-400 flex justify-between rounded-b-lg items-center">
-        <a href="/" class="text-3xl font-bold text-gray-200">+Exame</a>
+    <div class="w-full pl-[5%] pr-[5%] py-[2.5%] bg-white flex justify-between items-center">
+        <a href="/" class="text-3xl font-bold text-blue-500">+Exame</a>
         if authUser.Name == "" {
             <a class="flex flex-row items-center justify-center bg-white py-1 px-3 rounded-2xl" href="/auth/google">
                 <p class="pr-1">Login</p>
@@ -37,7 +37,7 @@ templ header(authUser *data.LoggedUser) {
             </a>
         } else {
             <div class="flex flex-row items-center justify-center">
-                <div class="flex flex-col items-center align-center mx-3">
+                <div class="flex flex-col items-center align-center mx-10">
                     <p class="text-lg">{ authUser.Name }</p>
                     <div hx-get="/user/points" hx-trigger="load"></div>
                 </div>

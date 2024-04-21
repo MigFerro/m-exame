@@ -11,13 +11,33 @@ import (
 
 templ Show() {
     @layouts.Base(layouts.BaseOptions{ WithLatex: true, WithHTMX:true }) {
-        <h2 class="w-full text-center text-4xl font-bold text-gray-900 pt-10 pb-5">Mais exercícios, mais prática</h2>
+        <h2 class="w-full text-center text-5xl font-bold text-gray-900 my-10">Mais exercícios, mais prática</h2>
 
         @exameContainer() {
             <div hx-get="/exam-list?show=show" hx-target="#exame_container" hx-swap="outerHTML" class="w-1/3 p-6 bg-white border border-gray-200 rounded-3xl shadow hover:cursor-pointer hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
                 <h5 class="w-full text-center mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Resolve um desafio</h5>
             </div>
         }
+
+        <div class="w-full bg-slate-100 py-10 mt-[3.5rem] mb-[8rem] text-xl text-center rounded-lg">
+            <ul class="text-xl text-center">
+                <li>
+                   Ganha pontos a resolver desafios com exercícios baseados nos Exames Nacionais.
+                </li>
+                <li class="mt-5">
+                    Usa os pontos para guiar o progresso do teu estudo e ganhar confiança na tua preparação.
+                </li>
+                <li class="mt-5">
+                    Atinge os 
+                    <span class="text-green-700 font-bold">
+                       500 
+                    </span>
+                    pontos para te sentires preparado/a!
+                </li>
+            </ul>
+        </div>
+
+        <h3 class="mb-20 w-full text-center text-4xl font-bold">Desafios de matérias específicas</h3>
 
         @yearContainer() {
             <ul class="flex -mx-2.5">
