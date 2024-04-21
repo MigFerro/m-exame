@@ -120,7 +120,7 @@ func header(authUser *data.LoggedUser) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex flex-row items-center justify-center\"><div class=\"flex flex-col items-center align-center mx-10\"><p class=\"text-lg\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"relative inline-block text-left\"><div><button type=\"button\" _=\"on click toggle between .hidden and .block on #logoutDiv\" class=\"inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50\" id=\"menu-button\" aria-expanded=\"true\" aria-haspopup=\"true\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -129,7 +129,7 @@ func header(authUser *data.LoggedUser) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p><div hx-get=\"/user/points\" hx-trigger=\"load\"></div></div><a class=\"flex flex-row items-center justify-center bg-white py-1 px-3 rounded-2xl\" href=\"/auth/logout\"><p class=\"pr-1\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div hx-get=\"/user/points\" hx-trigger=\"load\"></div></button></div><div id=\"logoutDiv\" class=\"hidden absolute right-0 z-10 mt-2 py-1 w-[6.5rem] origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none\" role=\"menu\" aria-orientation=\"vertical\" aria-labelledby=\"menu-button\" tabindex=\"-1\"><a href=\"/auth/logout\" class=\"inline-flex justify-between items-center w-full text-gray-700 block px-4 py-2 text-sm\" role=\"menuitem\" tabindex=\"-1\" id=\"menu-item-0\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -138,7 +138,7 @@ func header(authUser *data.LoggedUser) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p><img class=\"h-[15px] w-[15px]\" src=\"/static/icons/logout.svg\" alt=\"Logout icon\"></a></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <img class=\"h-[15px] w-[15px]\" src=\"/static/icons/logout.svg\" alt=\"Logout icon\"></a></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
