@@ -165,12 +165,7 @@ func (s *ExerciseService) EvaluateAndSaveTest(userId uuid.UUID, answers []data.E
 
 func (s *ExerciseService) attributePoints(userId uuid.UUID, result *data.TestResult) {
 	points := 0
-	if result.CorrectCount < 2 {
-		result.PointsGained = points
-		return
-	}
 
-	points = []int{5, 10, 15, 25}[result.CorrectCount-2]
 	exerciseIds := []uuid.UUID{}
 	for _, exercise := range result.Exercises {
 		if exercise.IsSolution {
@@ -178,13 +173,26 @@ func (s *ExerciseService) attributePoints(userId uuid.UUID, result *data.TestRes
 		}
 	}
 
-	var repeatedCount []int
+	correctIds := []uuid.UUID{}
+	wrongIds := []uuid.UUID{}
+	for _, exercise := range result.Exercises {
+		if exercise.IsSolution {
+			points += 5
+			correctIds = append(correctIds, exercise.Exercise.Id)
+		}
+		if !exercise.IsSolution {
+			points += -1
+			wrongIds = append(wrongIds, exercise.Exercise.Id)
+		}
+	}
+
+	var repeatedCorrectCount []int
 	query, args, err := sqlx.In(`
 		SELECT COUNT(*) FROM exercise_users eu
 		WHERE eu.user_id = ?
 		AND eu.exercise_id IN (?)
-		AND eu.last_solved_at IS NOT NULL
-	`, userId, exerciseIds)
+		AND eu.last_attempted_at IS NOT NULL
+	`, userId, correctIds)
 
 	query = s.DB.Rebind(query)
 
@@ -194,7 +202,7 @@ func (s *ExerciseService) attributePoints(userId uuid.UUID, result *data.TestRes
 		return
 	}
 
-	err = s.DB.Select(&repeatedCount, query, args...)
+	err = s.DB.Select(&repeatedCorrectCount, query, args...)
 
 	if err != nil {
 		result.PointsGained = 0
@@ -202,11 +210,32 @@ func (s *ExerciseService) attributePoints(userId uuid.UUID, result *data.TestRes
 		return
 	}
 
-	points = points - 2*repeatedCount[0]
+	var repeatedWrongCount []int
+	query, args, err = sqlx.In(`
+		SELECT COUNT(*) FROM exercise_users eu
+		WHERE eu.user_id = ?
+		AND eu.exercise_id IN (?)
+		AND eu.last_attempted_at IS NOT NULL
+	`, userId, wrongIds)
 
-	if points < 0 {
-		points = 0
+	query = s.DB.Rebind(query)
+
+	if err != nil {
+		result.PointsGained = 0
+		fmt.Println(err)
+		return
 	}
+
+	err = s.DB.Select(&repeatedWrongCount, query, args...)
+
+	if err != nil {
+		result.PointsGained = 0
+		fmt.Println(err)
+		return
+	}
+
+	points += -2 * repeatedCorrectCount[0]
+	points += -1 * repeatedWrongCount[0]
 
 	s.updateUserPoints(userId, points)
 

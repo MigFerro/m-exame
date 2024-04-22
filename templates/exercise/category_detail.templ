@@ -25,7 +25,7 @@ templ categoryDetail(ec entities.ExerciseCategoryEntity, isAdmin bool) {
 } 
 
 templ ShowCategoryDetail(ec entities.ExerciseCategoryEntity, isAdmin bool) {
-    @layouts.Base(layouts.BaseOptions{ WithLatex: false, WithHTMX: true }) {
+    @layouts.Base(layouts.BaseOptions{ WithLatex: false }) {
         @categoryDetail(ec, isAdmin) {}
     }
 }
@@ -41,7 +41,7 @@ templ ShowUpdateCategory(ec entities.ExerciseCategoryEntity) {
 
 templ ShowUpdateCategorySuccess(ec entities.ExerciseCategoryEntity) {
 
-    @layouts.Base(layouts.BaseOptions{ WithLatex: false, WithHTMX: true }) {
+    @layouts.Base(layouts.BaseOptions{ WithLatex: false }) {
         @categoryDetail(ec, true) {
             <p class="text-green-600">Alterações guardadas!</p>
         }

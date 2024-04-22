@@ -8,7 +8,7 @@ import (
 )
 
 templ ShowIndex(ids uuid.UUIDs) {
-    @layouts.Base(layouts.BaseOptions{ WithLatex: false, WithHTMX: false }) {
+    @layouts.Base(layouts.BaseOptions{ WithLatex: false }) {
         <h1 class="py-5 text-xl"> Exercise List</h1>
         <div class="pt-5">
             <ul>

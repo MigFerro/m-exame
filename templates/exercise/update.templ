@@ -10,7 +10,7 @@ import (
 )
 
 templ ShowUpdate(exercise *data.ExerciseUpsertForm, categories []entities.ExerciseCategoryEntity) {
-    @layouts.Base(layouts.BaseOptions{ WithLatex: true, WithHTMX: false }) {
+    @layouts.Base(layouts.BaseOptions{ WithLatex: true }) {
         <div class="pt-5">
             <div class="flex justify-between">
                 <div class="w-1/2 shrink container">

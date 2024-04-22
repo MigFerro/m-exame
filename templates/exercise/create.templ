@@ -15,7 +15,7 @@ templ ShowPreview(previewText string) {
 }
 
 templ ShowCreate(form *data.ExerciseUpsertForm, categories []entities.ExerciseCategoryEntity) {
-    @layouts.Base(layouts.BaseOptions{ WithLatex: true, WithHTMX: false }) {
+    @layouts.Base(layouts.BaseOptions{ WithLatex: true }) {
         <div class="pt-5">
             <div class="flex justify-between">
                 <div class="w-1/2 shrink container">
@@ -71,7 +71,7 @@ templ ShowCreate(form *data.ExerciseUpsertForm, categories []entities.ExerciseCa
 }
 
 templ ShowSaveConfirmationPreview(form *data.ExerciseUpsertForm) {
-    @layouts.Base(layouts.BaseOptions{ WithLatex: true, WithHTMX: false }) {
+    @layouts.Base(layouts.BaseOptions{ WithLatex: true }) {
         <div class="pt-5">
         <form method="post">
             <div class="">
@@ -126,7 +126,7 @@ templ ShowSaveConfirmationPreview(form *data.ExerciseUpsertForm) {
 }
 
 templ ExerciseSavedSuccessShow() {
-    @layouts.Base(layouts.BaseOptions{ WithLatex: false, WithHTMX: false }) {
+    @layouts.Base(layouts.BaseOptions{ WithLatex: false }) {
         <div class="pt-5">
             <p>O exercício foi guardado com sucesso!</p>
         </div>

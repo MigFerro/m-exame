@@ -3,9 +3,8 @@ package layouts
 import "github.com/MigFerro/exame/templates/components"
 
 type BaseOptions struct {
+    WithoutMargins bool
     WithLatex bool
-    WithHTMX bool
-    WithHyperscript bool
 }
 
 templ Base(options BaseOptions) {
@@ -39,13 +38,19 @@ templ Base(options BaseOptions) {
         <body>
             @components.HeaderWithAuthUser(ctx)
 
-            <div class="mb-10">
-                { children... }
-            </div>
+            if !options.WithoutMargins {
+                <div class="mb-10 mx-[15%]">
+                    { children... }
+                </div>
+            } else {
+                <div class="mb-10">
+                    { children... }
+                </div>
+            }
             
             @components.Footer()
 
-            if options.WithHTMX && options.WithLatex {
+            if options.WithLatex {
                 <script>
                     document.addEventListener('htmx:afterSwap', function(event) {
                         var div = event.target;
