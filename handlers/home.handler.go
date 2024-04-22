@@ -14,12 +14,6 @@ func (h *HomeHandler) HomeShow(c echo.Context) error {
 	return render(c, homeview.Show())
 }
 
-func (h *HomeHandler) ExameExerciseListShow(c echo.Context) error {
-	showList := c.QueryParam("show")
-
-	return render(c, homeview.ExameExerciseChoiceList(showList == "show"))
-}
-
 func (h *HomeHandler) YearExerciseCategoryListShow(c echo.Context) error {
 	showList := c.QueryParam("show")
 	showYear := c.QueryParam("showYear")

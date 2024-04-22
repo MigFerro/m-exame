@@ -31,7 +31,6 @@ func main() {
 	userHandler := handlers.UserHandler{UsersService: &userService}
 
 	app.GET("/", homeHandler.HomeShow)
-	app.GET("/exam-list", homeHandler.ExameExerciseListShow)
 	app.GET("/year-category-list", homeHandler.YearExerciseCategoryListShow)
 
 	// auth
