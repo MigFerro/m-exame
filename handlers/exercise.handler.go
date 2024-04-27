@@ -3,6 +3,7 @@ package handlers
 import (
 	"errors"
 	"fmt"
+	"net/http"
 	"strconv"
 
 	"github.com/MigFerro/exame/data"
@@ -158,7 +159,8 @@ func (h *ExerciseHandler) SolveTest(c echo.Context) error {
 		return err
 	}
 
-	return render(c, exerciseview.ShowTestResult(res))
+	return c.Redirect(http.StatusTemporaryRedirect, "/test/result")
+	// return render(c, exerciseview.ShowTestResult(res))
 }
 
 func (h *ExerciseHandler) readTestForm(c echo.Context) []data.ExerciseAnswer {
