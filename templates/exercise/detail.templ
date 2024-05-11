@@ -2,32 +2,64 @@ package exerciseview
 
 import (
     "strings"
-    "fmt"
+    "strconv"
 
     "github.com/MigFerro/exame/templates/layouts"
     templateutils "github.com/MigFerro/exame/templates/utils"
     "github.com/MigFerro/exame/entities"
+    "github.com/MigFerro/exame/data"
 )
 
+templ ExerciseHead(exercise entities.ExerciseWithChoicesEntity) {
+    <div class="p-10 mt-10 bg-blue-50 rounded-xl relative">
+        for _, line := range strings.Split(exercise.ProblemText, "\n") {
+            <p>{line}<br /></p>
+        }
 
-templ ShowDetail(exercise entities.ExerciseWithChoicesEntity) {
+        if exercise.ExameYear != "" && exercise.ExameFase != "" {
+            <p class="italic pt-5 pb-1">{ templateutils.GetExameString(exercise.ExameYear, exercise.ExameFase) }</p>
+        }
+
+        <div class="inline-flex items-center justify-between p-1.5 bg-indigo-500 text-gray-50 border border-gray-100 rounded-xl absolute top-0 right-0">
+            { exercise.Category.Category }
+        </div>
+    </div>
+}
+
+templ ShowExerciseDetail(exercise entities.ExerciseWithChoicesEntity) {
     @layouts.Base(layouts.BaseOptions{ WithLatex: true }) {
         <div class="pt-5" id="exercise-container">
 
-            <div class="pt-10">
-                for _, line := range strings.Split(exercise.ProblemText, "\n") {
-                    <p>{line}<br /></p>
-                }
-
-                <p class="italic pb-5">{ templateutils.GetExameString(exercise.ExameYear, exercise.ExameFase) }</p>
-
-                //<div class="inline-flex items-center justify-between p-1.5 text-gray-100 bg-blue-950 border border-gray-200 rounded-lg">
-                 //   { exercise.Category }
-                //</div>
-            </div>
+            @ExerciseHead(exercise)
 
             <div id="choices-container">
-                <form hx-post={ fmt.Sprintf("%v", templ.URL(exercise.Id.String() + "/solve")) } hx-vals='{"at": "detail"}' hx-target="#choices-container" hx-swap="innerHTML">
+                <div>
+                    <ul class="grid w-full gap-6 md:grid-cols-4 pt-10">
+                        for _, choice := range exercise.Choices {
+                            <li>
+                                <div for={ choice.Id.String() } class="inline-flex items-center justify-between w-full p-5 text-gray-700 font-bold bg-white border border-gray-200 rounded-lg cursor-pointer dark:border-gray-700 dark:peer-checked:text-blue-500 peer-checked:border-blue-600 peer-checked:text-blue-600"> 
+                                    <div class="block w-full text-center">
+                                        { choice.Value }
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    }
+}
+
+templ ShowExerciseToSolve(exercise entities.ExerciseWithChoicesEntity) {
+    @layouts.Base(layouts.BaseOptions{ WithLatex: true }) {
+        <div class="pt-5" id="exercise-container">
+
+            @ExerciseHead(exercise)
+
+            <div id="choices-container">
+                <form method="POST">
                     <ul class="grid w-full gap-6 md:grid-cols-4 pt-10">
                         for i, choice := range exercise.Choices {
                             <li>
@@ -46,10 +78,45 @@ templ ShowDetail(exercise entities.ExerciseWithChoicesEntity) {
                         }
                     </ul>
 
-                    <input class="text-white text-xl font-bold bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto my-10 px-5 py-2.5 text-center" type="submit" value="Responder" />
+                    <input class="text-white text-xl font-bold bg-blue-500 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto my-10 px-5 py-2.5 text-center" type="submit" value="Responder" />
                 </form>
             </div>
 
         </div>
+    }
+}
+
+templ ShowExerciseResult(result data.ExerciseSolved) {
+    @layouts.Base(layouts.BaseOptions{ WithLatex: true }) {
+
+            <div class="w-ful text-center text-xl font-bold">
+                if result.Points >= 0 {
+                    <p class="text-green-500">
+                        { "+" + strconv.Itoa(result.Points) + " pontos" }
+                    </p>
+                } else {
+                    <p class="text-red-500">
+                        { strconv.Itoa(result.Points) + " pontos" }
+                    </p>
+                }
+            </div>
+
+            @ExerciseHead(result.Exercise)
+
+            <div id="choices-container">
+                <div>
+                    <ul class="grid w-full gap-6 md:grid-cols-4 pt-10">
+                        for _, choice := range result.Exercise.Choices {
+                            <li>
+                                <div for={ choice.Id.String() } class="inline-flex items-center justify-between w-full p-5 text-gray-700 font-bold bg-white border border-gray-200 rounded-lg cursor-pointer dark:border-gray-700 dark:peer-checked:text-blue-500 peer-checked:border-blue-600 peer-checked:text-blue-600"> 
+                                    <div class="block w-full text-center">
+                                        { choice.Value }
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
     }
 }

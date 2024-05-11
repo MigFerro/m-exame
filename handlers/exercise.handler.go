@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+
 	"strconv"
 
 	"github.com/MigFerro/exame/data"
@@ -128,61 +129,6 @@ func (h *ExerciseHandler) ShowExerciseList(c echo.Context) error {
 	return render(c, exerciseview.ShowIndex(exerciseIds))
 }
 
-func (h *ExerciseHandler) ShowTest(c echo.Context) error {
-	testType := c.QueryParam("type")
-	loggedUser, ok := c.Request().Context().Value("authUser").(*data.LoggedUser)
-
-	if !ok {
-		return errors.New("No logged user")
-	}
-
-	exercises, err := h.ExerciseService.GetTestExercises(testType, loggedUser.Id)
-
-	if err != nil {
-		return err
-	}
-
-	return render(c, exerciseview.ShowTest(exercises))
-}
-
-func (h *ExerciseHandler) SolveTest(c echo.Context) error {
-	loggedUser, ok := c.Request().Context().Value("authUser").(*data.LoggedUser)
-
-	if !ok {
-		return errors.New("No logged user")
-	}
-
-	answers := h.readTestForm(c)
-	res, err := h.ExerciseService.EvaluateAndSaveTest(loggedUser.Id, answers)
-
-	if err != nil {
-		return err
-	}
-
-	return c.Redirect(http.StatusTemporaryRedirect, "/test/result")
-	// return render(c, exerciseview.ShowTestResult(res))
-}
-
-func (h *ExerciseHandler) readTestForm(c echo.Context) []data.ExerciseAnswer {
-	exerciseCount, _ := strconv.Atoi(c.Request().FormValue("exercise_count"))
-
-	answers := []data.ExerciseAnswer{}
-	ans := data.ExerciseAnswer{}
-
-	for i := 0; i < exerciseCount; i++ {
-		id := c.Request().FormValue("exercise-" + strconv.Itoa(i))
-		choiceId := c.Request().FormValue("choice-" + strconv.Itoa(i))
-
-		ans.Id = id
-		ans.ChoiceId = choiceId
-
-		answers = append(answers, ans)
-	}
-
-	return answers
-
-}
-
 func (h *ExerciseHandler) ShowExerciseHistory(c echo.Context) error {
 	authUser, _ := getAuthenticatedUser(c.Request().Context())
 
@@ -195,12 +141,20 @@ func (h *ExerciseHandler) ShowExerciseHistory(c echo.Context) error {
 	return render(c, exerciseview.ShowHistory(exerciseIds))
 }
 
+func (h *ExerciseHandler) ShowExerciseToSolve(c echo.Context) error {
+	exerciseId := h.ExerciseService.GetRandomExerciseId()
+
+	http.Redirect(c.Response().Writer, c.Request(), "/exercises/"+exerciseId, http.StatusSeeOther)
+
+	return nil
+}
+
 func (h *ExerciseHandler) ShowExerciseDetail(c echo.Context) error {
 	exerciseId := c.Param("id")
 
 	exercise, _ := h.ExerciseService.GetExerciseWithChoices(exerciseId)
 
-	return render(c, exerciseview.ShowDetail(exercise))
+	return render(c, exerciseview.ShowExerciseToSolve(exercise))
 }
 
 func (h *ExerciseHandler) ShowExerciseChoices(c echo.Context) error {
@@ -235,14 +189,36 @@ func (h *ExerciseHandler) HandleExerciseSolve(c echo.Context) error {
 		return errors.New("No user logged in")
 	}
 
-	result, err := h.ExerciseService.SolveExercise(loggedUser.Id, exerciseId, formChoice, true)
+	_, err := h.ExerciseService.SolveExercise(loggedUser.Id, exerciseId, formChoice)
 
 	if err != nil {
 		fmt.Println("Error saving exercise in database: ", err)
 		return err
 	}
 
-	return render(c, exerciseview.SolvedResult(result))
+	http.Redirect(c.Response().Writer, c.Request(), "/exercises/"+exerciseId+"/result", http.StatusSeeOther)
+
+	return err
+}
+
+func (h *ExerciseHandler) ShowExerciseResult(c echo.Context) error {
+	exerciseId := c.Param("id")
+
+	loggedUser, ok := c.Request().Context().Value("authUser").(*data.LoggedUser)
+
+	if !ok {
+		return errors.New("No user logged in")
+	}
+
+	// get exercise result from db
+	exerciseResult, err := h.ExerciseService.GetExerciseResult(loggedUser.Id, exerciseId)
+
+	if err != nil {
+		fmt.Println("Error getting exercise result from database: ", err)
+		return err
+	}
+
+	return render(c, exerciseview.ShowExerciseResult(exerciseResult))
 }
 
 func (h *ExerciseHandler) ShowExerciseCategoriesList(c echo.Context) error {

@@ -42,10 +42,12 @@ func main() {
 	app.GET("/user/points", userHandler.GetLoggedUserPoints)
 
 	//exercises
+	app.GET("/exercise", exerciseHandler.ShowExerciseToSolve)
 	app.GET("/exercises", exerciseHandler.ShowExerciseList)
 	app.GET("/exercises/create", exerciseHandler.ShowExerciseCreate)
 	app.GET("/exercises/:id/update", exerciseHandler.ShowExerciseUpdate)
 	app.GET("/exercises/:id", exerciseHandler.ShowExerciseDetail)
+	app.GET("/exercises/:id/result", exerciseHandler.ShowExerciseResult)
 	app.GET("/exercises/:id/choices", exerciseHandler.ShowExerciseChoices)
 	app.GET("/exercises/categories", exerciseHandler.ShowExerciseCategoriesList)
 	app.GET("/exercises/category/:id", exerciseHandler.ShowExerciseCategoryDetail)
@@ -53,13 +55,9 @@ func main() {
 	app.GET("/exercises/category/:id/edit", exerciseHandler.ShowUpdateExerciseCategory)
 	app.GET("/exercises/history", exerciseHandler.ShowExerciseHistory)
 
-	//test
-	app.GET("/test", exerciseHandler.ShowTest)
-	app.POST("/test/solve", exerciseHandler.SolveTest)
-
 	app.POST("/exercises/create", exerciseHandler.HandleExerciseUpsertJourney)
 	app.POST("/exercises/:id/update", exerciseHandler.HandleExerciseUpsertJourney)
-	app.POST("/exercises/:id/solve", exerciseHandler.HandleExerciseSolve)
+	app.POST("/exercises/:id", exerciseHandler.HandleExerciseSolve)
 	app.POST("/exercises/category/create", exerciseHandler.CreateExerciseCategory)
 	app.POST("/exercises/category/:id", exerciseHandler.UpdateExerciseCategory)
 

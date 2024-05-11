@@ -23,6 +23,8 @@ type ExerciseSolved struct {
 	ChoiceSelectedId string
 	ChoiceCorrectId  string
 	NextId           string
+	Repeated         bool
+	Points           int
 }
 
 type ExerciseWithChoices struct {
@@ -58,10 +60,4 @@ type ExerciseUpsertForm struct {
 type ExerciseAnswer struct {
 	Id       string
 	ChoiceId string
-}
-
-type TestResult struct {
-	Exercises    []ExerciseSolved
-	CorrectCount int
-	PointsGained int
 }
