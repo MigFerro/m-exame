@@ -107,13 +107,31 @@ templ ShowExerciseResult(result data.ExerciseSolved) {
                 <div>
                     <ul class="grid w-full gap-6 md:grid-cols-4 pt-10">
                         for _, choice := range result.Exercise.Choices {
-                            <li>
-                                <div for={ choice.Id.String() } class="inline-flex items-center justify-between w-full p-5 text-gray-700 font-bold bg-white border border-gray-200 rounded-lg cursor-pointer dark:border-gray-700 dark:peer-checked:text-blue-500 peer-checked:border-blue-600 peer-checked:text-blue-600"> 
-                                    <div class="block w-full text-center">
-                                        { choice.Value }
+                            if choice.IsSolution {
+                                <li>
+                                    <div for={ choice.Id.String() } class="inline-flex items-center justify-between w-full p-5 text-green-500 font-bold bg-white border-2 border-green-500 rounded-lg"> 
+                                        <div class="block w-full text-center">
+                                            { choice.Value }
+                                        </div>
                                     </div>
-                                </div>
-                            </li>
+                                </li>
+                            } else if choice.Id.String() == result.ChoiceSelectedId {
+                                <li>
+                                    <div for={ choice.Id.String() } class="inline-flex items-center justify-between w-full p-5 text-red-500 font-bold bg-white border-2 border-red-500 rounded-lg"> 
+                                        <div class="block w-full text-center">
+                                            { choice.Value }
+                                        </div>
+                                    </div>
+                                </li>
+                            } else {
+                                <li>
+                                    <div for={ choice.Id.String() } class="inline-flex items-center justify-between w-full p-5 text-gray-700 font-bold bg-white border-2 border-gray-200 rounded-lg"> 
+                                        <div class="block w-full text-center">
+                                            { choice.Value }
+                                        </div>
+                                    </div>
+                                </li>
+                            }
                         }
                     </ul>
                 </div>
