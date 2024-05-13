@@ -65,6 +65,44 @@ func (s *ExerciseService) GetExerciseHistory(userId uuid.UUID) (uuid.UUIDs, erro
 	return exerciseIds, err
 }
 
+func (s *ExerciseService) GetPreviousSolvedExerciseId(userId uuid.UUID, exerciseId string) (uuid.NullUUID, error) {
+
+	var previousExerciseId uuid.NullUUID
+	err := s.DB.Get(&previousExerciseId,
+		`
+		SELECT exercise_id FROM exercise_users
+		WHERE user_id = $1
+		AND last_attempted_at < (
+			SELECT last_attempted_at FROM exercise_users
+			WHERE user_id = $1
+			AND exercise_id = $2
+		)
+		ORDER BY last_attempted_at DESC
+		LIMIT 1
+	`, userId, exerciseId)
+
+	return previousExerciseId, err
+}
+
+func (s *ExerciseService) GetNextSolvedExerciseId(userId uuid.UUID, exerciseId string) (uuid.NullUUID, error) {
+
+	var nextExerciseId uuid.NullUUID
+	err := s.DB.Get(&nextExerciseId,
+		`
+		SELECT exercise_id FROM exercise_users
+		WHERE user_id = $1
+		AND last_attempted_at > (
+			SELECT last_attempted_at FROM exercise_users
+			WHERE user_id = $1
+			AND exercise_id = $2
+		)
+		ORDER BY last_attempted_at ASC
+		LIMIT 1
+	`, userId, exerciseId)
+
+	return nextExerciseId, err
+}
+
 func (s *ExerciseService) SolveExercise(userId uuid.UUID, exerciseId string, choiceId string) (data.ExerciseSolved, error) {
 	var exercise entities.ExerciseWithChoicesEntity
 	var solutionId uuid.UUID
@@ -106,7 +144,7 @@ func (s *ExerciseService) SolveExercise(userId uuid.UUID, exerciseId string, cho
 	if isSolution {
 		points = 10
 		if repeated {
-			points = 5
+			points = 7
 		}
 	} else {
 		points = -2
@@ -129,6 +167,7 @@ func (s *ExerciseService) SolveExercise(userId uuid.UUID, exerciseId string, cho
 			tx.MustExec("UPDATE exercise_users SET (last_attempted_at, choice_selected, points_gained) = ($1, $2, $3) WHERE user_id = $4 AND exercise_id = $5", now, choiceId, points, userId, exerciseId)
 		}
 	}
+
 	tx.Commit()
 
 	s.updateUserPoints(userId, points)
@@ -189,12 +228,17 @@ func (s *ExerciseService) GetExerciseResult(userId uuid.UUID, exerciseId string)
 		}
 	}
 
+	previousExerciseId, _ := s.GetPreviousSolvedExerciseId(userId, exerciseId)
+	nextExerciseId, _ := s.GetNextSolvedExerciseId(userId, exerciseId)
+
 	solvedData := data.ExerciseSolved{
-		Exercise:         exerciseWithChoices,
-		ChoiceSelectedId: exerciseUser.ChoiceSelected.String(),
-		ChoiceCorrectId:  correctChoiceId,
-		IsSolution:       exerciseUser.ChoiceSelected.String() == correctChoiceId,
-		Points:           int(exerciseUser.PointsGained.Int32),
+		Exercise:           exerciseWithChoices,
+		ChoiceSelectedId:   exerciseUser.ChoiceSelected.String(),
+		ChoiceCorrectId:    correctChoiceId,
+		IsSolution:         exerciseUser.ChoiceSelected.String() == correctChoiceId,
+		Points:             int(exerciseUser.PointsGained.Int32),
+		PreviousExerciseId: previousExerciseId,
+		NextExerciseId:     nextExerciseId,
 	}
 
 	return solvedData, err
@@ -285,18 +329,6 @@ func (s *ExerciseService) GetExerciseUpsertForm(exerciseId string) (*data.Exerci
 	}
 
 	return &form, nil
-}
-
-// check if this is used
-func (s *ExerciseService) GetPreviouslyAttemptedExercise(exerciseId string, userId string) string {
-
-	exerciseUserRow := s.DB.QueryRowx(
-		`SELECT exercise_id FROM exercise_users
-		WHERE id = $1`, exerciseId)
-
-	fmt.Println(exerciseUserRow)
-	return ""
-
 }
 
 func (s *ExerciseService) GetRandomExerciseId() string {

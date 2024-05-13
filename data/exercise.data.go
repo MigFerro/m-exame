@@ -18,13 +18,15 @@ type ExerciseChoices struct {
 }
 
 type ExerciseSolved struct {
-	Exercise         entities.ExerciseWithChoicesEntity
-	IsSolution       bool
-	ChoiceSelectedId string
-	ChoiceCorrectId  string
-	NextId           string
-	Repeated         bool
-	Points           int
+	Exercise           entities.ExerciseWithChoicesEntity
+	IsSolution         bool
+	ChoiceSelectedId   string
+	ChoiceCorrectId    string
+	NextId             string
+	Repeated           bool
+	Points             int
+	PreviousExerciseId uuid.NullUUID
+	NextExerciseId     uuid.NullUUID
 }
 
 type ExerciseWithChoices struct {

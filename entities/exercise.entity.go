@@ -32,8 +32,9 @@ type ExerciseChoiceEntity struct {
 
 type ExerciseWithChoicesEntity struct {
 	ExerciseEntity
-	Category ExerciseCategoryEntity `db:"category"`
-	Choices  []ExerciseChoiceEntity
+	Category         ExerciseCategoryEntity `db:"category"`
+	Choices          []ExerciseChoiceEntity
+	PreviousResultId uuid.NullUUID
 }
 
 type ExerciseCategoryEntity struct {

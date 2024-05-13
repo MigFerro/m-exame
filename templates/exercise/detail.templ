@@ -83,6 +83,10 @@ templ ShowExerciseToSolve(exercise entities.ExerciseWithChoicesEntity) {
             </div>
 
         </div>
+
+        <div class="my-10">
+            <a href="/exercise">New</a>
+        </div>
     }
 }
 
@@ -136,5 +140,18 @@ templ ShowExerciseResult(result data.ExerciseSolved) {
                     </ul>
                 </div>
             </div>
+
+        <div>
+            <div class="flex justify-between my-10">
+                if result.PreviousExerciseId.Valid {
+                    <a href={ templ.SafeURL("/exercises/" + result.PreviousExerciseId.UUID.String() + "/result" ) }>Previous</a>
+                }
+                if result.NextExerciseId.Valid {
+                    <a href={ templ.SafeURL("/exercises/" + result.NextExerciseId.UUID.String() + "/result" ) }>Next</a>
+                }
+                <a href="/exercise">New</a>
+            </div>
+
+        </div>
     }
 }
