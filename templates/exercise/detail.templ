@@ -141,17 +141,34 @@ templ ShowExerciseResult(result data.ExerciseSolved) {
                 </div>
             </div>
 
-        <div>
-            <div class="flex justify-between my-10">
+        <div class="flex justify-between my-10">
+            <div class="flex">
                 if result.PreviousExerciseId.Valid {
-                    <a href={ templ.SafeURL("/exercises/" + result.PreviousExerciseId.UUID.String() + "/result" ) }>Previous</a>
+                    <a href={ templ.SafeURL("/exercises/" + result.PreviousExerciseId.UUID.String() + "/result" ) }>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6 stroke-blue-500 hover:stroke-indigo-500">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                        </svg>
+                    </a>
+                } else {
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.0" stroke="currentColor" class="w-6 h-6 stroke-gray-300">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                    </svg>
                 }
                 if result.NextExerciseId.Valid {
-                    <a href={ templ.SafeURL("/exercises/" + result.NextExerciseId.UUID.String() + "/result" ) }>Next</a>
+                    <a href={ templ.SafeURL("/exercises/" + result.NextExerciseId.UUID.String() + "/result" ) }>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6 stroke-blue-500 hover:stroke-indigo-500">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                        </svg>
+                    </a>
+                } else {
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.0" stroke="currentColor" class="w-6 h-6 stroke-gray-300">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                    </svg>
                 }
-                <a href="/exercise">New</a>
-            </div>
 
+            </div>
+            
+            <a href="/exercise">New</a>
         </div>
     }
 }
