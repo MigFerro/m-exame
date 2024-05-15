@@ -664,6 +664,11 @@ video {
   margin-right: 15%;
 }
 
+.mx-\[20\%\] {
+  margin-left: 20%;
+  margin-right: 20%;
+}
+
 .my-10 {
   margin-top: 2.5rem;
   margin-bottom: 2.5rem;
@@ -683,6 +688,14 @@ video {
 
 .mb-\[8rem\] {
   margin-bottom: 8rem;
+}
+
+.ml-10 {
+  margin-left: 2.5rem;
+}
+
+.mr-2 {
+  margin-right: 0.5rem;
 }
 
 .mt-10 {
@@ -733,12 +746,20 @@ video {
   height: 1.5rem;
 }
 
+.h-8 {
+  height: 2rem;
+}
+
 .h-\[15em\] {
   height: 15em;
 }
 
 .h-\[15px\] {
   height: 15px;
+}
+
+.h-full {
+  height: 100%;
 }
 
 .w-1\/2 {
@@ -757,6 +778,10 @@ video {
   width: 1.5rem;
 }
 
+.w-8 {
+  width: 2rem;
+}
+
 .w-\[15px\] {
   width: 15px;
 }
@@ -771,6 +796,10 @@ video {
 
 .w-full {
   width: 100%;
+}
+
+.max-w-\[900px\] {
+  max-width: 900px;
 }
 
 .shrink {
@@ -812,6 +841,10 @@ video {
 
 .items-center {
   align-items: center;
+}
+
+.justify-end {
+  justify-content: flex-end;
 }
 
 .justify-center {
@@ -984,6 +1017,11 @@ video {
   padding-right: 0.5rem;
 }
 
+.px-2\.5 {
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
+}
+
 .px-3 {
   padding-left: 0.75rem;
   padding-right: 0.75rem;
@@ -1129,6 +1167,11 @@ video {
 .text-5xl {
   font-size: 3rem;
   line-height: 1;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
 }
 
 .text-sm {
@@ -1306,6 +1349,16 @@ video {
   background-color: rgb(249 250 251 / var(--tw-bg-opacity));
 }
 
+.hover\:bg-indigo-500:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(99 102 241 / var(--tw-bg-opacity));
+}
+
+.hover\:bg-indigo-800:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(55 48 163 / var(--tw-bg-opacity));
+}
+
 .hover\:stroke-indigo-500:hover {
   stroke: #6366f1;
 }
@@ -1318,6 +1371,22 @@ video {
 .hover\:text-yellow-500:hover {
   --tw-text-opacity: 1;
   color: rgb(234 179 8 / var(--tw-text-opacity));
+}
+
+.hover\:outline-none:hover {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.hover\:ring-2:hover {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
+.hover\:ring-indigo-500:hover {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(99 102 241 / var(--tw-ring-opacity));
 }
 
 .focus\:outline-none:focus {
