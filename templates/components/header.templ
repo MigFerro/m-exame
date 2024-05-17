@@ -15,6 +15,10 @@ templ HeaderUserPoints(points int) {
     <p class={ "font-bold " + pointsColor(points) }>{ strconv.Itoa(points) }</p>
 }
 
+templ HeaderUserPointsFailed() {
+    <p></p>
+}
+
 func pointsColor(points int) string {
     if points < 250 {
         return "text-red-700"

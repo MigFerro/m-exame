@@ -1,7 +1,7 @@
 package db
 
 import (
-	"log"
+	// "log"
 	"os"
 
 	"github.com/jmoiron/sqlx"
@@ -13,18 +13,18 @@ func ConnectToDB() *sqlx.DB {
 
 	err := godotenv.Load(".env")
 	if err != nil {
-		log.Fatalf("Error loading .env file")
+		// log.Fatalf("Error loading .env file")
 	}
 
 	dbConnectionString := os.Getenv("POSTGRESQL_URL")
 
 	db, err := sqlx.Open("postgres", dbConnectionString)
 	if err != nil {
-		log.Fatal("error opening database connection: ", err)
+		// log.Fatal("error opening database connection: ", err)
 	}
 	err = db.Ping()
 	if err != nil {
-		log.Fatal("error while pinging database: ", err)
+		// log.Fatal("error while pinging database: ", err)
 	}
 
 	return db

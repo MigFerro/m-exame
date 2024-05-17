@@ -331,16 +331,19 @@ func (s *ExerciseService) GetExerciseUpsertForm(exerciseId string) (*data.Exerci
 	return &form, nil
 }
 
-func (s *ExerciseService) GetRandomExerciseId() string {
-	exerciseRow := s.DB.QueryRowx(
-		`SELECT id FROM exercises
+func (s *ExerciseService) GetRandomExerciseId() (string, error) {
+	query := `
+		SELECT id FROM exercises
 		ORDER BY random()
-		LIMIT 1`)
+		LIMIT 1
+	`
 
 	var exerciseId string
-	_ = exerciseRow.Scan(&exerciseId)
+	err := s.DB.Get(&exerciseId, query)
 
-	return exerciseId
+	fmt.Println(err)
+
+	return exerciseId, err
 }
 
 func (s *ExerciseService) SaveExercise(exerciseForm *data.ExerciseUpsertForm) error {

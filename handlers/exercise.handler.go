@@ -152,7 +152,11 @@ func (h *ExerciseHandler) ShowExerciseList(c echo.Context) error {
 }
 
 func (h *ExerciseHandler) ShowExerciseToSolve(c echo.Context) error {
-	exerciseId := h.ExerciseService.GetRandomExerciseId()
+	exerciseId, err := h.ExerciseService.GetRandomExerciseId()
+
+	if err != nil {
+		return render(c, errorsview.GeneralErrorPage())
+	}
 
 	http.Redirect(c.Response().Writer, c.Request(), "/exercises/"+exerciseId, http.StatusSeeOther)
 
