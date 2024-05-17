@@ -10,7 +10,8 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
-	"github.com/markbates/goth/providers/google"
+	"github.com/markbates/goth/providers/auth0"
+	// "github.com/markbates/goth/providers/google"
 )
 
 func InitCookieStore() *sessions.CookieStore {
@@ -24,7 +25,6 @@ func InitCookieStore() *sessions.CookieStore {
 	//COOKIE STORE
 	key := os.Getenv("COOKIE_SESSION_KEY")
 
-	// I don't really understand this
 	gob.Register(&data.LoggedUser{})
 
 	maxAge := 86400 * 30 // 30 days
@@ -40,7 +40,8 @@ func InitCookieStore() *sessions.CookieStore {
 
 	//PROVIDERS
 	goth.UseProviders(
-		google.New(os.Getenv("GOOGLE_CLIENT_ID"), os.Getenv("GOOGLE_SECRET_KEY"), "http://localhost:3000/auth/google/callback", "email", "profile"),
+		// google.New(os.Getenv("GOOGLE_CLIENT_ID"), os.Getenv("GOOGLE_SECRET_KEY"), "http://localhost:3000/auth/google/callback", "email", "profile"),
+		auth0.New(os.Getenv("AUTH0_CLIENT_ID"), os.Getenv("AUTH0_SECRET"), "http://localhost:3000/auth/auth0/callback", os.Getenv("AUTH0_DOMAIN")),
 	)
 
 	return store

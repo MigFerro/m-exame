@@ -2,7 +2,6 @@ package local
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/MigFerro/exame/data"
 	"github.com/labstack/echo-contrib/session"
@@ -20,13 +19,7 @@ func SaveLoggedUser(user data.LoggedUser, echoContext echo.Context, context cont
 
 func RemoveLoggedUser(echoContext echo.Context) {
 	session, _ := session.Get("session", echoContext)
-
-	val := session.Values["logged-user"]
-	if _, ok := val.(*data.LoggedUser); ok {
-		session.Values["logged-user"] = nil
-	} else {
-		fmt.Println("Could not retrieve logged user from cookies.")
-	}
+	session.Options.MaxAge = -1
 
 	session.Save(echoContext.Request(), echoContext.Response())
 }

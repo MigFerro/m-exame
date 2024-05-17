@@ -132,7 +132,7 @@ func (s *ExerciseService) SolveExercise(userId uuid.UUID, exerciseId string, cho
 	err = tx.Get(&solutionId, "SELECT id FROM exercise_choices WHERE exercise_id = $1 AND is_solution = TRUE", exerciseId)
 
 	exerciseUser := entities.ExerciseUserEntity{}
-	err = tx.Get(&exerciseUser, "SELECT * FROM exercise_users WHERE exercise_id = $1 AND user_id = $2", exerciseId, userId)
+	_ = tx.Get(&exerciseUser, "SELECT * FROM exercise_users WHERE exercise_id = $1 AND user_id = $2", exerciseId, userId)
 
 	now := time.Now()
 
