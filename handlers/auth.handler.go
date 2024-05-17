@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"net/url"
+	"os"
 
 	"github.com/MigFerro/exame/data"
 	"github.com/MigFerro/exame/local"
@@ -76,5 +78,25 @@ func (h *AuthHandler) Login(c echo.Context) error {
 func (h *AuthHandler) Logout(c echo.Context) error {
 	local.RemoveLoggedUser(c)
 
-	return c.Redirect(http.StatusFound, "/")
+	logoutUrl, err := url.Parse("https://" + os.Getenv("AUTH0_DOMAIN") + "/v2/logout")
+	if err != nil {
+		return render(c, errorsview.GeneralErrorPage())
+	}
+
+	scheme := "http"
+	if c.Request().TLS != nil {
+		scheme = "https"
+	}
+
+	returnTo, err := url.Parse(scheme + "://" + c.Request().Host)
+	if err != nil {
+		return render(c, errorsview.GeneralErrorPage())
+	}
+
+	parameters := url.Values{}
+	parameters.Add("returnTo", returnTo.String())
+	parameters.Add("client_id", os.Getenv("AUTH0_CLIENT_ID"))
+	logoutUrl.RawQuery = parameters.Encode()
+
+	return c.Redirect(http.StatusTemporaryRedirect, logoutUrl.String())
 }

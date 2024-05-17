@@ -39,11 +39,11 @@ templ Base(options BaseOptions) {
             @components.HeaderWithAuthUser(ctx)
 
             if !options.WithoutMargins {
-                <div class="mb-10 mx-[20%] h-full">
+                <div class="mb-10 mx-[20%] min-h-full">
                     { children... }
                 </div>
             } else {
-                <div class="mb-10 h-full">
+                <div class="mb-10 min-h-full">
                     { children... }
                 </div>
             }
