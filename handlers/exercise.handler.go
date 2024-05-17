@@ -22,6 +22,14 @@ type ExerciseHandler struct {
 }
 
 func (h *ExerciseHandler) HandleExerciseUpsertJourney(c echo.Context) error {
+	authUser, _ := getAuthenticatedUser(c.Request().Context())
+
+	userRole := h.UsersService.GetUserRole(authUser.Id)
+
+	if userRole != "admin" {
+		return render(c, errorsview.PermissionDenied())
+	}
+
 	formAction := c.Request().FormValue("action")
 	exerciseId := c.Param("id")
 
@@ -60,7 +68,7 @@ func (h *ExerciseHandler) ShowExerciseCreate(c echo.Context) error {
 	categories, err := h.ExerciseService.GetAllCategories()
 
 	if err != nil {
-		return err
+		return render(c, errorsview.GeneralErrorPage())
 	}
 
 	return render(c, exerciseview.ShowCreate(exerciseForm, categories))
@@ -79,15 +87,16 @@ func (h *ExerciseHandler) ShowExerciseUpdate(c echo.Context) error {
 
 	exercise, err := h.ExerciseService.GetExerciseUpsertForm(exerciseId)
 	if err != nil {
-		return err
+		return render(c, errorsview.GeneralErrorPage())
 	}
 
 	categories, err := h.ExerciseService.GetAllCategories()
 
 	if err != nil {
-		return err
+		return render(c, errorsview.GeneralErrorPage())
 	}
 
+	// should this be here?
 	exercise.UpdatedBy = authUser.Id
 
 	return render(c, exerciseview.ShowUpdate(exercise, categories))
@@ -107,7 +116,7 @@ func (h *ExerciseHandler) ShowExerciseUpdateBack(c echo.Context) error {
 	categories, err := h.ExerciseService.GetAllCategories()
 
 	if err != nil {
-		return err
+		return render(c, errorsview.GeneralErrorPage())
 	}
 
 	exerciseForm.Id = exerciseId
@@ -116,29 +125,30 @@ func (h *ExerciseHandler) ShowExerciseUpdateBack(c echo.Context) error {
 }
 
 func (h *ExerciseHandler) ShowExerciseList(c echo.Context) error {
+	authUser, _ := getAuthenticatedUser(c.Request().Context())
+
+	userRole := h.UsersService.GetUserRole(authUser.Id)
+
+	if userRole != "admin" {
+		return render(c, errorsview.PermissionDenied())
+	}
+
 	category := c.QueryParam("category")
 
 	var exerciseIds uuid.UUIDs
 
+	var err error
 	if category != "" {
-		exerciseIds, _ = h.ExerciseService.GetExerciseListOfCategory(category)
+		exerciseIds, err = h.ExerciseService.GetExerciseListOfCategory(category)
 	} else {
-		exerciseIds, _ = h.ExerciseService.GetExerciseList()
+		exerciseIds, err = h.ExerciseService.GetExerciseList()
+	}
+
+	if err != nil {
+		return render(c, errorsview.GeneralErrorPage())
 	}
 
 	return render(c, exerciseview.ShowIndex(exerciseIds))
-}
-
-func (h *ExerciseHandler) ShowExerciseHistory(c echo.Context) error {
-	authUser, _ := getAuthenticatedUser(c.Request().Context())
-
-	exerciseIds, err := h.ExerciseService.GetExerciseHistory(authUser.Id)
-
-	if err != nil {
-		return err
-	}
-
-	return render(c, exerciseview.ShowHistory(exerciseIds))
 }
 
 func (h *ExerciseHandler) ShowExerciseToSolve(c echo.Context) error {
@@ -154,10 +164,20 @@ func (h *ExerciseHandler) ShowExerciseDetail(c echo.Context) error {
 
 	exercise, _ := h.ExerciseService.GetExerciseWithChoices(exerciseId)
 
-	return render(c, exerciseview.ShowExerciseToSolve(exercise))
+	_, ok := c.Request().Context().Value("authUser").(*data.LoggedUser)
+
+	return render(c, exerciseview.ShowExerciseToSolve(exercise, ok))
 }
 
 func (h *ExerciseHandler) ShowExerciseChoices(c echo.Context) error {
+	authUser, _ := getAuthenticatedUser(c.Request().Context())
+
+	userRole := h.UsersService.GetUserRole(authUser.Id)
+
+	if userRole != "admin" {
+		return render(c, errorsview.PermissionDenied())
+	}
+
 	exerciseId := c.Param("id")
 
 	exerciseChoices := []entities.ExerciseChoiceEntity{}
@@ -168,7 +188,7 @@ func (h *ExerciseHandler) ShowExerciseChoices(c echo.Context) error {
 
 	if err != nil {
 		fmt.Println("Error retrieving exercise choices from database: ", err)
-		return err
+		return render(c, errorsview.GeneralErrorPage())
 	}
 
 	choices := data.ExerciseChoices{
@@ -186,14 +206,15 @@ func (h *ExerciseHandler) HandleExerciseSolve(c echo.Context) error {
 	loggedUser, ok := c.Request().Context().Value("authUser").(*data.LoggedUser)
 
 	if !ok {
-		return errors.New("No user logged in")
+		fmt.Println("No user logged in")
+		return render(c, errorsview.GeneralErrorPage())
 	}
 
 	_, err := h.ExerciseService.SolveExercise(loggedUser.Id, exerciseId, formChoice)
 
 	if err != nil {
 		fmt.Println("Error saving exercise in database: ", err)
-		return err
+		return render(c, errorsview.GeneralErrorPage())
 	}
 
 	http.Redirect(c.Response().Writer, c.Request(), "/exercises/"+exerciseId+"/result", http.StatusSeeOther)
@@ -207,7 +228,8 @@ func (h *ExerciseHandler) ShowExerciseResult(c echo.Context) error {
 	loggedUser, ok := c.Request().Context().Value("authUser").(*data.LoggedUser)
 
 	if !ok {
-		return errors.New("No user logged in")
+		fmt.Println("No user logged in")
+		return render(c, errorsview.GeneralErrorPage())
 	}
 
 	// get exercise result from db
@@ -215,18 +237,26 @@ func (h *ExerciseHandler) ShowExerciseResult(c echo.Context) error {
 
 	if err != nil {
 		fmt.Println("Error getting exercise result from database: ", err)
-		return err
+		return render(c, errorsview.GeneralErrorPage())
 	}
 
 	return render(c, exerciseview.ShowExerciseResult(exerciseResult))
 }
 
 func (h *ExerciseHandler) ShowExerciseCategoriesList(c echo.Context) error {
+	authUser, _ := getAuthenticatedUser(c.Request().Context())
+
+	userRole := h.UsersService.GetUserRole(authUser.Id)
+
+	if userRole != "admin" {
+		return render(c, errorsview.PermissionDenied())
+	}
+
 	categories, err := h.ExerciseService.GetAllCategories()
 
 	if err != nil {
 		fmt.Println("Error retrieving exercise categories from database: ", err)
-		return err
+		return render(c, errorsview.GeneralErrorPage())
 	}
 
 	return render(c, exerciseview.ShowCategoriesIndex(categories))
@@ -236,12 +266,17 @@ func (h *ExerciseHandler) ShowExerciseCategoryDetail(c echo.Context) error {
 	authUser, _ := getAuthenticatedUser(c.Request().Context())
 	userRole := h.UsersService.GetUserRole(authUser.Id)
 
+	// TODO: category page for non admins
+	if userRole != "admin" {
+		return render(c, errorsview.PermissionDenied())
+	}
+
 	categoryIid := c.Param("id")
 
 	category, err := h.ExerciseService.GetExerciseCategory(categoryIid)
 
 	if err != nil {
-		return err
+		return render(c, errorsview.GeneralErrorPage())
 	}
 
 	return render(c, exerciseview.ShowCategoryDetail(category, userRole == "admin"))
@@ -273,7 +308,7 @@ func (h *ExerciseHandler) ShowUpdateExerciseCategory(c echo.Context) error {
 	category, err := h.ExerciseService.GetExerciseCategory(categoryIid)
 
 	if err != nil {
-		return err
+		return render(c, errorsview.GeneralErrorPage())
 	}
 
 	return render(c, exerciseview.ShowUpdateCategory(category))
@@ -302,7 +337,7 @@ func (h *ExerciseHandler) UpdateExerciseCategory(c echo.Context) error {
 
 	if err != nil {
 		fmt.Println(err)
-		return err
+		return render(c, errorsview.GeneralErrorPage())
 	}
 
 	return render(c, exerciseview.ShowUpdateCategorySuccess(category))
@@ -323,7 +358,7 @@ func (h *ExerciseHandler) CreateExerciseCategory(c echo.Context) error {
 	err := h.ExerciseService.SaveCategory(category, year)
 
 	if err != nil {
-		return err
+		return render(c, errorsview.GeneralErrorPage())
 	}
 
 	return render(c, exerciseview.ShowCategoryCreateSuccess(category, year))

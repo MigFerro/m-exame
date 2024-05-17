@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"github.com/MigFerro/exame/services"
+	errorsview "github.com/MigFerro/exame/templates/errors"
 	homeview "github.com/MigFerro/exame/templates/home"
 	"github.com/labstack/echo/v4"
 )
@@ -21,7 +22,7 @@ func (h *HomeHandler) YearExerciseCategoryListShow(c echo.Context) error {
 	categories, err := h.ExerciseService.GetCategoriesByYear(showYear)
 
 	if err != nil {
-		return err
+		return render(c, errorsview.GeneralErrorPage())
 	}
 
 	return render(c, homeview.YearExerciseCategoryList(showList == "show", showYear, categories))

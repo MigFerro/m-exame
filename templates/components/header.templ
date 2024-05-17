@@ -31,8 +31,8 @@ templ header(authUser *data.LoggedUser) {
     <div class="w-full pl-[5%] pr-[5%] py-[2.5%] bg-white flex justify-between items-center">
         <a href="/" class="text-3xl font-bold text-blue-500">+Exame</a>
         if authUser.Name == "" {
-            <a class="flex flex-row items-center justify-center bg-white py-1 px-3 rounded-2xl" href="/auth/google">
-                <p class="pr-1">Login</p>
+            <a class="inline-flex justify-center items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" href="/auth/google">
+                <p class="pr-1">Entrar / Registar</p>
                 <img class="h-[15px] w-[15px] -rotate-90" src="/static/icons/login.svg" alt="Login icon" />
             </a>
         } else {
@@ -46,7 +46,7 @@ templ header(authUser *data.LoggedUser) {
 
               <div id="logoutDiv" class="hidden absolute right-0 z-10 mt-2 py-1 w-[6.5rem] origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
                 <a href="/auth/logout" class="inline-flex justify-between items-center w-full text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-0">
-                    Logout
+                    Sair
                     <img class="h-[15px] w-[15px]" src="/static/icons/logout.svg" alt="Logout icon" />
                 </a>
               </div>

@@ -13,3 +13,11 @@ templ PermissionDenied() {
     }
 }
 
+templ GeneralErrorPage() {
+    @layouts.Base(layouts.BaseOptions{ WithLatex: false }) {
+
+        <h1 class="text-4xl font-bold text-gray-900 pt-5 pb-5">Ups! Algo correu mal.</h1>
+
+    }
+}
+

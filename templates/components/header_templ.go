@@ -106,11 +106,11 @@ func header(authUser *data.LoggedUser) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if authUser.Name == "" {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a class=\"flex flex-row items-center justify-center bg-white py-1 px-3 rounded-2xl\" href=\"/auth/google\"><p class=\"pr-1\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a class=\"inline-flex justify-center items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50\" href=\"/auth/google\"><p class=\"pr-1\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Var6 := `Login`
+			templ_7745c5c3_Var6 := `Entrar / Registar`
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -133,7 +133,7 @@ func header(authUser *data.LoggedUser) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Var8 := `Logout`
+			templ_7745c5c3_Var8 := `Sair`
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

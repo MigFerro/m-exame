@@ -8,6 +8,7 @@ import (
 	"github.com/MigFerro/exame/data"
 	"github.com/MigFerro/exame/local"
 	"github.com/MigFerro/exame/services"
+	errorsview "github.com/MigFerro/exame/templates/errors"
 	"github.com/labstack/echo/v4"
 	"github.com/markbates/goth/gothic"
 )
@@ -66,7 +67,7 @@ func (h *AuthHandler) Login(c echo.Context) error {
 
 	if err != nil {
 		fmt.Println("error saving session: ", err)
-		return err
+		return render(c, errorsview.GeneralErrorPage())
 	}
 
 	return c.Redirect(http.StatusFound, "/")

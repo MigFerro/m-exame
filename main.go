@@ -53,7 +53,6 @@ func main() {
 	app.GET("/exercises/category/:id", exerciseHandler.ShowExerciseCategoryDetail)
 	app.GET("/exercises/category/create", exerciseHandler.ShowCreateExerciseCategory)
 	app.GET("/exercises/category/:id/edit", exerciseHandler.ShowUpdateExerciseCategory)
-	app.GET("/exercises/history", exerciseHandler.ShowExerciseHistory)
 
 	app.POST("/exercises/create", exerciseHandler.HandleExerciseUpsertJourney)
 	app.POST("/exercises/:id/update", exerciseHandler.HandleExerciseUpsertJourney)
