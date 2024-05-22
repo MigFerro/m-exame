@@ -194,7 +194,6 @@ func (s *ExerciseService) updateUserPoints(userId uuid.UUID, points int) {
 	err := s.DB.Get(&currPoints, query, userId)
 
 	if err != nil {
-		fmt.Println("here")
 		fmt.Println(err)
 		return
 	}
@@ -340,8 +339,6 @@ func (s *ExerciseService) GetRandomExerciseId() (string, error) {
 
 	var exerciseId string
 	err := s.DB.Get(&exerciseId, query)
-
-	fmt.Println(err)
 
 	return exerciseId, err
 }
