@@ -28,7 +28,7 @@ func InitCookieStore() *sessions.CookieStore {
 	gob.Register(&data.LoggedUser{})
 
 	maxAge := 86400 * 30 // 30 days
-	isProd := false      // Set to true when serving over https
+	isProd := true       // Set to true when serving over https
 
 	store := sessions.NewCookieStore([]byte(key))
 	store.MaxAge(maxAge)
@@ -41,7 +41,7 @@ func InitCookieStore() *sessions.CookieStore {
 	//PROVIDERS
 	goth.UseProviders(
 		// google.New(os.Getenv("GOOGLE_CLIENT_ID"), os.Getenv("GOOGLE_SECRET_KEY"), "http://localhost:3000/auth/google/callback", "email", "profile"),
-		auth0.New(os.Getenv("AUTH0_CLIENT_ID"), os.Getenv("AUTH0_SECRET"), "http://localhost:3000/auth/auth0/callback", os.Getenv("AUTH0_DOMAIN")),
+		auth0.New(os.Getenv("AUTH0_CLIENT_ID"), os.Getenv("AUTH0_SECRET"), os.Getenv("BASE_URL")+"/auth/auth0/callback", os.Getenv("AUTH0_DOMAIN")),
 	)
 
 	return store
