@@ -84,7 +84,7 @@ func (h *AuthHandler) Logout(c echo.Context) error {
 	}
 
 	scheme := "http"
-	if c.Request().TLS != nil {
+	if os.Getenv("IS_PROD") == "1" {
 		scheme = "https"
 	}
 
