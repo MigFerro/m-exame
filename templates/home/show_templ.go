@@ -45,7 +45,7 @@ func Show() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h2><div class=\"py-10 flex flex-col justify-center items-center\" id=\"exame_container\"><a href=\"/exercise\" class=\"max-w-80 p-6 bg-blue-500 border border-gray-200 rounded-3xl shadow hover:cursor-pointer hover:bg-blue-800 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700\"><h5 class=\"w-full text-center mb-2 text-2xl font-bold tracking-tight text-white dark:text-white\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h2><div class=\"py-10 flex flex-col justify-center items-center\" id=\"exame_container\"><a href=\"/exercise\" class=\"max-w-80 p-6 bg-blue-500 border border-gray-200 rounded-3xl shadow hover:cursor-pointer hover:bg-blue-800\"><h5 class=\"w-full text-center mb-2 text-2xl font-bold tracking-tight text-white\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -58,7 +58,7 @@ func Show() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Var5 := `Ganha pontos a resolver exercícios baseados nos Exames Nacionais.`
+			templ_7745c5c3_Var5 := `Ganha pontos a resolver exercícios baseados nos Exames Nacionais`
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -67,7 +67,7 @@ func Show() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Var6 := `Usa os pontos para guiar o progresso do teu estudo e ganhar confiança na tua preparação.`
+			templ_7745c5c3_Var6 := `Usa os pontos para guiar o progresso do teu estudo`
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -220,7 +220,7 @@ func yearButton(year string, clicked bool, categoryList []data.ExerciseCategory)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-target=\"#year_container\" hx-swap=\"outerHTML\" class=\"block p-6 border border-gray-200 rounded-lg bg-gray-100 hover:cursor-pointer\"><h5 class=\"mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-target=\"#year_container\" hx-swap=\"outerHTML\" class=\"block p-6 border border-gray-200 rounded-lg bg-gray-100 hover:cursor-pointer\"><h5 class=\"mb-2 text-2xl font-bold tracking-tight text-gray-900\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -247,7 +247,7 @@ func yearButton(year string, clicked bool, categoryList []data.ExerciseCategory)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-target=\"#year_container\" hx-swap=\"outerHTML\" class=\"block p-6 bg-white border border-gray-200 rounded-lg shadow hover:cursor-pointer hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700\"><h5 class=\"mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-target=\"#year_container\" hx-swap=\"outerHTML\" class=\"block p-6 bg-white border border-gray-200 rounded-lg shadow hover:cursor-pointer hover:bg-gray-100\"><h5 class=\"mb-2 text-2xl font-bold tracking-tight text-gray-900\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
