@@ -310,7 +310,7 @@ func ShowExerciseToSolve(exercise entities.ExerciseWithChoicesEntity, loggedUser
 						return templ_7745c5c3_Err
 					}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ul><div class=\"w-full grid gap-6 md:grid-cols-2 my-10\"><input class=\"text-white text-xl font-semibold bg-blue-500 hover:bg-indigo-800 hover:cursor-pointer focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-xl w-full px-5 py-2.5 text-center\" type=\"submit\" value=\"Responder\"> <a href=\"/exercise\" class=\"flex justify-between items-center bg-white ring-1 ring-gray-300 ring-inset py-2.5 px-5 lg:ml-10 text-gray-400 font-semibold text-lg rounded-xl hover:outline-none hover:ring-2 hover:ring-indigo-500 focus:ring-4 focus:outline-none focus:ring-blue-300\"><span class=\"mr-2\">")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ul><div class=\"w-full grid gap-6 md:grid-cols-2 my-10\"><input class=\"text-white text-xl font-semibold bg-blue-500 hover:bg-indigo-800 hover:cursor-pointer focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-xl w-full px-5 py-2.5 text-center\" type=\"submit\" value=\"Responder\"> <a href=\"/exercise\" class=\"flex justify-center items-center bg-white ring-1 ring-gray-300 ring-inset py-2.5 px-5 lg:ml-[30%] text-gray-400 font-semibold text-lg rounded-xl hover:outline-none hover:ring-2 hover:ring-indigo-500 focus:ring-4 focus:outline-none focus:ring-blue-300\"><span class=\"mr-2\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
