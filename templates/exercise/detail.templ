@@ -2,7 +2,6 @@ package exerciseview
 
 import (
     "strings"
-    "strconv"
 
     "github.com/MigFerro/exame/templates/layouts"
     templateutils "github.com/MigFerro/exame/templates/utils"
@@ -133,17 +132,15 @@ templ ShowExerciseResult(result data.ExerciseSolved) {
         <div class="relative flex justify-center">
 
             @ExerciseContainer(){
-                <div class="w-ful text-center text-xl font-bold">
-                    if result.Points >= 0 {
-                        <p class="text-green-500">
-                            { "+" + strconv.Itoa(result.Points) + " pontos" }
-                        </p>
-                    } else {
-                        <p class="text-red-500">
-                            { strconv.Itoa(result.Points) + " pontos" }
-                        </p>
-                    }
-                </div>
+                if !result.NextExerciseId.Valid {
+                    <div class="flex justify-center lg:justify-start items-center">
+                        <span class="text-2xl font-semibold text-gray-400">Nível de preparação:</span>
+                        <div class="ml-5 lg:ml-7 text-4xl font-bold">
+                          <div hx-get="/user/preplevel" hx-trigger="load"></div>
+                        </div>
+                    </div>
+                }
+
                 @ExerciseHead(result.Exercise)
 
                 <div id="choices-container">

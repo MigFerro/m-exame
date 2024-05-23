@@ -19,3 +19,15 @@ func GetAuthenticatedUserInfo(c context.Context) *data.LoggedUser {
 func GetExameString(exameYear string, exameFase string) string {
 	return "Exame Nacional de " + exameYear + ", " + exameFase + "ª fase"
 }
+
+func PrepLevelColor(prepLevel int) string {
+	if prepLevel < 25 {
+		return "text-red-700"
+	}
+
+	if prepLevel < 65 {
+		return "text-yellow-500"
+	}
+
+	return "text-green-700"
+}

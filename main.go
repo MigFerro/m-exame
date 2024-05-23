@@ -39,6 +39,7 @@ func main() {
 	app.GET("/auth/logout", authHandler.Logout)
 
 	// users
+	app.GET("/user/preplevel", userHandler.GetLoggedUserPrepLevel)
 	app.GET("/user/points", userHandler.GetLoggedUserPoints)
 
 	//exercises

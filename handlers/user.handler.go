@@ -14,6 +14,24 @@ type UserHandler struct {
 	UsersService *services.UserService
 }
 
+func (h *UserHandler) GetLoggedUserPrepLevel(c echo.Context) error {
+	authUser, ok := getAuthenticatedUser(c.Request().Context())
+
+	if !ok {
+		return render(c, components.HeaderUserPrepLevelFailed())
+	}
+
+	prepLevel, err := h.UsersService.GetPreparationLevel(authUser.Id)
+
+	if err != nil {
+		fmt.Println("error getting user preparation level", err)
+		return render(c, components.HeaderUserPrepLevelFailed())
+	}
+
+	return render(c, components.HeaderUserPrepLevel(prepLevel))
+
+}
+
 func (h *UserHandler) GetLoggedUserPoints(c echo.Context) error {
 	authUser, ok := getAuthenticatedUser(c.Request().Context())
 
@@ -24,7 +42,7 @@ func (h *UserHandler) GetLoggedUserPoints(c echo.Context) error {
 	points, ok := h.UsersService.GetUserPoints(authUser.Id)
 
 	if !ok {
-		fmt.Println("User is not student")
+		fmt.Println("error getting user points")
 		return render(c, components.HeaderUserPointsFailed())
 	}
 
