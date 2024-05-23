@@ -10,6 +10,7 @@ type BaseOptions struct {
 templ Base(options BaseOptions) {
     <html>
         <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
             <link rel="stylesheet" href="/static/css/tailwind.css" />
 
             // Hyperscript
@@ -39,7 +40,7 @@ templ Base(options BaseOptions) {
             @components.HeaderWithAuthUser(ctx)
 
             if !options.WithoutMargins {
-                <div class="mb-10 mx-[20%] min-h-full">
+                <div class="mb-10 mx-[5%] lg:mx-[20%] min-h-full">
                     { children... }
                 </div>
             } else {
