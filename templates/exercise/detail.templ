@@ -198,7 +198,7 @@ templ ExerciseResult(result data.ExerciseSolved) {
 
 templ ShowExerciseResult(result data.ExerciseSolved) {
     @layouts.Base(layouts.BaseOptions{ WithLatex: true }) {
-        @ExerciseResult(result)
+        @ExerciseResult(result) {}
     }
 }
 
