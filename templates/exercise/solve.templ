@@ -9,13 +9,13 @@ templ SolvedResult(result data.ExerciseSolved) {
         <h2 class="w-full text-2xl text-center font-bold text-green-900 pt-5 pb-5"> Resposta correcta! </h2>
         <ul class="flex flex-col w-full px-5">
             <li class="block w-full m-2.5">
-                <a href={ templ.URL("/exercises/" + result.NextId) } class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:cursor-pointer hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Próximo exercício</h5>
+                <a href={ templ.URL("/exercises/" + result.NextId) } class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:cursor-pointer hover:bg-gray-100">
+                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">Próximo exercício</h5>
                 </a>
             </li>
             <li class="block w-full m-2.5">
-                <a href="#" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Explora outros exercícios</h5>
+                <a href="#" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100">
+                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">Explora outros exercícios</h5>
                 </a>
             </li>
         </ul>
@@ -25,13 +25,13 @@ templ SolvedResult(result data.ExerciseSolved) {
 
         <ul class="flex flex-col w-full px-5">
             <li class="block w-full m-2.5">
-                <a href={ templ.URL("/exercises/" + result.Exercise.Id.String()) } class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:cursor-pointer hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Tenta novamente</h5>
+                <a href={ templ.URL("/exercises/" + result.Exercise.Id.String()) } class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:cursor-pointer hover:bg-gray-100">
+                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">Tenta novamente</h5>
                 </a>
             </li>
             <li class="block w-full m-2.5">
-                <a href="#" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Vê a solução deste exercício</h5>
+                <a href="#" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100">
+                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">Vê a solução deste exercício</h5>
                 </a>
             </li>
         </ul>

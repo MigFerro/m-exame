@@ -11,7 +11,7 @@ import (
 )
 
 templ ExerciseContainer() {
-        <div class="pt-5 max-w-[900px]" id="exercise-container">
+        <div class="pt-5 w-3/4" id="exercise-container">
             { children... }
         </div>
 }
@@ -42,7 +42,7 @@ templ ShowExerciseDetail(exercise entities.ExerciseWithChoicesEntity) {
                     <ul class="grid w-full gap-6 md:grid-cols-4 pt-10">
                         for _, choice := range exercise.Choices {
                             <li>
-                                <div for={ choice.Id.String() } class="inline-flex items-center justify-between w-full p-5 text-gray-700 font-bold bg-white border border-gray-200 rounded-lg cursor-pointer dark:border-gray-700 dark:peer-checked:text-blue-500 peer-checked:border-blue-600 peer-checked:text-blue-600"> 
+                                <div for={ choice.Id.String() } class="inline-flex items-center justify-between w-full p-5 text-gray-700 font-bold bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600"> 
                                     <div class="block w-full text-center">
                                         { choice.Value }
                                     </div>
@@ -73,7 +73,7 @@ templ ShowExerciseToSolve(exercise entities.ExerciseWithChoicesEntity, loggedUse
                                         <input type="radio" id={ choice.Id.String() } name="choice" value={ choice.Id.String() } class="hidden peer" />
                                     }
 
-                                    <label for={ choice.Id.String() } class="inline-flex items-center justify-between w-full p-5 text-gray-700 font-bold bg-white border border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-blue-500 peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">                           
+                                    <label for={ choice.Id.String() } class="inline-flex items-center justify-between w-full p-5 text-gray-700 font-bold bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100">                           
                                         <div class="block w-full text-center">
                                             { choice.Value }
                                         </div>
@@ -82,19 +82,16 @@ templ ShowExerciseToSolve(exercise entities.ExerciseWithChoicesEntity, loggedUse
                             }
                         </ul>
 
-                        <div class="flex justify-end">
-                            <div class="flex justify-center my-10">
-                                <div></div>
-                                <input class="text-white text-xl font-semibold bg-blue-500 hover:bg-indigo-800 hover:cursor-pointer focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-xl w-full sm:w-auto px-5 py-2.5 text-center" type="submit" value="Responder" />
+                        <div class="w-full grid gap-6 md:grid-cols-2 my-10">
+                                <input class="text-white text-xl font-semibold bg-blue-500 hover:bg-indigo-800 hover:cursor-pointer focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-xl w-full px-5 py-2.5 text-center" type="submit" value="Responder" />
 
-                                <a href="/exercise" class="flex justify-between items-center bg-white ring-1 ring-gray-300 ring-inset py-1 px-2.5 ml-10 text-gray-400 font-semibold text-lg rounded-xl hover:outline-none hover:ring-2 hover:ring-indigo-500 focus:ring-4 focus:outline-none focus:ring-blue-300">
+                                <a href="/exercise" class="flex justify-between items-center bg-white ring-1 ring-gray-300 ring-inset py-2.5 px-5 lg:ml-10 text-gray-400 font-semibold text-lg rounded-xl hover:outline-none hover:ring-2 hover:ring-indigo-500 focus:ring-4 focus:outline-none focus:ring-blue-300">
                                     <span class="mr-2">Saltar exercício</span>
 
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                       <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
                                     </svg>
                                 </a>
-                            </div>
                         </div>
                     </form>
                 </div>
@@ -133,19 +130,20 @@ templ ShowExerciseToSolve(exercise entities.ExerciseWithChoicesEntity, loggedUse
 templ ShowExerciseResult(result data.ExerciseSolved) {
     @layouts.Base(layouts.BaseOptions{ WithLatex: true }) {
 
-            <div class="w-ful text-center text-xl font-bold">
-                if result.Points >= 0 {
-                    <p class="text-green-500">
-                        { "+" + strconv.Itoa(result.Points) + " pontos" }
-                    </p>
-                } else {
-                    <p class="text-red-500">
-                        { strconv.Itoa(result.Points) + " pontos" }
-                    </p>
-                }
-            </div>
+        <div class="relative flex justify-center">
 
             @ExerciseContainer(){
+                <div class="w-ful text-center text-xl font-bold">
+                    if result.Points >= 0 {
+                        <p class="text-green-500">
+                            { "+" + strconv.Itoa(result.Points) + " pontos" }
+                        </p>
+                    } else {
+                        <p class="text-red-500">
+                            { strconv.Itoa(result.Points) + " pontos" }
+                        </p>
+                    }
+                </div>
                 @ExerciseHead(result.Exercise)
 
                 <div id="choices-container">
@@ -209,16 +207,16 @@ templ ShowExerciseResult(result data.ExerciseSolved) {
 
                 </div>
                 
-                <a href="/exercise" class="flex justify-between bg-blue-500 py-2.5 px-5 text-white font-medium text-lg rounded-xl hover:bg-indigo-500 focus:ring-4 focus:outline-none focus:ring-blue-300">
+                <a href="/exercise" class="flex justify-between items-center bg-white py-2.5 px-5 text-blue-500 ring-1 ring-blue-500 ring-inset font-medium text-lg rounded-xl hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-blue-300">
                     <span class="mr-2">Próximo exercício</span>
 
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6 stroke-blue-500 hover:stroke-indigo-500">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                     </svg>
+
                 </a>
             </div>
-
             }
-
+        </div>
     }
 }
