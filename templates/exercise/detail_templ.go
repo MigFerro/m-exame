@@ -216,7 +216,7 @@ func ExerciseToSolve(exercise entities.ExerciseWithChoicesEntity, loggedUser boo
 			templ_7745c5c3_Var10 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"relative flex justify-center\" id=\"exercise-parent\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"opacity-0 relative flex justify-center\" id=\"exercise-parent\" _=\"on load transition opacity to 100\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -411,7 +411,7 @@ func ExerciseResult(result data.ExerciseSolved) templ.Component {
 			templ_7745c5c3_Var16 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"relative flex justify-center\" id=\"exercise-parent\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"opacity-0 relative flex justify-center\" id=\"exercise-parent\" _=\"on load transition opacity to 100\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

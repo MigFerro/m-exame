@@ -56,7 +56,7 @@ templ ShowExerciseDetail(exercise entities.ExerciseWithChoicesEntity) {
 }
 
 templ ExerciseToSolve(exercise entities.ExerciseWithChoicesEntity, loggedUser bool) {
-    <div class="relative flex justify-center" id="exercise-parent">
+    <div class="opacity-0 relative flex justify-center" id="exercise-parent" _="on load transition opacity to 100">
         @ExerciseContainer(){
             @ExerciseHead(exercise)
 
@@ -108,7 +108,7 @@ templ ShowExerciseToSolve(exercise entities.ExerciseWithChoicesEntity, loggedUse
 }
 
 templ ExerciseResult(result data.ExerciseSolved) {
-    <div class="relative flex justify-center" id="exercise-parent">
+    <div class="opacity-0 relative flex justify-center" id="exercise-parent" _="on load transition opacity to 100">
 
         @ExerciseContainer(){
             if !result.NextExerciseId.Valid {
