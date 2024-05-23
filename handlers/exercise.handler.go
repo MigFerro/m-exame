@@ -152,10 +152,17 @@ func (h *ExerciseHandler) ShowExerciseList(c echo.Context) error {
 }
 
 func (h *ExerciseHandler) ShowExerciseToSolve(c echo.Context) error {
+	content := c.QueryParam("content")
+
 	exerciseId, err := h.ExerciseService.GetRandomExerciseId()
 
 	if err != nil {
 		return render(c, errorsview.GeneralErrorPage())
+	}
+
+	if content == "True" {
+		http.Redirect(c.Response().Writer, c.Request(), "/exercises/"+exerciseId+"?content=True", http.StatusSeeOther)
+		return nil
 	}
 
 	http.Redirect(c.Response().Writer, c.Request(), "/exercises/"+exerciseId, http.StatusSeeOther)
@@ -165,10 +172,15 @@ func (h *ExerciseHandler) ShowExerciseToSolve(c echo.Context) error {
 
 func (h *ExerciseHandler) ShowExerciseDetail(c echo.Context) error {
 	exerciseId := c.Param("id")
+	content := c.QueryParam("content")
 
 	exercise, _ := h.ExerciseService.GetExerciseWithChoices(exerciseId)
 
 	_, ok := c.Request().Context().Value("authUser").(*data.LoggedUser)
+
+	if content == "True" {
+		return render(c, exerciseview.ExerciseToSolve(exercise, ok))
+	}
 
 	return render(c, exerciseview.ShowExerciseToSolve(exercise, ok))
 }
@@ -206,6 +218,7 @@ func (h *ExerciseHandler) ShowExerciseChoices(c echo.Context) error {
 func (h *ExerciseHandler) HandleExerciseSolve(c echo.Context) error {
 	exerciseId := c.Param("id")
 	formChoice := c.Request().FormValue("choice")
+	content := c.QueryParam("content")
 
 	loggedUser, ok := c.Request().Context().Value("authUser").(*data.LoggedUser)
 
@@ -221,6 +234,11 @@ func (h *ExerciseHandler) HandleExerciseSolve(c echo.Context) error {
 		return render(c, errorsview.GeneralErrorPage())
 	}
 
+	if content == "True" {
+		http.Redirect(c.Response().Writer, c.Request(), "/exercises/"+exerciseId+"/result?content=True", http.StatusSeeOther)
+		return err
+	}
+
 	http.Redirect(c.Response().Writer, c.Request(), "/exercises/"+exerciseId+"/result", http.StatusSeeOther)
 
 	return err
@@ -228,6 +246,7 @@ func (h *ExerciseHandler) HandleExerciseSolve(c echo.Context) error {
 
 func (h *ExerciseHandler) ShowExerciseResult(c echo.Context) error {
 	exerciseId := c.Param("id")
+	content := c.QueryParam("content")
 
 	loggedUser, ok := c.Request().Context().Value("authUser").(*data.LoggedUser)
 
@@ -242,6 +261,10 @@ func (h *ExerciseHandler) ShowExerciseResult(c echo.Context) error {
 	if err != nil {
 		fmt.Println("Error getting exercise result from database: ", err)
 		return render(c, errorsview.GeneralErrorPage())
+	}
+
+	if content == "True" {
+		return render(c, exerciseview.ExerciseResult(exerciseResult))
 	}
 
 	return render(c, exerciseview.ShowExerciseResult(exerciseResult))

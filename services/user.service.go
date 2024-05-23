@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/MigFerro/exame/entities"
 	"github.com/google/uuid"
@@ -11,6 +12,46 @@ import (
 
 type UserService struct {
 	DB *sqlx.DB
+}
+
+func (s *UserService) GetPreparationLevel(userId uuid.UUID) (int, error) {
+	prepLevel := 0
+
+	var triedExercises int
+	err := s.DB.Get(&triedExercises,
+		`
+		SELECT count(*) FROM exercise_users
+		WHERE user_id = $1
+		AND last_attempted_at > $2
+	`, userId, time.Now().AddDate(0, 0, -60))
+
+	if err != nil {
+		fmt.Println("error getting tried exercises", err)
+		return prepLevel, err
+	}
+
+	if triedExercises < 30 {
+		triedExercises = 30
+	}
+
+	var correctExercises int
+	err = s.DB.Get(&correctExercises,
+		`
+		SELECT count(*) FROM exercise_users
+		WHERE user_id = $1
+		AND last_attempted_at > $2
+		AND last_attempted_at = last_solved_at
+	`, userId, time.Now().AddDate(0, 0, -60))
+
+	if err != nil {
+		fmt.Println("error getting tried exercises", err)
+		return prepLevel, err
+	}
+
+	prepLevel = 100 * correctExercises / triedExercises
+
+	return prepLevel, nil
+
 }
 
 func (s *UserService) GetUserPoints(userId uuid.UUID) (int, bool) {

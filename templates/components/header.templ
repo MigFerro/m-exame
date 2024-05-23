@@ -15,7 +15,15 @@ templ HeaderUserPoints(points int) {
     <p class={ "font-bold " + pointsColor(points) }>{ strconv.Itoa(points) }</p>
 }
 
+templ HeaderUserPrepLevel(prepLevel int) {
+    <p class={ "font-bold " + templateutils.PrepLevelColor(prepLevel) }>{ strconv.Itoa(prepLevel) + "%" }</p>
+}
+
 templ HeaderUserPointsFailed() {
+    <p></p>
+}
+
+templ HeaderUserPrepLevelFailed() {
     <p></p>
 }
 
@@ -44,7 +52,7 @@ templ header(authUser *data.LoggedUser) {
               <div>
                 <button type="button" _="on click toggle between .hidden and .block on #logoutDiv" class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" id="menu-button" aria-expanded="true" aria-haspopup="true">
                   { authUser.Name}
-                  <div hx-get="/user/points" hx-trigger="load"></div>
+                  <div hx-get="/user/preplevel" hx-trigger="load"></div>
                 </button>
               </div>
 

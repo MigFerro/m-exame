@@ -54,11 +54,11 @@ func Show() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h5></a></div><div class=\"w-full bg-slate-100 py-10 mt-[3.5rem] mb-[8rem] text-xl text-center rounded-lg\"><ul class=\"text-xl text-center\"><li>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h5></a></div><div class=\"w-full bg-slate-100 py-10 mt-[3.5rem] mb-[8rem] text-xl text-gray-700 font-semibold text-center rounded-lg\"><ul class=\"text-xl text-center\"><li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Var5 := `Ganha pontos a resolver exercícios baseados nos Exames Nacionais`
+			templ_7745c5c3_Var5 := `Resolve exercícios baseados nos Exames Nacionais`
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -67,7 +67,7 @@ func Show() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Var6 := `Usa os pontos para guiar o progresso do teu estudo`
+			templ_7745c5c3_Var6 := `Acompanha o teu nível de preparação e avalia o teu progresso`
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -85,7 +85,7 @@ func Show() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Var8 := `500 `
+			templ_7745c5c3_Var8 := `75% `
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -94,7 +94,7 @@ func Show() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Var9 := `pontos para te sentires preparado/a!`
+			templ_7745c5c3_Var9 := `para te sentires preparado/a!`
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

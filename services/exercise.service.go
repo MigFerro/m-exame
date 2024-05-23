@@ -58,7 +58,7 @@ func (s *ExerciseService) GetExerciseHistory(userId uuid.UUID) (uuid.UUIDs, erro
 	`, userId)
 
 	if err != nil {
-		fmt.Println("Error retrieving exercise from database: ", err)
+		fmt.Println("error retrieving exercise from database: ", err)
 		return exerciseIds, err
 	}
 
@@ -263,7 +263,7 @@ func (s *ExerciseService) GetExerciseWithChoices(exerciseId string) (entities.Ex
 	err := s.DB.Get(&ex, query, exerciseId)
 
 	if err != nil {
-		fmt.Println("Error retrieving exercise from database: ", err)
+		fmt.Println("error retrieving exercise from database: ", err)
 		return entities.ExerciseWithChoicesEntity{}, err
 	}
 
@@ -275,7 +275,7 @@ func (s *ExerciseService) GetExerciseWithChoices(exerciseId string) (entities.Ex
 		ORDER BY random()`, exerciseId)
 
 	if err != nil {
-		fmt.Println("Error retrieving exercise from database: ", err)
+		fmt.Println("error retrieving exercise from database: ", err)
 		return entities.ExerciseWithChoicesEntity{}, err
 	}
 
@@ -288,7 +288,7 @@ func (s *ExerciseService) GetExerciseUpsertForm(exerciseId string) (*data.Exerci
 	exerciseWithChoices, err := s.GetExerciseWithChoices(exerciseId)
 
 	if err != nil {
-		fmt.Println("Error retrieving exercise from database: ", err)
+		fmt.Println("error retrieving exercise from database: ", err)
 		return &data.ExerciseUpsertForm{}, err
 	}
 
@@ -399,7 +399,7 @@ func (s *ExerciseService) UpdateExercise(exerciseForm *data.ExerciseUpsertForm) 
 		WHERE exercise_id = $1`, exerciseForm.Id)
 
 	if err != nil {
-		fmt.Println("Error retrieving exercise from database: ", err)
+		fmt.Println("error retrieving exercise from database: ", err)
 	}
 
 	for i, choice := range exerciseForm.Choices {
@@ -425,7 +425,7 @@ func (s *ExerciseService) GetAllCategories() ([]entities.ExerciseCategoryEntity,
 	err := s.DB.Select(&categories, `SELECT * FROM exercise_categories`)
 
 	if err != nil {
-		fmt.Println("Error retrieving exercise categories from database: ", err)
+		fmt.Println("error retrieving exercise categories from database: ", err)
 		return []entities.ExerciseCategoryEntity{}, err
 	}
 
@@ -441,7 +441,7 @@ func (s *ExerciseService) GetExerciseCategory(iid string) (entities.ExerciseCate
 	err := catRow.StructScan(&category)
 
 	if err != nil {
-		fmt.Println("Error retrieving category from database: ", err)
+		fmt.Println("error retrieving category from database: ", err)
 		return entities.ExerciseCategoryEntity{}, err
 	}
 
