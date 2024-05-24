@@ -49,14 +49,15 @@ type ExerciseCategory struct {
 }
 
 type ExerciseUpsertForm struct {
-	Id          string
-	ProblemText string
-	Choices     []ExerciseChoice
-	Category    ExerciseCategory
-	ExameYear   string
-	ExameFase   string
-	CreatedBy   uuid.UUID
-	UpdatedBy   uuid.UUID
+	Id           string
+	ProblemText  string
+	SolutionText string
+	Choices      []ExerciseChoice
+	Category     ExerciseCategory
+	ExameYear    string
+	ExameFase    string
+	CreatedBy    uuid.UUID
+	UpdatedBy    uuid.UUID
 }
 
 type ExerciseAnswer struct {

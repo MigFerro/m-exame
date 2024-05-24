@@ -45,8 +45,8 @@ func main() {
 	//exercises
 	app.GET("/exercise", exerciseHandler.ShowExerciseToSolve)
 	app.GET("/exercises", exerciseHandler.ShowExerciseList)
-	app.GET("/exercises/create", exerciseHandler.ShowExerciseCreate)
-	app.GET("/exercises/:id/update", exerciseHandler.ShowExerciseUpdate)
+	app.GET("/exercises/create", exerciseHandler.ShowExerciseUpsert)
+	app.GET("/exercises/:id/update", exerciseHandler.ShowExerciseUpsert)
 	app.GET("/exercises/:id", exerciseHandler.ShowExerciseDetail)
 	app.GET("/exercises/:id/result", exerciseHandler.ShowExerciseResult)
 	app.GET("/exercises/:id/choices", exerciseHandler.ShowExerciseChoices)
