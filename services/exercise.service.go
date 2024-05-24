@@ -252,11 +252,14 @@ func (s *ExerciseService) GetExerciseWithChoices(exerciseId string) (entities.Ex
             cat.iid AS category_iid,
             cat.category AS "category.category",
             cat.created_at AS "category.created_at",
-            cat.updated_at AS "category.updated_at"
+            cat.updated_at AS "category.updated_at",
+			sol.solution_text AS "solution_text"
         FROM
             exercises e
         LEFT JOIN
             exercise_categories cat ON e.category_iid = cat.iid
+		LEFT JOIN
+			exercise_solutions sol ON e.id = sol.exercise_id
         WHERE
             e.id = $1
     `
