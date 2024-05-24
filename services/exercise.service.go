@@ -252,11 +252,14 @@ func (s *ExerciseService) GetExerciseWithChoices(exerciseId string) (entities.Ex
             cat.iid AS category_iid,
             cat.category AS "category.category",
             cat.created_at AS "category.created_at",
-            cat.updated_at AS "category.updated_at"
+            cat.updated_at AS "category.updated_at",
+			sol.solution_text AS "solution_text"
         FROM
             exercises e
         LEFT JOIN
             exercise_categories cat ON e.category_iid = cat.iid
+		LEFT JOIN
+			exercise_solutions sol ON e.id = sol.exercise_id
         WHERE
             e.id = $1
     `
@@ -365,6 +368,8 @@ func (s *ExerciseService) SaveExercise(exerciseForm *data.ExerciseUpsertForm) er
 	query := fmt.Sprintf("INSERT INTO exercise_choices (value, is_solution, created_by, exercise_id) VALUES %s", strings.Join(valueStrings, ","))
 	tx.MustExec(query, valueArgs...)
 
+	tx.QueryRow("INSERT INTO exercise_solutions (exercise_id, solution_text) VALUES ($1, $2)", exerciseId, exerciseForm.SolutionText)
+
 	// End transaction
 	tx.Commit()
 
@@ -412,6 +417,15 @@ func (s *ExerciseService) UpdateExercise(exerciseForm *data.ExerciseUpsertForm) 
 			fmt.Println(err)
 			return err
 		}
+	}
+
+	_, err = tx.Exec(`UPDATE exercise_solutions
+		SET solution_text = $1
+		WHERE exercise_id = $2`, exerciseForm.SolutionText, exerciseForm.Id)
+
+	if err != nil {
+		fmt.Println(err)
+		return err
 	}
 
 	// End transaction

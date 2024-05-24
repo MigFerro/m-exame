@@ -14,7 +14,7 @@ templ ShowPreview(previewText string) {
    <p id="preview">{ previewText }</p> 
 }
 
-templ ShowCreate(form *data.ExerciseUpsertForm, categories []entities.ExerciseCategoryEntity) {
+templ ShowExerciseUpsert(form *data.ExerciseUpsertForm, categories []entities.ExerciseCategoryEntity) {
     @layouts.Base(layouts.BaseOptions{ WithLatex: true }) {
         <div class="pt-5">
             <div class="flex justify-between">
@@ -46,7 +46,7 @@ templ ShowCreate(form *data.ExerciseUpsertForm, categories []entities.ExerciseCa
                             <input type="text" id="exame_fase" name="exame_fase" class="border border-slate-300 px-2 py-2" value={ form.ExameFase }/>
                             <label for="exame_year">Fase do exame</label><br />
                         </div>
-                        <div class="pt-5">
+                        <div class="py-5">
                             <label for="category">Categoria</label>
                             <select name="category" id="category" form="exercise_create_form">
                                 for _, cat := range categories {
@@ -54,16 +54,33 @@ templ ShowCreate(form *data.ExerciseUpsertForm, categories []entities.ExerciseCa
                                 }
                             </select>
                         </div>
+                        if form.SolutionText == "" {
+                            <textarea class="border border-slate-300 px-5 py-5 w-full h-[15em]" id="solution_text" name="solution_text"
+                            placeholder="Escreve aqui o texto da solução..." required>
+                            </textarea>
+                        } else {
+                            <textarea class="border border-slate-300 px-5 py-5 w-full h-[15em]" id="solution_text" name="solution_text" rows="20" cols="50" required>
+                                { form.SolutionText }
+                            </textarea>
+                        }
                         <div class="pt-5">
                             <button class="btn-primary" type="submit" name="action" value="preview">Pré-visualização</button>
                             <button class="btn-primary" type="submit" name="action" value="save">Avançar</button>
                         </div>
                     </form>
                 </div>
-                <div class="w-1/2 shrink px-5 py-5">
-                    for _, line := range strings.Split(form.ProblemText, "\n") {
-                        <p>{line}<br /></p>
-                    }
+                <div class="w-1/2 shrink mx-5 my-5 flex flex-col">
+                    <div class="mb-20">
+                        for _, line := range strings.Split(form.ProblemText, "\n") {
+                            <p>{line}<br /></p>
+                        }
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold mb-5">Solução:</h2>
+                        for _, line := range strings.Split(form.SolutionText, "\n") {
+                            <p>{line}<br /></p>
+                        }
+                    </div>
                 </div>
             </div>
         </div>
@@ -81,6 +98,7 @@ templ ShowSaveConfirmationPreview(form *data.ExerciseUpsertForm) {
                 }
 
                 <input type="hidden" id="problem_text" name="problem_text" value={ form.ProblemText } />
+                <input type="hidden" id="solution_text" name="solution_text" value={ form.SolutionText } />
 
                 for _, line := range strings.Split(form.ProblemText, "\n") {
                     <p>{line}<br /></p>
@@ -92,7 +110,7 @@ templ ShowSaveConfirmationPreview(form *data.ExerciseUpsertForm) {
                     { form.Category.Category }
                 </div>
 
-                <div class="grid grid-cols-4 pt-7 w-1/2">
+                <div class="grid grid-cols-4 mt-7 mb-10 w-1/2">
                     for i, choice := range form.Choices {
                         <div class="flex">
                             <p class="font-bold">{ []string{"(A) ", "(B) ", "(C) ", "(D) "}[i] }</p>
@@ -108,6 +126,11 @@ templ ShowSaveConfirmationPreview(form *data.ExerciseUpsertForm) {
                         </div>
                     }
                 </div>
+
+                <h2 class="text-xl font-bold mb-5">Solução:</h2>
+                for _, line := range strings.Split(form.SolutionText, "\n") {
+                    <p>{line}<br /></p>
+                }
             </div>
 
 

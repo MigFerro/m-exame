@@ -31,7 +31,6 @@ func (h *ExerciseHandler) HandleExerciseUpsertJourney(c echo.Context) error {
 	}
 
 	formAction := c.Request().FormValue("action")
-	exerciseId := c.Param("id")
 
 	if formAction == "preview" {
 		return h.exercisePreviewShow(c)
@@ -42,10 +41,7 @@ func (h *ExerciseHandler) HandleExerciseUpsertJourney(c echo.Context) error {
 	}
 
 	if formAction == "back" {
-		if exerciseId != "" {
-			return h.ShowExerciseUpdateBack(c)
-		}
-		return h.ShowExerciseCreate(c)
+		return h.ShowExerciseUpsert(c)
 	}
 
 	if formAction == "confirm" {
@@ -55,7 +51,54 @@ func (h *ExerciseHandler) HandleExerciseUpsertJourney(c echo.Context) error {
 	return nil
 }
 
-func (h *ExerciseHandler) ShowExerciseCreate(c echo.Context) error {
+// func (h *ExerciseHandler) ShowExerciseCreate(c echo.Context) error {
+// 	authUser, _ := getAuthenticatedUser(c.Request().Context())
+//
+// 	userRole := h.UsersService.GetUserRole(authUser.Id)
+//
+// 	if userRole != "admin" {
+// 		return render(c, errorsview.PermissionDenied())
+// 	}
+//
+// 	exerciseForm, err := h.getExerciseUpsertForm(c)
+// 	categories, err := h.ExerciseService.GetAllCategories()
+//
+// 	if err != nil {
+// 		return render(c, errorsview.GeneralErrorPage())
+// 	}
+//
+// 	return render(c, exerciseview.ShowCreate(exerciseForm, categories))
+// }
+
+// func (h *ExerciseHandler) ShowExerciseUpdate(c echo.Context) error {
+// 	authUser, _ := getAuthenticatedUser(c.Request().Context())
+//
+// 	userRole := h.UsersService.GetUserRole(authUser.Id)
+//
+// 	if userRole != "admin" {
+// 		return render(c, errorsview.PermissionDenied())
+// 	}
+//
+// 	exerciseId := c.Param("id")
+//
+// 	exercise, err := h.ExerciseService.GetExerciseUpsertForm(exerciseId)
+// 	if err != nil {
+// 		return render(c, errorsview.GeneralErrorPage())
+// 	}
+//
+// 	categories, err := h.ExerciseService.GetAllCategories()
+//
+// 	if err != nil {
+// 		return render(c, errorsview.GeneralErrorPage())
+// 	}
+//
+// 	// should this be here?
+// 	exercise.UpdatedBy = authUser.Id
+//
+// 	return render(c, exerciseview.ShowUpdate(exercise, categories))
+// }
+
+func (h *ExerciseHandler) ShowExerciseUpsert(c echo.Context) error {
 	authUser, _ := getAuthenticatedUser(c.Request().Context())
 
 	userRole := h.UsersService.GetUserRole(authUser.Id)
@@ -64,54 +107,6 @@ func (h *ExerciseHandler) ShowExerciseCreate(c echo.Context) error {
 		return render(c, errorsview.PermissionDenied())
 	}
 
-	exerciseForm, err := h.getExerciseUpsertForm(c)
-	categories, err := h.ExerciseService.GetAllCategories()
-
-	if err != nil {
-		return render(c, errorsview.GeneralErrorPage())
-	}
-
-	return render(c, exerciseview.ShowCreate(exerciseForm, categories))
-}
-
-func (h *ExerciseHandler) ShowExerciseUpdate(c echo.Context) error {
-	authUser, _ := getAuthenticatedUser(c.Request().Context())
-
-	userRole := h.UsersService.GetUserRole(authUser.Id)
-
-	if userRole != "admin" {
-		return render(c, errorsview.PermissionDenied())
-	}
-
-	exerciseId := c.Param("id")
-
-	exercise, err := h.ExerciseService.GetExerciseUpsertForm(exerciseId)
-	if err != nil {
-		return render(c, errorsview.GeneralErrorPage())
-	}
-
-	categories, err := h.ExerciseService.GetAllCategories()
-
-	if err != nil {
-		return render(c, errorsview.GeneralErrorPage())
-	}
-
-	// should this be here?
-	exercise.UpdatedBy = authUser.Id
-
-	return render(c, exerciseview.ShowUpdate(exercise, categories))
-}
-
-func (h *ExerciseHandler) ShowExerciseUpdateBack(c echo.Context) error {
-	authUser, _ := getAuthenticatedUser(c.Request().Context())
-
-	userRole := h.UsersService.GetUserRole(authUser.Id)
-
-	if userRole != "admin" {
-		return render(c, errorsview.PermissionDenied())
-	}
-
-	exerciseId := c.Param("id")
 	exerciseForm, _ := h.getExerciseUpsertForm(c)
 	categories, err := h.ExerciseService.GetAllCategories()
 
@@ -119,9 +114,15 @@ func (h *ExerciseHandler) ShowExerciseUpdateBack(c echo.Context) error {
 		return render(c, errorsview.GeneralErrorPage())
 	}
 
-	exerciseForm.Id = exerciseId
+	exerciseId := c.Param("id")
+	if exerciseId != "" {
+		exerciseForm, err = h.ExerciseService.GetExerciseUpsertForm(exerciseId)
+		if err != nil {
+			return render(c, errorsview.GeneralErrorPage())
+		}
+	}
 
-	return render(c, exerciseview.ShowUpdate(exerciseForm, categories))
+	return render(c, exerciseview.ShowExerciseUpsert(exerciseForm, categories))
 }
 
 func (h *ExerciseHandler) ShowExerciseList(c echo.Context) error {
@@ -399,6 +400,8 @@ func (h *ExerciseHandler) getExerciseUpsertForm(c echo.Context) (*data.ExerciseU
 	}
 
 	formPreviewText := c.Request().FormValue("problem_text")
+	formPreviewSolutionText := c.Request().FormValue("solution_text")
+
 	choices := []data.ExerciseChoice{}
 	sol, _ := strconv.Atoi(c.Request().FormValue("choice_solution"))
 	for i := 0; i < 4; i++ {
@@ -417,8 +420,9 @@ func (h *ExerciseHandler) getExerciseUpsertForm(c echo.Context) (*data.ExerciseU
 	exameFase := c.Request().FormValue("exame_fase")
 
 	formResponse := data.ExerciseUpsertForm{
-		ProblemText: formPreviewText,
-		Choices:     choices,
+		ProblemText:  formPreviewText,
+		SolutionText: formPreviewSolutionText,
+		Choices:      choices,
 		Category: data.ExerciseCategory{
 			Iid:      categoryIid,
 			Category: category,
@@ -451,7 +455,7 @@ func (h *ExerciseHandler) exercisePreviewShow(c echo.Context) error {
 		return err
 	}
 
-	return render(c, exerciseview.ShowCreate(exerciseForm, categories))
+	return render(c, exerciseview.ShowExerciseUpsert(exerciseForm, categories))
 }
 
 func (h *ExerciseHandler) exerciseSaveConfirmationPreviewShow(c echo.Context) error {
