@@ -34,6 +34,7 @@ type ExerciseWithChoicesEntity struct {
 	ExerciseEntity
 	Category         ExerciseCategoryEntity `db:"category"`
 	Choices          []ExerciseChoiceEntity
+	SolutionText     string `db:"solution_text"`
 	PreviousResultId uuid.NullUUID
 }
 

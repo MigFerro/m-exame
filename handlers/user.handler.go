@@ -1,12 +1,10 @@
 package handlers
 
 import (
-	// "errors"
 	"fmt"
 
 	"github.com/MigFerro/exame/services"
 	"github.com/MigFerro/exame/templates/components"
-	// errorsview "github.com/MigFerro/exame/templates/errors"
 	"github.com/labstack/echo/v4"
 )
 
@@ -18,6 +16,12 @@ func (h *UserHandler) GetLoggedUserPrepLevel(c echo.Context) error {
 	authUser, ok := getAuthenticatedUser(c.Request().Context())
 
 	if !ok {
+		return render(c, components.HeaderUserPrepLevelFailed())
+	}
+
+	userRole := h.UsersService.GetUserRole(authUser.Id)
+
+	if userRole != "student" {
 		return render(c, components.HeaderUserPrepLevelFailed())
 	}
 
