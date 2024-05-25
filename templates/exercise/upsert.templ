@@ -50,7 +50,7 @@ templ ShowExerciseUpsert(form *data.ExerciseUpsertForm, categories []entities.Ex
                             <label for="category">Categoria</label>
                             <select name="category" id="category" form="exercise_create_form">
                                 for _, cat := range categories {
-                                    <option value={ strconv.Itoa(cat.Iid) }>{ cat.Category }</option>
+                                    <option value={ strconv.Itoa(cat.Iid) }>{ cat.Category + " (" + cat.Year + ")" }</option>
                                 }
                             </select>
                         </div>

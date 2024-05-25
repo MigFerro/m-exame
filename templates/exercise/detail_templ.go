@@ -738,7 +738,7 @@ func forceLoginModal() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var31 := `Entra na tua conta ou regista-te para resolveres exercícios e ganhares pontos!`
+		templ_7745c5c3_Var31 := `Entra na tua conta ou regista-te para resolveres exercícios e acompanhares o teu progresso!`
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var31)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

@@ -233,7 +233,7 @@ func ShowExerciseUpsert(form *data.ExerciseUpsertForm, categories []entities.Exe
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var9 string = cat.Category
+				var templ_7745c5c3_Var9 string = cat.Category + " (" + cat.Year + ")"
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
