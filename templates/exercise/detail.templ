@@ -17,16 +17,18 @@ templ ExerciseContainer() {
 
 templ ExerciseHead(exercise entities.ExerciseWithChoicesEntity) {
     <div class="p-10 mt-10 bg-blue-50 rounded-xl relative">
-        for _, line := range strings.Split(exercise.ProblemText, "\n") {
-            <p class="text-lg">{line}<br /></p>
-        }
-
-        if exercise.ExameYear != "" && exercise.ExameFase != "" {
-            <p class="italic pt-5 pb-1">{ templateutils.GetExameString(exercise.ExameYear, exercise.ExameFase) }</p>
-        }
-
-        <div class="inline-flex items-center justify-between p-1.5 bg-indigo-500 text-gray-50 border border-gray-100 rounded-xl absolute top-0 right-0">
+        <div class="inline-flex items-center justify-between p-1.5 mb-2 bg-indigo-500 text-gray-50 border border-gray-100 rounded-xl absolute top-0 right-0">
             { exercise.Category.Category }
+        </div>
+
+        <div class="pt-5">
+            for _, line := range strings.Split(exercise.ProblemText, "\n") {
+                <p class="text-lg">{line}<br /></p>
+            }
+
+            if exercise.ExameYear != "" && exercise.ExameFase != "" {
+                <p class="italic pt-5 pb-1">{ templateutils.GetExameString(exercise.ExameYear, exercise.ExameFase) }</p>
+            }
         </div>
     </div>
 }
