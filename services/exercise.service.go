@@ -253,6 +253,7 @@ func (s *ExerciseService) GetExerciseWithChoices(exerciseId string) (entities.Ex
             cat.category AS "category.category",
             cat.created_at AS "category.created_at",
             cat.updated_at AS "category.updated_at",
+			cat.year AS "category.year",
 			sol.solution_text AS "solution_text"
         FROM
             exercises e
