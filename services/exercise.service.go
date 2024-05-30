@@ -320,10 +320,11 @@ func (s *ExerciseService) GetExerciseUpsertForm(exerciseId string) (*data.Exerci
 	}
 
 	form := data.ExerciseUpsertForm{
-		Id:          exerciseWithChoices.Id.String(),
-		ProblemText: exerciseWithChoices.ProblemText,
-		ExameYear:   exerciseWithChoices.ExameYear,
-		ExameFase:   exerciseWithChoices.ExameFase,
+		Id:           exerciseWithChoices.Id.String(),
+		ProblemText:  exerciseWithChoices.ProblemText,
+		SolutionText: exerciseWithChoices.SolutionText,
+		ExameYear:    exerciseWithChoices.ExameYear,
+		ExameFase:    exerciseWithChoices.ExameFase,
 		Category: data.ExerciseCategory{
 			Iid:      cat.Iid,
 			Category: cat.Category,
