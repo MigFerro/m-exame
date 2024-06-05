@@ -8,6 +8,7 @@ import (
 	"github.com/MigFerro/exame/services"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
+	echomiddleware "github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
@@ -19,6 +20,7 @@ func main() {
 
 	app.Use(session.Middleware(authCookieStore))
 	app.Use(middleware.WithAuthenticatedUser)
+	app.Use(echomiddleware.Logger())
 
 	app.Static("/static", "templates/static")
 
@@ -61,5 +63,5 @@ func main() {
 	app.POST("/exercises/category/create", exerciseHandler.CreateExerciseCategory)
 	app.POST("/exercises/category/:id", exerciseHandler.UpdateExerciseCategory)
 
-	app.Start(":3000")
+	app.Logger.Debug(app.Start(":3000"))
 }
