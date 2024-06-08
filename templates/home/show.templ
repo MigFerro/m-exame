@@ -9,7 +9,11 @@ import (
 )
 
 templ Show() {
-    @layouts.Base(layouts.BaseOptions{ WithoutMargins: true }) {
+    @layouts.Base(layouts.BaseOptions{ 
+        Title: `+Exame - Exercícios Para Conquistar o Exame de Matemática`,
+        Description: `Complementa o teu estudo para o exame de Matemática com exercícios de escolha múltipla, soluções detalhadas e feedback instantâneo do teu progresso.`,
+        WithoutMargins: true,
+        }) {
 
         <h2 class="w-full text-center text-5xl font-bold text-gray-900 mt-5 mb-14">Mais exercícios, mais prática</h2>
 
