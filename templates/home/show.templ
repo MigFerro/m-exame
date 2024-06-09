@@ -14,15 +14,31 @@ templ Show(exercise entities.ExerciseWithChoicesEntity) {
     @layouts.Base(layouts.BaseOptions{ 
         Title: `+Exame - Exercícios Para Conquistar o Exame de Matemática`,
         Description: `Complementa o teu estudo para o exame de Matemática com exercícios de escolha múltipla, soluções detalhadas e feedback instantâneo do teu progresso.`,
+        WithLatex:true,
         WithoutMargins: true,
         }) {
 
-        <div class="flex justify-between items-center mb-10 mx-[10%] lg:mx-[10%] min-h-full">
-            <div class="w-1/2 mr-[2.5%]">
-                <h2 class="text-5xl font-bold text-gray-900 mt-5 mb-14">Mais exercícios, mais prática</h2>
+        <div class="flex flex-col md:flex-row justify-center items-center my-10 mx-[5%] md:mx-[10%]">
+            <div class="max-w-md md:mr-[3%] rounded-xl border-2 border-gray-200 pl-9 pr-2 pb-9 pt-5">
+                <h2 class="text-5xl font-bold text-gray-900 mt-5 mb-16">Mais exercícios, mais prática</h2>
+                <ul class="w-4/5 text-lg text-gray-600 mb-8">
+                    <li>
+                        Resolve exercícios para preparares o teu exame de Matemática.
+                    </li>
+                    <li class="mt-7">
+                        Avalia o teu raciocínio e corrige os teus erros através de soluções detalhadas.
+                    </li>
+                    <li class="mt-7">
+                        Aumenta o teu nível de preparação e tenta atingir os
+                        <span class="text-2xl text-green-700 font-bold">
+                           100% 
+                        </span>
+                        !
+                    </li>
+                </ul>
             </div>
 
-            <div class="w-1/2 ml-[2.5%]">
+            <div class="max-w-fit md:ml-[5%]">
                 @exerciseview.ExerciseBody(exercise)
             </div>
 
@@ -46,6 +62,12 @@ templ Show(exercise entities.ExerciseWithChoicesEntity) {
             </ul>
         </div>
 
+        <div class="my-10 flex flex-col justify-center items-center" id="exame_container">
+            <a href="/exercise" class="max-w-80 p-6 bg-blue-500 border border-gray-200 rounded-3xl shadow hover:cursor-pointer hover:bg-blue-800 opacity-0" _="on load transition opacity to 100">
+                <h5 class="w-full text-center mb-2 text-2xl font-bold tracking-tight text-white">Resolve um exercício</h5>
+            </a>
+        </div>
+
         // <h3 class="mb-5 w-full text-center text-4xl font-bold">Exercícios de matérias específicas</h3>
         // <div class="mb-20 w-full text-center text-2xl text-blue-500 font-semibold">(brevemente...)</div>
 
@@ -58,11 +80,6 @@ templ Show(exercise entities.ExerciseWithChoicesEntity) {
         //    
         //}
 
-        <div class="my-10 flex flex-col justify-center items-center" id="exame_container">
-            <a href="/exercise" class="max-w-80 p-6 bg-blue-500 border border-gray-200 rounded-3xl shadow hover:cursor-pointer hover:bg-blue-800 opacity-0" _="on load transition opacity to 100">
-                <h5 class="w-full text-center mb-2 text-2xl font-bold tracking-tight text-white">Resolve um exercício</h5>
-            </a>
-        </div>
     }
 }
 
