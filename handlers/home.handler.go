@@ -12,7 +12,14 @@ type HomeHandler struct {
 }
 
 func (h *HomeHandler) HomeShow(c echo.Context) error {
-	return render(c, homeview.Show())
+	id, err := h.ExerciseService.GetRandomExerciseId()
+	exercise, err := h.ExerciseService.GetExerciseWithChoices(id)
+
+	if err != nil {
+		return render(c, errorsview.GeneralErrorPage())
+	}
+
+	return render(c, homeview.Show(exercise))
 }
 
 func (h *HomeHandler) YearExerciseCategoryListShow(c echo.Context) error {
