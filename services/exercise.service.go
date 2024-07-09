@@ -316,8 +316,7 @@ func (s *ExerciseService) GetExerciseWithChoices(exerciseId string) (entities.Ex
 
 	err = s.DB.Select(&exerciseChoices,
 		`SELECT * FROM exercise_choices
-		WHERE exercise_id = $1
-		ORDER BY random()`, exerciseId)
+		WHERE exercise_id = $1`, exerciseId)
 
 	if err != nil {
 		fmt.Println("error retrieving exercise from database: ", err)
