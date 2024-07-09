@@ -2,6 +2,7 @@ package exerciseview
 
 import (
     "strings"
+    "strconv"
 
     "github.com/MigFerro/exame/templates/layouts"
     templateutils "github.com/MigFerro/exame/templates/utils"
@@ -57,11 +58,11 @@ templ ShowExerciseDetail(exercise entities.ExerciseWithChoicesEntity) {
     }
 }
 
-templ ExerciseBody(exercise entities.ExerciseWithChoicesEntity) {
+templ ExerciseBody(exercise entities.ExerciseWithChoicesEntity, atHomepage bool) {
     @ExerciseHead(exercise)
 
     <div id="choices-container">
-        <form hx-post={"/exercises/" + exercise.Id.String() + "?content=True" } hx-target="#exercise-parent" hx-swap="outerHTML" hx-replace-url={"/exercises/" + exercise.Id.String() + "/result"}>
+        <form hx-post={"/exercises/" + exercise.Id.String() + "?atHomepage=" + strconv.FormatBool(atHomepage) + "&content=true" } hx-trigger="change" hx-include="this" hx-target="#exercise-parent" hx-swap="outerHTML">
             <ul class="grid w-full gap-6 md:grid-cols-4 pt-10">
                 for i, choice := range exercise.Choices {
                     <li>
@@ -83,10 +84,10 @@ templ ExerciseBody(exercise entities.ExerciseWithChoicesEntity) {
     </div>
 }
 
-templ ExerciseToSolve(exercise entities.ExerciseWithChoicesEntity, loggedUser bool) {
+templ ExerciseToSolve(exercise entities.ExerciseWithChoicesEntity, atHomepage bool) {
     <div class="opacity-0 relative flex justify-center" id="exercise-parent" _="on load transition opacity to 100">
         @ExerciseContainer(){
-            @ExerciseBody(exercise)
+            @ExerciseBody(exercise, atHomepage)
 
             { children... }
 
@@ -94,6 +95,8 @@ templ ExerciseToSolve(exercise entities.ExerciseWithChoicesEntity, loggedUser bo
 
     </div>
 }
+
+
 
 templ ExerciseButtons() {
     <div class="w-full grid gap-6 md:grid-cols-2 my-10">
@@ -108,7 +111,11 @@ templ ExerciseButtons() {
 }
 
 templ ShowExerciseToSolve(exercise entities.ExerciseWithChoicesEntity, loggedUser bool) {
-    @layouts.Base(layouts.BaseOptions{ WithLatex: true }) {
+    @layouts.Base(layouts.BaseOptions{ 
+        Title: "Exercício - " + exercise.Category.Category,
+        Description: exercise.ProblemText,
+        WithLatex:true,
+    }) {
         @ExerciseToSolve(exercise, loggedUser) {
             @ExerciseButtons()
         }
@@ -117,6 +124,25 @@ templ ShowExerciseToSolve(exercise entities.ExerciseWithChoicesEntity, loggedUse
             @forceLoginModal() {}
         }
     }
+}
+
+templ ExerciseSimpleResult(result data.ExerciseSolved) {
+    <div class="pt-5 w-full" id="exercise-container">
+        <div class="flex justify-center items-center">
+        if result.IsSolution {
+                <span class="text-4xl font-semibold text-green-500">Resposta correcta!</span>
+        }
+        else {
+                <span class="text-4xl font-semibold text-red-400">Resposta incorrecta</span>
+        }
+        </div>
+
+        <div class="my-10 flex flex-col justify-center items-center" id="exame_container">
+            <a href="/exercise" class="max-w-80 p-6 bg-blue-500 border border-gray-200 rounded-3xl shadow hover:cursor-pointer hover:bg-blue-800 opacity-0" _="on load transition opacity to 100">
+                <h5 class="w-full text-center mb-2 text-2xl font-bold tracking-tight text-white">Resolve mais exercícios</h5>
+            </a>
+        </div>
+    </div>
 }
 
 templ ExerciseResult(result data.ExerciseSolved) {

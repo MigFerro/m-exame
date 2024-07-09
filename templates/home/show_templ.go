@@ -96,7 +96,7 @@ func Show(exercise entities.ExerciseWithChoicesEntity) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = exerciseview.ExerciseBody(exercise).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = exerciseview.ExerciseToSolve(exercise, true).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -149,7 +149,7 @@ func Show(exercise entities.ExerciseWithChoicesEntity) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Var14 := `Resolve um exercício`
+			templ_7745c5c3_Var14 := `Resolve exercícios`
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

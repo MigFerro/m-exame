@@ -39,7 +39,7 @@ templ Show(exercise entities.ExerciseWithChoicesEntity) {
             </div>
 
             <div class="max-w-fit md:ml-[5%]">
-                @exerciseview.ExerciseBody(exercise)
+                @exerciseview.ExerciseToSolve(exercise, true)
             </div>
 
         </div>
@@ -64,7 +64,7 @@ templ Show(exercise entities.ExerciseWithChoicesEntity) {
 
         <div class="my-10 flex flex-col justify-center items-center" id="exame_container">
             <a href="/exercise" class="max-w-80 p-6 bg-blue-500 border border-gray-200 rounded-3xl shadow hover:cursor-pointer hover:bg-blue-800 opacity-0" _="on load transition opacity to 100">
-                <h5 class="w-full text-center mb-2 text-2xl font-bold tracking-tight text-white">Resolve um exercício</h5>
+                <h5 class="w-full text-center mb-2 text-2xl font-bold tracking-tight text-white">Resolve exercícios</h5>
             </a>
         </div>
 
