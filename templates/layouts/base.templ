@@ -3,6 +3,8 @@ package layouts
 import "github.com/MigFerro/exame/templates/components"
 
 type BaseOptions struct {
+    Title string
+    Description string
     WithoutMargins bool
     WithLatex bool
 }
@@ -10,9 +12,18 @@ type BaseOptions struct {
 templ Base(options BaseOptions) {
     <html>
         <head>
+            if options.Title != "" {
+                <title>{ options.Title }</title>
+            }
+
+            if options.Description != "" {
+                <meta name="description" content={ options.Description } />
+            }
+
             <meta name="viewport" content="width=device-width, initial-scale=1" />
+
             <link rel="stylesheet" href="/static/css/tailwind.css" />
-            <link rel="icon" href="static/icons/mais-exame-logo.png" />
+            <link rel="icon" href="/static/icons/mais-exame-logo.png" />
 
             // Hyperscript
             <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>           

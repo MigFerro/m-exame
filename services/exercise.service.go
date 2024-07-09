@@ -103,6 +103,47 @@ func (s *ExerciseService) GetNextSolvedExerciseId(userId uuid.UUID, exerciseId s
 	return nextExerciseId, err
 }
 
+func (s *ExerciseService) SolveExerciseWithoutSaving(exerciseId string, choiceId string) (data.ExerciseSolved, error) {
+	var exercise entities.ExerciseWithChoicesEntity
+	var solutionId uuid.UUID
+
+	tx := s.DB.MustBegin()
+	err := tx.Get(&exercise, `
+        SELECT
+            e.*,
+            cat.iid AS category_iid,
+            cat.category AS "category.category",
+            cat.created_at AS "category.created_at",
+            cat.updated_at AS "category.updated_at"
+        FROM
+            exercises e
+        LEFT JOIN
+            exercise_categories cat ON e.category_iid = cat.iid
+		WHERE e.id = $1`, exerciseId)
+
+	dbChoices := []entities.ExerciseChoiceEntity{}
+	err = s.DB.Select(&dbChoices, `
+	SELECT * FROM exercise_choices
+	WHERE exercise_id = $1
+	ORDER BY random()`, exercise.Id)
+
+	exercise.Choices = dbChoices
+
+	err = tx.Get(&solutionId, "SELECT id FROM exercise_choices WHERE exercise_id = $1 AND is_solution = TRUE", exerciseId)
+
+	isSolution := solutionId.String() == choiceId
+
+	solvedData := data.ExerciseSolved{
+		Exercise:         exercise,
+		ChoiceSelectedId: choiceId,
+		ChoiceCorrectId:  solutionId.String(),
+		IsSolution:       isSolution,
+	}
+
+	return solvedData, err
+
+}
+
 func (s *ExerciseService) SolveExercise(userId uuid.UUID, exerciseId string, choiceId string) (data.ExerciseSolved, error) {
 	var exercise entities.ExerciseWithChoicesEntity
 	var solutionId uuid.UUID
@@ -275,8 +316,7 @@ func (s *ExerciseService) GetExerciseWithChoices(exerciseId string) (entities.Ex
 
 	err = s.DB.Select(&exerciseChoices,
 		`SELECT * FROM exercise_choices
-		WHERE exercise_id = $1
-		ORDER BY random()`, exerciseId)
+		WHERE exercise_id = $1`, exerciseId)
 
 	if err != nil {
 		fmt.Println("error retrieving exercise from database: ", err)

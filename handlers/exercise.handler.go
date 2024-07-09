@@ -51,53 +51,6 @@ func (h *ExerciseHandler) HandleExerciseUpsertJourney(c echo.Context) error {
 	return nil
 }
 
-// func (h *ExerciseHandler) ShowExerciseCreate(c echo.Context) error {
-// 	authUser, _ := getAuthenticatedUser(c.Request().Context())
-//
-// 	userRole := h.UsersService.GetUserRole(authUser.Id)
-//
-// 	if userRole != "admin" {
-// 		return render(c, errorsview.PermissionDenied())
-// 	}
-//
-// 	exerciseForm, err := h.getExerciseUpsertForm(c)
-// 	categories, err := h.ExerciseService.GetAllCategories()
-//
-// 	if err != nil {
-// 		return render(c, errorsview.GeneralErrorPage())
-// 	}
-//
-// 	return render(c, exerciseview.ShowCreate(exerciseForm, categories))
-// }
-
-// func (h *ExerciseHandler) ShowExerciseUpdate(c echo.Context) error {
-// 	authUser, _ := getAuthenticatedUser(c.Request().Context())
-//
-// 	userRole := h.UsersService.GetUserRole(authUser.Id)
-//
-// 	if userRole != "admin" {
-// 		return render(c, errorsview.PermissionDenied())
-// 	}
-//
-// 	exerciseId := c.Param("id")
-//
-// 	exercise, err := h.ExerciseService.GetExerciseUpsertForm(exerciseId)
-// 	if err != nil {
-// 		return render(c, errorsview.GeneralErrorPage())
-// 	}
-//
-// 	categories, err := h.ExerciseService.GetAllCategories()
-//
-// 	if err != nil {
-// 		return render(c, errorsview.GeneralErrorPage())
-// 	}
-//
-// 	// should this be here?
-// 	exercise.UpdatedBy = authUser.Id
-//
-// 	return render(c, exerciseview.ShowUpdate(exercise, categories))
-// }
-
 func (h *ExerciseHandler) ShowExerciseUpsert(c echo.Context) error {
 	authUser, _ := getAuthenticatedUser(c.Request().Context())
 
@@ -220,11 +173,23 @@ func (h *ExerciseHandler) HandleExerciseSolve(c echo.Context) error {
 	exerciseId := c.Param("id")
 	formChoice := c.Request().FormValue("choice")
 	content := c.QueryParam("content")
+	atHomepage := c.QueryParam("atHomepage")
+
+	if atHomepage == "true" {
+		solvedData, err := h.ExerciseService.SolveExerciseWithoutSaving(exerciseId, formChoice)
+
+		if err != nil {
+			fmt.Println("Error solving exercise: ", err)
+			return render(c, errorsview.GeneralErrorPage())
+		}
+
+		return render(c, exerciseview.ExerciseSimpleResult(solvedData))
+	}
 
 	loggedUser, ok := c.Request().Context().Value("authUser").(*data.LoggedUser)
 
 	if !ok {
-		fmt.Println("No user logged in")
+		fmt.Println("No user logged in.")
 		return render(c, errorsview.GeneralErrorPage())
 	}
 
@@ -235,7 +200,7 @@ func (h *ExerciseHandler) HandleExerciseSolve(c echo.Context) error {
 		return render(c, errorsview.GeneralErrorPage())
 	}
 
-	if content == "True" {
+	if content == "true" {
 		http.Redirect(c.Response().Writer, c.Request(), "/exercises/"+exerciseId+"/result?content=True", http.StatusSeeOther)
 		return err
 	}

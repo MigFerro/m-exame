@@ -2,6 +2,7 @@ package exerciseview
 
 import (
     "strings"
+    "strconv"
 
     "github.com/MigFerro/exame/templates/layouts"
     templateutils "github.com/MigFerro/exame/templates/utils"
@@ -10,7 +11,7 @@ import (
 )
 
 templ ExerciseContainer() {
-        <div class="pt-5 w-3/4" id="exercise-container">
+        <div class="pt-5 w-4/5" id="exercise-container">
             { children... }
         </div>
 }
@@ -57,56 +58,91 @@ templ ShowExerciseDetail(exercise entities.ExerciseWithChoicesEntity) {
     }
 }
 
-templ ExerciseToSolve(exercise entities.ExerciseWithChoicesEntity, loggedUser bool) {
+templ ExerciseBody(exercise entities.ExerciseWithChoicesEntity, atHomepage bool) {
+    @ExerciseHead(exercise)
+
+    <div id="choices-container">
+        <form hx-post={"/exercises/" + exercise.Id.String() + "?atHomepage=" + strconv.FormatBool(atHomepage) + "&content=true" } hx-trigger="change" hx-include="this" hx-target="#exercise-parent" hx-swap="outerHTML">
+            <ul class="grid w-full gap-6 md:grid-cols-4 pt-10">
+                for i, choice := range exercise.Choices {
+                    <li>
+                        if i == 0 {
+                            <input type="radio" id={ choice.Id.String() } name="choice" value={ choice.Id.String() } class="hidden peer" required />
+                        } else {
+                            <input type="radio" id={ choice.Id.String() } name="choice" value={ choice.Id.String() } class="hidden peer" />
+                        }
+
+                        <label for={ choice.Id.String() } class="inline-flex items-center justify-between w-full p-5 text-gray-700 font-bold bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100">                           
+                            <div class="block w-full text-center">
+                                { choice.Value }
+                            </div>
+                        </label>
+                    </li>
+                }
+            </ul>
+        </form>
+    </div>
+}
+
+templ ExerciseToSolve(exercise entities.ExerciseWithChoicesEntity, atHomepage bool) {
     <div class="opacity-0 relative flex justify-center" id="exercise-parent" _="on load transition opacity to 100">
         @ExerciseContainer(){
-            @ExerciseHead(exercise)
+            @ExerciseBody(exercise, atHomepage)
 
-            <div id="choices-container">
-                <form hx-post={"/exercises/" + exercise.Id.String() + "?content=True" } hx-target="#exercise-parent" hx-swap="outerHTML" hx-replace-url={"/exercises/" + exercise.Id.String() + "/result"}>
-                    <ul class="grid w-full gap-6 md:grid-cols-4 pt-10">
-                        for i, choice := range exercise.Choices {
-                            <li>
-                                if i == 0 {
-                                    <input type="radio" id={ choice.Id.String() } name="choice" value={ choice.Id.String() } class="hidden peer" required />
-                                } else {
-                                    <input type="radio" id={ choice.Id.String() } name="choice" value={ choice.Id.String() } class="hidden peer" />
-                                }
+            { children... }
 
-                                <label for={ choice.Id.String() } class="inline-flex items-center justify-between w-full p-5 text-gray-700 font-bold bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100">                           
-                                    <div class="block w-full text-center">
-                                        { choice.Value }
-                                    </div>
-                                </label>
-                            </li>
-                        }
-                    </ul>
+        }
 
-                    <div class="w-full grid gap-6 md:grid-cols-2 my-10">
-                            <input class="text-white text-xl font-semibold bg-blue-500 hover:bg-indigo-800 hover:cursor-pointer focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-xl w-full px-5 py-2.5 text-center" type="submit" value="Responder" />
+    </div>
+}
 
-                            <a href="/exercise" class="flex justify-center items-center bg-white ring-1 ring-gray-300 ring-inset py-2.5 px-5 lg:ml-[30%] text-gray-400 font-semibold text-lg rounded-xl hover:outline-none hover:ring-2 hover:ring-indigo-500 focus:ring-4 focus:outline-none focus:ring-blue-300">
-                                <span class="mr-2">Saltar exercício</span>
 
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                  <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
-                                </svg>
-                            </a>
-                    </div>
-                </form>
-            </div>
+
+templ ExerciseButtons() {
+    <div class="w-full grid gap-6 md:grid-cols-2 my-10">
+            <a href="/exercise" class="flex justify-center items-center bg-white ring-1 ring-gray-300 ring-inset py-2.5 px-5 lg:ml-[30%] text-gray-400 font-semibold text-lg rounded-xl hover:outline-none hover:ring-2 hover:ring-indigo-500 focus:ring-4 focus:outline-none focus:ring-blue-300">
+                <span class="mr-2">Saltar exercício</span>
+
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
+                </svg>
+            </a>
+    </div>
+}
+
+templ ShowExerciseToSolve(exercise entities.ExerciseWithChoicesEntity, loggedUser bool) {
+    @layouts.Base(layouts.BaseOptions{ 
+        Title: "Exercício - " + exercise.Category.Category,
+        Description: exercise.ProblemText,
+        WithLatex:true,
+    }) {
+        @ExerciseToSolve(exercise, loggedUser) {
+            @ExerciseButtons()
         }
 
         if (!loggedUser) {
             @forceLoginModal() {}
         }
-    </div>
+    }
 }
 
-templ ShowExerciseToSolve(exercise entities.ExerciseWithChoicesEntity, loggedUser bool) {
-    @layouts.Base(layouts.BaseOptions{ WithLatex: true }) {
-        @ExerciseToSolve(exercise, loggedUser) {}
-    }
+templ ExerciseSimpleResult(result data.ExerciseSolved) {
+    <div class="pt-5 w-full" id="exercise-container">
+        <div class="flex justify-center items-center">
+        if result.IsSolution {
+                <span class="text-4xl font-semibold text-green-500">Resposta correcta!</span>
+        }
+        else {
+                <span class="text-4xl font-semibold text-red-400">Resposta incorrecta</span>
+        }
+        </div>
+
+        <div class="my-10 flex flex-col justify-center items-center" id="exame_container">
+            <a href="/exercise" class="max-w-80 p-6 bg-blue-500 border border-gray-200 rounded-3xl shadow hover:cursor-pointer hover:bg-blue-800 opacity-0" _="on load transition opacity to 100">
+                <h5 class="w-full text-center mb-2 text-2xl font-bold tracking-tight text-white">Resolve mais exercícios</h5>
+            </a>
+        </div>
+    </div>
 }
 
 templ ExerciseResult(result data.ExerciseSolved) {
